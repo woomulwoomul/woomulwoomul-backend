@@ -25,7 +25,6 @@ jobs:
 
       - name: Build with Gradle
         run: ./gradlew build
-        env:
 
       - name: JaCoCo Code Coverage Report
         id: jacoco_reporter
