@@ -1,0 +1,137 @@
+buildscript {
+	ext {
+		queryDslVersion = '5.0.0'
+	}
+}
+
+plugins {
+	id 'java'
+	id 'jacoco'
+	id 'org.springframework.boot' version '3.2.5'
+	id 'io.spring.dependency-management' version '1.1.4'
+	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+}
+
+group = 'com.woomulwoomul'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '21'
+}
+
+bootJar {
+	archiveFileName = 'app.jar'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
+	implementation 'com.auth0:java-jwt:4.4.0'
+	implementation 'io.sentry:sentry-spring-boot-starter:7.8.0'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
+	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+	implementation 'io.springfox:springfox-swagger2:3.0.0'
+	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
+	implementation 'com.amazonaws:aws-java-sdk-bom:1.12.710'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+	finalizedBy 'jacocoTestReport'
+}
+
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+
+jacoco {
+	toolVersion = '0.8.12'
+}
+
+jacocoTestReport {
+	reports {
+		html.required = true
+		csv.required = true
+		xml.required = true
+	}
+
+	def qDomains = []
+	for (qPattern in "**/QA".."**/QZ")
+		qDomains.add(qPattern + "*")
+
+	afterEvaluate {
+		classDirectories.each { dir ->
+			fileTree(dir).exclude(qDomains)
+		}
+	}
+
+	finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+	def qDomains = []
+	for (qPattern in "*.QA".."*.QZ")
+		qDomains.add(qPattern + "*")
+
+	violationRules {
+
+		rule {
+			enabled = true
+			element = 'BUNDLE'
+
+			limit {
+				counter = 'INSTRUCTION'
+				value = 'COVEREDRATIO'
+//				minimum = 0.90
+			}
+
+			excludes = [] + qDomains
+		}
+	}
+}
