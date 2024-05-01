@@ -26,10 +26,10 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
         env:
-          JWT_DOMAIN: ${{ secrets.JWT_DOMAIN }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           JWT_ACCESS: ${{ secrets.JWT_ACCESS }}
+          JWT_DOMAIN: ${{ secrets.JWT_DOMAIN }}
           JWT_REFRESH: ${{ secrets.JWT_REFRESH }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
           MAIL_ADDRESS: ${{ secrets.MAIL_ADDRESS }}
           MAIL_HOST: ${{ secrets.MAIL_HOST }}
           MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
