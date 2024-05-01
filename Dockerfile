@@ -1,9 +1,9 @@
-FROM openjdk:21-jdk
+FROM openjdk:21-slim
 
 ENV TZ=Asia/Seoul
 
-RUN apt-get update && \
-    apt-get upgrade -y
+RUN apt update && \
+    apt upgrade -y
 
 ARG JAR_FILE=build/libs/app.jar
 COPY ${JAR_FILE} app.jar
