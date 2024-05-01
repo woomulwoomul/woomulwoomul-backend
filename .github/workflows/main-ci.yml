@@ -1,8 +1,8 @@
-name: Dev - CI
+name: Main - CI
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "main" ]
     paths-ignore:
       - 'docs/**'
       - 'README.md'
@@ -37,8 +37,8 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_check_run: false
           publish_only_summary: true
-#          fail_below_threshold: true
-#          minimum_coverage: 90
+      #          fail_below_threshold: true
+      #          minimum_coverage: 90
 
       - name: Add Coverage Job Summary
         run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY
@@ -54,7 +54,7 @@ jobs:
         uses: mr-smithers-excellent/docker-build-push@v6
         with:
           image: gs97ahn/server
-          tags: woomulwoomul-dev
+          tags: woomulwoomul-prod, woomulwoomul-v1.0.0
           registry: docker.io
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
