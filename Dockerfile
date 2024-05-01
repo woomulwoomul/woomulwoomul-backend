@@ -2,8 +2,8 @@ FROM openjdk:21
 
 ENV TZ=Asia/Seoul
 
-RUN apk update && \
-    apk upgrade && \
+RUN apt-get update && \
+    apt-get upgrade -y && \
     rm -rf /var/cache/apk/*
 
 ARG JAR_FILE=build/libs/app.jar
