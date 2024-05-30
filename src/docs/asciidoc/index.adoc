@@ -1,0 +1,23 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 우물우물 REST API 문서
+:doctype: book
+:icon: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Develop-API]]
+=== Develop API
+
+include::api/develop/health-check.adoc[]
+
+[[Auth-API]]
+=== Auth API
+
+[[User-API]]
+=== User API
+
+

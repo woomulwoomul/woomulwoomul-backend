@@ -1,12 +1,10 @@
-FROM openjdk:21-slim
+FROM openjdk:21-alpine
 
 ENV TZ=Asia/Seoul
 
-RUN apt update && \
-    apt upgrade -y && \
-    apt install -yq tzdata && \
-    ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
-    dpkg-reconfigure -f noninteractive tzdata
+RUN apk update && \
+    apk upgrade && \
+    rm -rf /var/cache/apk/*
 
 ARG JAR_FILE=build/libs/app.jar
 COPY ${JAR_FILE} app.jar

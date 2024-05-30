@@ -1,10 +1,6 @@
 spring:
   profiles:
-    default:
-      local
-
-  application:
-    name: woomulwoomul-backend
+    default: local
 
   jpa:
     hibernate:
@@ -39,29 +35,25 @@ logging:
   file:
     name: woomulwoomul-rolling.log
 
-
-springdoc:
-  default-consumes-media-type: application/json;charset=UTF-8
-  default-produces-media-type: application/json;charset=UTF-8
-  show-actuator: true
-  paths-to-match: /api/**
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /api-docs
-    disable-swagger-default-url: true
-    display-request-duration: true
-    operations-sorter: alpha
-
 sentry:
   traces-sample-rate: 1.0
   logging:
     minimum-event-level: info
     minimum-breadcrumb-level: info
 
+#cloud:
+#  aws:
+#    credentials:
+#      access-key: ${AWS_ACCESS_KEY}
+#      secret-key: ${AWS_SECRET_KEY}
+#    region:
+#      static: ${AWS_REGION}
+#    s3:
+#      bucket: ${AWS_BUCKET}
+
 api:
   master:
-    id: alloon
+    id: woomulwoomul
   jwt:
     secret: ${JWT_SECRET}
     domain: ${JWT_DOMAIN}
