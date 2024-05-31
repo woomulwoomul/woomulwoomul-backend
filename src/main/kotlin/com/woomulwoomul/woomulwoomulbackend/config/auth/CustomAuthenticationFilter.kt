@@ -1,5 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.config.auth
 
+import com.woomulwoomul.woomulwoomulbackend.common.constant.CustomHttpHeaders.Companion.REFRESH_TOKEN
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -16,7 +17,7 @@ class CustomAuthenticationFilter(
                                   response: HttpServletResponse,
                                   filterChain: FilterChain) {
         val accessToken = request.getHeader(AUTHORIZATION)
-        val refreshToken = request.getHeader("Refresh-Token")
+        val refreshToken = request.getHeader(REFRESH_TOKEN)
 
         if (accessToken != null && !request.requestURI.contains("token")) {
             jwtProvider.verifyToken(accessToken, JwtType.ACCESS)

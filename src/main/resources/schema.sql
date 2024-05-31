@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS follow;
 DROP TABLE IF EXISTS user_visit;
 DROP TABLE IF EXISTS user_provider;
 DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS user_withraw;
+DROP TABLE IF EXISTS withdraw_user;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
@@ -25,13 +25,13 @@ CREATE TABLE users
     CONSTRAINT uq_user_email UNIQUE (email)
 );
 
-CREATE TABLE user_withdraw
+CREATE TABLE withdraw_user
 (
-    user_withdraw_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    withdraw_user_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
     create_date_time            DATETIME(6)                 NOT NULL,
     update_date_time            DATETIME(6)                 NOT NULL,
     user_id                     BIGINT                      NOT NULL,
-    CONSTRAINT fk_user_withdraw_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+    CONSTRAINT fk_withdraw_user_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE user_role
