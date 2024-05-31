@@ -1,4 +1,4 @@
-FROM openjdk:21-alpine
+FROM openjdk:21-jdk
 
 ENV TZ=Asia/Seoul
 
