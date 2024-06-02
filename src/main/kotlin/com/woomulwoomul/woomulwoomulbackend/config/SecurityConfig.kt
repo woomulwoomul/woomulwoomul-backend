@@ -1,5 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.config
 
+import com.woomulwoomul.woomulwoomulbackend.api.service.user.DefaultOAuth2UserService
 import com.woomulwoomul.woomulwoomulbackend.config.auth.CustomAuthenticationEntryPoint
 import com.woomulwoomul.woomulwoomulbackend.config.auth.CustomAuthenticationFilter
 import org.springframework.context.annotation.Bean
@@ -16,6 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     val customAuthenticationFilter: CustomAuthenticationFilter,
     val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
+    val defaultOAuth2UserService: DefaultOAuth2UserService,
 ) {
 
     @Bean
@@ -26,8 +28,11 @@ class SecurityConfig(
         return http
             .csrf{ it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests { it.anyRequest().permitAll() }
-            .addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+            .oauth2Login{ it -> it.userInfoEndpoint{ it.userService(defaultOAuth2UserService) }.defaultSuccessUrl("/api/user") }
+            .authorizeHttpRequests {
+                it.requestMatchers("/api/login").permitAll()
+                    .anyRequest().permitAll()
+            }.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling{ it.authenticationEntryPoint(customAuthenticationEntryPoint) }
             .build()
     }
