@@ -34,7 +34,7 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .oauth2Login{ it ->
                 it.userInfoEndpoint{ it.userService(defaultOAuth2UserService) }
-                .defaultSuccessUrl("/api/user")
+                    .defaultSuccessUrl("/api/user")
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler)
             }.authorizeHttpRequests {

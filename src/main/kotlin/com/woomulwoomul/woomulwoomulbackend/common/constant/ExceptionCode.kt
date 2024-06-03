@@ -25,6 +25,7 @@ enum class ExceptionCode(
 
     // Custom
     FILE_FIELD_REQUIRED(HttpStatus.BAD_REQUEST, "파일은 필수 입력입니다."),
+    PROVIDER_TYPE_INVALID(HttpStatus.BAD_REQUEST, "SNS는 'kakao' 중 하나여야 됩니다."),
 
     /**
      * 401 Unauthorized

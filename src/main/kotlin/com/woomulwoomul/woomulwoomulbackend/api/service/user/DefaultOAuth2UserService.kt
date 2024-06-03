@@ -2,14 +2,18 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.SERVER_ERROR
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
+import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2Provider
+import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType
+import com.woomulwoomul.woomulwoomulbackend.domain.user.Role
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @Service
 class DefaultOAuth2UserService : OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -23,19 +27,14 @@ class DefaultOAuth2UserService : OAuth2UserService<OAuth2UserRequest, OAuth2User
         if (!StringUtils.hasText(userNameAttributeName))
             throw CustomException(SERVER_ERROR)
 
-        println("===============================")
-        println("===============================")
-        println("===============================")
-        print("userNameAttributeName=")
-        println(userNameAttributeName)
-        print("userRequest=")
-        println(userRequest)
-        println("===============================")
-        println("===============================")
-        println("===============================")
+        val delegate: OAuth2UserService<OAuth2UserRequest, OAuth2User> = DefaultOAuth2UserService()
+        val oAuth2User: OAuth2User = delegate.loadUser(userRequest)
+        val attributes = oAuth2User.attributes
 
-        val userAttributes: Map<String, JvmType.Object> = HashMap()
+        val extractedAttributes = OAuth2Provider.of(ProviderType.of(userNameAttributeName), attributes)
+        val userAttributes: Map<String, Any> = HashMap()
         val authorities: Set<GrantedAuthority> = LinkedHashSet()
+        authorities.plus(SimpleGrantedAuthority(Role.USER.name))
 
         return DefaultOAuth2User(authorities, userAttributes, userNameAttributeName)
     }

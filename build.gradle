@@ -55,6 +55,7 @@ dependencies {
 	implementation 'io.sentry:sentry-spring-boot-starter:7.4.0'
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
 	kapt("jakarta.annotation:jakarta.annotation-api")
