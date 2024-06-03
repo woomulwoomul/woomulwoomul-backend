@@ -27,11 +27,16 @@ class DefaultOAuth2UserService : OAuth2UserService<OAuth2UserRequest, OAuth2User
         if (!StringUtils.hasText(userNameAttributeName))
             throw CustomException(SERVER_ERROR)
 
-        val delegate: OAuth2UserService<OAuth2UserRequest, OAuth2User> = DefaultOAuth2UserService()
-        val oAuth2User: OAuth2User = delegate.loadUser(userRequest)
-        val attributes = oAuth2User.attributes
+        println("DefaultOAuth2UserService")
 
-        val extractedAttributes = OAuth2Provider.of(ProviderType.of(userNameAttributeName), attributes)
+        println("Client Registration: ${userRequest.clientRegistration}")
+        println("Access Token: ${userRequest.accessToken.tokenValue}")
+        println("Access Token Type: ${userRequest.accessToken.tokenType}")
+        println("Access Token Scopes: ${userRequest.accessToken.scopes}")
+        println("Access Token Expiration: ${userRequest.accessToken.expiresAt}")
+        println("Additional Parameters: ${userRequest.additionalParameters}")
+
+//        val extractedAttributes = OAuth2Provider.of(ProviderType.of(userNameAttributeName), attributes)
         val userAttributes: Map<String, Any> = HashMap()
         val authorities: Set<GrantedAuthority> = LinkedHashSet()
         authorities.plus(SimpleGrantedAuthority(Role.USER.name))
