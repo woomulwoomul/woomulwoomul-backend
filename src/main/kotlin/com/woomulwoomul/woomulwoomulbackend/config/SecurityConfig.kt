@@ -1,6 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.config
 
-import com.woomulwoomul.woomulwoomulbackend.api.service.user.DefaultOAuth2UserService
+import com.woomulwoomul.woomulwoomulbackend.api.service.user.CustomOAuth2UserService
 import com.woomulwoomul.woomulwoomulbackend.config.auth.CustomAuthenticationEntryPoint
 import com.woomulwoomul.woomulwoomulbackend.config.auth.CustomAuthenticationFilter
 import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2AuthenticationFailureHandler
@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 class SecurityConfig(
     private val customAuthenticationFilter: CustomAuthenticationFilter,
     private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
-    private val defaultOAuth2UserService: DefaultOAuth2UserService,
+    private val customOAuth2UserService: CustomOAuth2UserService,
     private val oAuth2AuthenticationSuccessHandler: OAuth2AuthenticationSuccessHandler,
     private val oAuth2AuthenticationFailureHandler: OAuth2AuthenticationFailureHandler,
 ) {
@@ -33,7 +33,7 @@ class SecurityConfig(
             .csrf{ it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .oauth2Login{ it ->
-                it.userInfoEndpoint{ it.userService(defaultOAuth2UserService) }
+                it.userInfoEndpoint{ it.userService(customOAuth2UserService) }
                     .defaultSuccessUrl("/api/user")
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler)

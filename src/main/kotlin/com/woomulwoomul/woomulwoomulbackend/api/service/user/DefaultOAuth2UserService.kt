@@ -2,21 +2,18 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.SERVER_ERROR
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
-import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2Provider
-import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import org.springframework.util.StringUtils
 
 @Service
-class DefaultOAuth2UserService : OAuth2UserService<OAuth2UserRequest, OAuth2User> {
+class CustomOAuth2UserService : DefaultOAuth2UserService() {
 
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
         if (userRequest == null || !StringUtils.hasText(userRequest.clientRegistration.providerDetails.userInfoEndpoint.uri))
@@ -27,7 +24,8 @@ class DefaultOAuth2UserService : OAuth2UserService<OAuth2UserRequest, OAuth2User
         if (!StringUtils.hasText(userNameAttributeName))
             throw CustomException(SERVER_ERROR)
 
-        println("DefaultOAuth2UserService")
+        val oAuth2User = super.loadUser(userRequest)
+        println("oAuth2User: $oAuth2User")
 
         println("Client Registration: ${userRequest.clientRegistration}")
         println("Access Token: ${userRequest.accessToken.tokenValue}")
