@@ -17,26 +17,11 @@ class OAuth2Provider(
 
         private fun ofKakao(attributes: Map<String, Any>): Map<String, String> {
             val map: MutableMap<String, String> = mutableMapOf()
-
-            println("=============PURE====================")
-            for ((key, value) in attributes)
-                println("$key: $value")
-            println("=================================")
-            println("=================================")
-            println("=================================")
-
+            map["id"] = attributes["id"] as? String?: ""
             map["email"] = attributes["kakao_account.email"] as? String ?: ""
             map["gender"] = attributes["kakao_account.gender"] as? String ?: ""
             map["imageUrl"] = attributes["kakao_account.profile.profile_image_url"] as? String ?: ""
             map["thumbnailImageUrl"] = attributes["kakao_account.profile.thumbnail_image_url"] as? String ?: ""
-
-            println("=============EXTRACTED====================")
-            for ((key, value) in map)
-                println("$key: $value")
-            println("=================================")
-            println("=================================")
-            println("=================================")
-
             return map
         }
     }

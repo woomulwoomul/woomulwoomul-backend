@@ -1,5 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.OAUTH_UNAUTHENTICATED
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.SERVER_ERROR
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2Provider
@@ -19,21 +20,12 @@ class CustomOAuth2UserService : DefaultOAuth2UserService() {
 
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
         if (userRequest == null || !StringUtils.hasText(userRequest.clientRegistration.providerDetails.userInfoEndpoint.uri))
-            throw CustomException(SERVER_ERROR)
+            throw CustomException(OAUTH_UNAUTHENTICATED)
 
         val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName
-        println("clientId=".plus(userRequest.clientRegistration.clientId))
-
-        if (!StringUtils.hasText(userNameAttributeName))
-            throw CustomException(SERVER_ERROR)
-
-        println("registrationId=".plus(userRequest.clientRegistration.registrationId))
         val oAuth2User = super.loadUser(userRequest)
-        println("attributes")
-        for ((key, value) in oAuth2User.attributes)
-            println("key=".plus(key).plus(", value=").plus(value))
 
-        val attributes = OAuth2Provider.of(ProviderType.of(userRequest.clientRegistration.registrationId), userRequest.additionalParameters)
+        val attributes = OAuth2Provider.of(ProviderType.of(userRequest.clientRegistration.registrationId), oAuth2User.attributes)
         val authorities: Set<GrantedAuthority> = LinkedHashSet()
         authorities.plus(SimpleGrantedAuthority(Role.USER.name))
 
