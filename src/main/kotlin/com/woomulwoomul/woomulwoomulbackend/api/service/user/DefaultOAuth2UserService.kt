@@ -22,6 +22,7 @@ class CustomOAuth2UserService : DefaultOAuth2UserService() {
             throw CustomException(SERVER_ERROR)
 
         val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName
+        println("clientId=".plus(userRequest.clientRegistration.clientId))
 
         if (!StringUtils.hasText(userNameAttributeName))
             throw CustomException(SERVER_ERROR)
