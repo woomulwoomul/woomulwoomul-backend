@@ -31,6 +31,7 @@ enum class ExceptionCode(
      * 401 Unauthorized
      */
     TOKEN_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "승인되지 않은 요청입니다. 다시 로그인 해주세요."),
+    OAUTH_UNAUTHENTICATED(HttpStatus.UNAUTHORIZED, "SNS 로그인에 실패했습니다. 다시 로그인 해주세요."),
 
     /**
      * 403 Forbidden
