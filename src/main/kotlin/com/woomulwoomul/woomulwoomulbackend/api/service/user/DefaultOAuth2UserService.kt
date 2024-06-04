@@ -26,8 +26,11 @@ class CustomOAuth2UserService : DefaultOAuth2UserService() {
         if (!StringUtils.hasText(userNameAttributeName))
             throw CustomException(SERVER_ERROR)
 
-//        val oAuth2User = super.loadUser(userRequest)
         println("registrationId=".plus(userRequest.clientRegistration.registrationId))
+        val oAuth2User = super.loadUser(userRequest)
+        println("attributes")
+        for ((key, value) in oAuth2User.attributes)
+            println("key=".plus(key).plus(", value=").plus(value))
 
         val attributes = OAuth2Provider.of(ProviderType.of(userRequest.clientRegistration.registrationId), userRequest.additionalParameters)
         val authorities: Set<GrantedAuthority> = LinkedHashSet()
