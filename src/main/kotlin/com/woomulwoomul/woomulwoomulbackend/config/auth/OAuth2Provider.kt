@@ -22,6 +22,11 @@ class OAuth2Provider(
             map["gender"] = attributes["kakao_account.gender"] as? String ?: ""
             map["imageUrl"] = attributes["kakao_account.profile.profile_image_url"] as? String ?: ""
             map["thumbnailImageUrl"] = attributes["kakao_account.profile.thumbnail_image_url"] as? String ?: ""
+
+            println("=====OAuth2Provider=====")
+            for ((key, value) in map)
+                println("key=".plus(key).plus(", value=").plus(value))
+
             return map
         }
     }

@@ -34,10 +34,10 @@ class CustomOAuth2UserService : DefaultOAuth2UserService() {
         for ((key, value) in attributes)
             println("key=".plus(key).plus(", value=").plus(value))
         println("userNameAttributeName=".plus(userNameAttributeName))
-        println("authorities=".plus(authorities))
+        println("authorities")
+        for (a in authorities)
+            println(a)
         println("===============================")
         return DefaultOAuth2User(authorities, attributes, userNameAttributeName)
     }
-
-
 }
