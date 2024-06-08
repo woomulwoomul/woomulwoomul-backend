@@ -30,6 +30,12 @@ class CustomOAuth2UserService : DefaultOAuth2UserService() {
         authorities.plus(SimpleGrantedAuthority(Role.USER.name))
 
         println("===CustomOAuth2UserService===")
+        println("oAuthUser.authorities")
+        for (i in oAuth2User.authorities)
+            println(i)
+        println("oAuthUser.attributes")
+        for ((key, value) in oAuth2User.attributes)
+            println("key=".plus(key).plus(", value=").plus(value))
         println("attributes")
         for ((key, value) in attributes)
             println("key=".plus(key).plus(", value=").plus(value))
