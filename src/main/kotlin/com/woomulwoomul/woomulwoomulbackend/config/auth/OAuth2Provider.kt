@@ -1,10 +1,9 @@
 package com.woomulwoomul.woomulwoomulbackend.config.auth
 
-import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.convertValue
 import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType
 import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType.KAKAO
 
@@ -15,6 +14,7 @@ class OAuth2Provider {
         private val objectMapper = ObjectMapper().apply {
             registerModule(KotlinModule.Builder().build())
             propertyNamingStrategy = PropertyNamingStrategies.SNAKE_CASE
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
 
 
@@ -44,18 +44,5 @@ data class Properties(
 )
 
 data class KakaoAccount(
-    val profile: Profile,
-    val hasEmail: String,
-    val emailNeedsAgreement: String,
-    val isEmailValid: String,
     val email: String,
-    val profileNicknameNeedsAgreement: String,
-)
-
-data class Profile(
-    val nickname: String,
-    val thumbnailImageUrl: String,
-    val profileImageUrl: String,
-    val isDefaultImage: String,
-    val isDefaultNickname: String,
 )
