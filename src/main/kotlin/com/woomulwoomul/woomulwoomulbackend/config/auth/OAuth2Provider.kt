@@ -1,33 +1,27 @@
 package com.woomulwoomul.woomulwoomulbackend.config.auth
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.JsonNode
 import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType
 import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType.KAKAO
 
-class OAuth2Provider(
-    private val objectMapper: ObjectMapper,
-) {
+class OAuth2Provider {
 
     companion object {
-        fun of(providerType: ProviderType, attributes: Map<String, Any>): Map<String, Any> {
+
+        fun of(providerType: ProviderType, node: JsonNode): Map<String, Any> {
             return when (providerType) {
-                KAKAO -> ofKakao(attributes)
+                KAKAO -> ofKakao(node)
             }
         }
 
-        private fun ofKakao(attributes: Map<String, Any>): Map<String, String> {
-            val map: MutableMap<String, String> = mutableMapOf()
-            map["id"] = attributes["id"] as? String?: ""
-            map["email"] = attributes["kakao_account.email"] as? String ?: ""
-            map["gender"] = attributes["kakao_account.gender"] as? String ?: ""
-            map["imageUrl"] = attributes["kakao_account.profile.profile_image_url"] as? String ?: ""
-            map["thumbnailImageUrl"] = attributes["kakao_account.profile.thumbnail_image_url"] as? String ?: ""
-
-            println("=====OAuth2Provider=====")
-            for ((key, value) in map)
-                println("key=".plus(key).plus(", value=").plus(value))
-
-            return map
+        private fun ofKakao(node: JsonNode): Map<String, String> {
+            val attributes: MutableMap<String, String> = mutableMapOf()
+            attributes["id"] = node.path("id").toString()
+            attributes["email"] = node.path("kakao_account.email").toString()
+            attributes["gender"] = node.path("kakao_account.gender").toString()
+            attributes["imageUrl"] = node.path("kakao_account.profile.profile_image_url").toString()
+            attributes["thumbnailImageUrl"] = node.path("kakao_account.profile.thumbnail_image_url").toString()
+            return attributes
         }
     }
 }
