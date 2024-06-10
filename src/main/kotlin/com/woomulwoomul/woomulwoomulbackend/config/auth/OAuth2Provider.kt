@@ -44,5 +44,17 @@ data class Properties(
 )
 
 data class KakaoAccount(
+    val profile: Profile,
+    val hasEmail: String,
+    val emailNeedsAgreement: String,
+    val isEmailValid: String,
     val email: String,
+)
+
+data class Profile(
+    val nickname: String,
+    val thumbnailImageUrl: String,
+    val profileImageUrl: String,
+    val isDefaultImage: String,
+    val isDefaultNickname: String,
 )
