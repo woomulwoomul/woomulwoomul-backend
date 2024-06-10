@@ -49,6 +49,7 @@ data class KakaoAccount(
     val emailNeedsAgreement: String,
     val isEmailValid: String,
     val email: String,
+    val profileNicknameNeedsAgreement: String,
 )
 
 data class Profile(
