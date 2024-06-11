@@ -3,21 +3,21 @@ package com.woomulwoomul.woomulwoomulbackend.domain.user
 import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
 import jakarta.persistence.*
 
+@Table(name = "user_role")
 @Entity
-class UserProvider(
+class UserRoleEntity(
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_provider_id")
+    @Column(name = "user_role_id", nullable = false)
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val user: User,
+    val userEntity: UserEntity,
 
+    @Column(nullable = false, length = 6)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    val provider: ProviderType,
-
-    @Column(nullable = false, length = 100)
-    val providerId: String,
-) : BasePermanentEntity()
+    val role: Role,
+) : BasePermanentEntity() {
+}

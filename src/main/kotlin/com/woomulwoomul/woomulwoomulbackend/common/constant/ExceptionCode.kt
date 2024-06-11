@@ -53,6 +53,7 @@ enum class ExceptionCode(
      * 409 Conflict
      */
     EXISTING_USER(HttpStatus.CONFLICT, "해당 이메일로 이미 가입된 회원이 있습니다."),
+    USERNAME_GENERATE_FAIL(HttpStatus.CONFLICT, "아이디 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."),
 
     /**
      * 413 Payload too large

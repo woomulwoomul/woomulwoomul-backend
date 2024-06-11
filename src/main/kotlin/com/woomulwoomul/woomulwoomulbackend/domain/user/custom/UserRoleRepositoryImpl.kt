@@ -1,9 +1,10 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.user.custom
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.woomulwoomul.woomulwoomulbackend.domain.user.QUser.user
-import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserRole.userRole
-import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRole
+import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
+import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity.userEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserRoleEntity.userRoleEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRoleEntity
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -11,13 +12,14 @@ class UserRoleRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : UserRoleCustomRepository {
 
-    override fun findAllFetchUser(userId: Long): List<UserRole> {
+    override fun findAllFetchUser(userId: Long): List<UserRoleEntity> {
         return queryFactory
-            .selectFrom(userRole)
-            .innerJoin(user)
-            .on(user.id.eq(userRole.user.id))
+            .selectFrom(userRoleEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(userRoleEntity.userEntity.id)
+                .and(userEntity.serviceStatus.eq(ACTIVE)))
             .fetchJoin()
-            .where(user.id.eq(userId))
+            .where(userEntity.id.eq(userId))
             .fetch()
     }
 }

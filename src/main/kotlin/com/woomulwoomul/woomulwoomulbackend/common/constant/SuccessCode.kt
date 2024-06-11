@@ -8,7 +8,7 @@ enum class SuccessCode(
 ) {
 
     /**
-     * User Controller
+     * UserEntity Controller
      */
     // 201 Created
 

@@ -1,5 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.user
 
+import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -17,41 +19,44 @@ class UserRoleRepositoryTest(
     @Autowired private val userRepository: UserRepository
 ) {
 
-    @DisplayName("회원 식별자로 모든 회원 권한을 조회하면 정상 작동한다")
+    @DisplayName("회원 ID로 모든 회원 권한을 조회하면 정상 작동한다")
     @Test
     fun givenValid_whenFindAllFetchUser_thenReturn() {
         // given
-//        val user = createAndSaveUser(contact)
-//        val role = Role.USER
-//        val userRole = createAndSaveUserRole(user, role)
-//
-//        // when
-//        val foundUserRoles = userRoleRepository.findAllFetchUser(user.id!!)
-//
-//        // then
-//        assertAll(
-//            {
-//                assertThat(foundUserRoles)
-//                    .extracting("id", "role", "createDateTime", "updateDateTime", "user")
-//                    .containsExactly(
-//                        Tuple.tuple(userRole.id, userRole.role, userRole.createDateTime, userRole.updateDateTime,
-//                            userRole.user)
-//                    )
-//            },
-//            {
-//                assertThat(foundUserRoles)
-//                    .extracting("user")
-//                    .extracting("id", "username", "password", "imageUrl", "temporaryPasswordYn", "createDateTime",
-//                        "updateDateTime", "contact")
-//                    .containsExactly(
-//                        Tuple.tuple(user.id, user.username, user.password, user.imageUrl, user.temporaryPasswordYn,
-//                            user.createDateTime, user.updateDateTime, user.contact)
-//                    )
-//            }
-//        )
+        val userRoleEntity = createAndSaveUserRole(USER)
+
+        // when
+        val foundUserRoles = userRoleRepository.findAllFetchUser(userRoleEntity.userEntity.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundUserRoles)
+                    .extracting("id", "role", "serviceStatus", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        Tuple.tuple(userRoleEntity.id, userRoleEntity.role, userRoleEntity.serviceStatus,
+                            userRoleEntity.createDateTime, userRoleEntity.updateDateTime)
+                    )
+            },
+            {
+                assertThat(foundUserRoles)
+                    .extracting("userEntity")
+                    .extracting("id", "username", "imageUrl", "serviceStatus", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        Tuple.tuple(userRoleEntity.userEntity.id, userRoleEntity.userEntity.username,
+                            userRoleEntity.userEntity.imageUrl, userRoleEntity.userEntity.serviceStatus,
+                            userRoleEntity.userEntity.createDateTime, userRoleEntity.userEntity.updateDateTime)
+                    )
+            }
+        )
     }
 
-    private fun createAndSaveUserRole(user: User, role: Role): UserRole {
-        return userRoleRepository.save(UserRole(user = user, role = role))
+    private fun createAndSaveUserRole(role: Role): UserRoleEntity {
+        val userEntity = userRepository.save(UserEntity(
+            username = "tester",
+            email = "tester@woomulwoomul.com",
+            imageUrl = "https://www.google.com"
+        ))
+        return userRoleRepository.save(UserRoleEntity(userEntity = userEntity, role = role))
     }
 }

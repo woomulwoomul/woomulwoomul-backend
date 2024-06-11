@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType
+import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType.KAKAO
 
 class OAuth2Provider {
@@ -17,19 +17,31 @@ class OAuth2Provider {
             configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         }
 
-
-        fun of(providerType: ProviderType, attributes: Map<String, Any>): Map<String, String> {
+        fun of(providerType: ProviderType, userNameAttributeName: String, attributes: Map<String, Any>):
+                MutableMap<String, String> {
             return when (providerType) {
-                KAKAO -> ofKakao(attributes)
+                KAKAO -> ofKakao(userNameAttributeName, attributes)
             }
         }
 
-        private fun ofKakao(attributes: Map<String, Any>): Map<String, String> {
+        fun toUserEntity(username: String, email: String, imageUrl: String): UserEntity {
+            return UserEntity(username = username, email = email, imageUrl = imageUrl)
+        }
+
+        fun toUserProviderEntity(userEntity: UserEntity, provider: ProviderType, providerId: String): UserProviderEntity {
+            return UserProviderEntity(userEntity = userEntity, provider = provider, providerId = providerId)
+        }
+
+        fun toUserRoleEntity(userEntity: UserEntity): UserRoleEntity {
+            return UserRoleEntity(userEntity = userEntity, role = Role.USER)
+        }
+
+        private fun ofKakao(userNameAttributeName: String, attributes: Map<String, Any>): MutableMap<String, String> {
             val properties: Properties = objectMapper.convertValue(attributes["properties"], Properties::class.java)
             val kakaoAccount: KakaoAccount = objectMapper.convertValue(attributes["kakao_account"], KakaoAccount::class.java)
 
             val customAttributes: MutableMap<String, String> = mutableMapOf()
-            customAttributes["id"] = attributes["id"].toString()
+            customAttributes["id"] = attributes[userNameAttributeName].toString()
             customAttributes["email"] = kakaoAccount.email
             customAttributes["imageUrl"] = properties.profileImage
             return customAttributes

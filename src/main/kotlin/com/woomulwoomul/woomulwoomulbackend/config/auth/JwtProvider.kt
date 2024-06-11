@@ -131,17 +131,17 @@ class JwtProvider(
      * @return 회원 정보
      */
     private fun getUserDetails (userId: Long): User {
-        val userRoles = userRoleRepository.findAllFetchUser(userId)
+        val userRoleEntities = userRoleRepository.findAllFetchUser(userId)
 
-        val user = userRoles.stream()
+        val userEntity = userRoleEntities.stream()
             .findFirst()
             .orElseThrow{ CustomException(ExceptionCode.USER_NOT_FOUND) }
-            .user
+            .userEntity
 
-        val grantedAuthorities = userRoles.stream()
-            .map { userRole -> SimpleGrantedAuthority(userRole.role.name) }
+        val grantedAuthorities = userRoleEntities.stream()
+            .map { userRoleEntity -> SimpleGrantedAuthority(userRoleEntity.role.name) }
             .toList()
 
-        return User(user.id.toString(), "", grantedAuthorities)
+        return User(userEntity.id.toString(), "", grantedAuthorities)
     }
 }
