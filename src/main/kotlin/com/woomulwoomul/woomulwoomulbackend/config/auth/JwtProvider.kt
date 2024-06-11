@@ -134,6 +134,7 @@ class JwtProvider(
      */
     private fun getUserDetails (userId: Long): User {
         println("=========== START getUserDetails")
+        println("userId=".plus(userId))
         val userRoleEntities = userRoleRepository.findAllFetchUser(userId)
 
         println("============= userRoleEntities.stream().findFirst().userEntity")
