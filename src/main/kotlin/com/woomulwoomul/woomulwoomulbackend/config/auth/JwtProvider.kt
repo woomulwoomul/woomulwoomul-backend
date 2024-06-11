@@ -43,6 +43,7 @@ class JwtProvider(
      * @return HTTP 헤더
      */
     fun createToken(userId: Long): HttpHeaders {
+        println("=========== START createToken")
         val userDetails = getUserDetails(userId)
         val time = System.currentTimeMillis()
 
@@ -81,6 +82,7 @@ class JwtProvider(
             is Either.Right -> headers.add(REFRESH_TOKEN, signedJWT.value.rendered)
         }
 
+        println("=========== END createToken")
         return headers
     }
 
@@ -131,6 +133,7 @@ class JwtProvider(
      * @return 회원 정보
      */
     private fun getUserDetails (userId: Long): User {
+        println("=========== START getUserDetails")
         val userRoleEntities = userRoleRepository.findAllFetchUser(userId)
 
         val userEntity = userRoleEntities.stream()
@@ -142,6 +145,7 @@ class JwtProvider(
             .map { userRoleEntity -> SimpleGrantedAuthority(userRoleEntity.role.name) }
             .toList()
 
+        println("=========== END getUserDetails")
         return User(userEntity.id.toString(), "", grantedAuthorities)
     }
 }

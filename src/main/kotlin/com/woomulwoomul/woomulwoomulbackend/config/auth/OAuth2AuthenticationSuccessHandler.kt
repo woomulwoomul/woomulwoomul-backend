@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.resposne.UserLoginResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.CustomHttpHeaders.Companion.REFRESH_TOKEN
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.OAUTH2_LOGIN
-import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
@@ -26,15 +25,19 @@ class OAuth2AuthenticationSuccessHandler(
         authentication: Authentication?
     ) {
         println("==============onAuthenticationSuccess==============")
+        print("authentication.name")
+        println(authentication!!.name)
         val headers = jwtProvider.createToken(authentication!!.name.toLong())
         val accessToken = headers.getValue(AUTHORIZATION).toString()
         println("accessToken=".plus(accessToken))
         val refreshToken = headers.getValue(REFRESH_TOKEN).toString()
         println("refreshToken=".plus(refreshToken))
+
+
         val body = DefaultSingleResponse(
             code = OAUTH2_LOGIN.name,
             message = OAUTH2_LOGIN.message,
-            data = UserLoginResponse(authentication.authorities.associate { it.authority to true })
+            data = UserLoginResponse(authentication.name.toLong())
         )
         println("body.code=".plus(body.code))
         println("body.message=".plus(body.message))
