@@ -21,7 +21,7 @@ enum class SuccessCode(
      * Auth Controller
      */
     // 201 Created
-
+    OAUTH2_LOGIN(HttpStatus.OK, "SNS 로그인을 했습니다."),
 
     // 200 OK
 

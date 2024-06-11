@@ -23,6 +23,8 @@ class CustomOAuth2UserService(
     private val userRoleRepository: UserRoleRepository,
 ) : DefaultOAuth2UserService() {
 
+    private val USER_ID_CONST = "userId"
+    private val PROVIDER_ID_CONST = "providerId"
 
     @Transactional
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
@@ -34,7 +36,7 @@ class CustomOAuth2UserService(
         val oAuth2User = super.loadUser(userRequest)
         val attributes = OAuth2Provider.of(provider, userNameAttributeName, oAuth2User.attributes)
 
-        var userProviderEntity = userProviderRepository.findFetchUser(attributes["id"]!!)
+        var userProviderEntity = userProviderRepository.findFetchUser(attributes[PROVIDER_ID_CONST]!!)
         val userRoleEntities = if (userProviderEntity == null) {
             attributes["username"] = createRandomUsername(attributes["email"]!!)
             val userEntity = userRepository.save(OAuth2Provider.toUserEntity(
@@ -46,7 +48,7 @@ class CustomOAuth2UserService(
             userProviderEntity = userProviderRepository.save(OAuth2Provider.toUserProviderEntity(
                 userEntity = userEntity,
                 provider = provider,
-                providerId = attributes["id"]!!
+                providerId = attributes[PROVIDER_ID_CONST]!!
             ))
 
             listOf(userRoleRepository.save(OAuth2Provider.toUserRoleEntity(userEntity)))
@@ -54,9 +56,11 @@ class CustomOAuth2UserService(
             userRoleRepository.findAllFetchUser(userProviderEntity.userEntity.id!!)
         }
 
+        attributes[USER_ID_CONST] = userProviderEntity.userEntity.id.toString()
+
         val authorities: List<GrantedAuthority> = Role.getSimpleGrantedAuthorities(userRoleEntities)
 
-        return DefaultOAuth2User(authorities, attributes.toMap(), userNameAttributeName)
+        return DefaultOAuth2User(authorities, attributes.toMap(), USER_ID_CONST)
     }
 
     private fun createRandomUsername(email: String): String {

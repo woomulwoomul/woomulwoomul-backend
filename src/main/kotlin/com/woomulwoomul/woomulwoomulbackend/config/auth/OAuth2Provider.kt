@@ -41,7 +41,7 @@ class OAuth2Provider {
             val kakaoAccount: KakaoAccount = objectMapper.convertValue(attributes["kakao_account"], KakaoAccount::class.java)
 
             val customAttributes: MutableMap<String, String> = mutableMapOf()
-            customAttributes["id"] = attributes[userNameAttributeName].toString()
+            customAttributes["providerId"] = attributes[userNameAttributeName].toString()
             customAttributes["email"] = kakaoAccount.email
             customAttributes["imageUrl"] = properties.profileImage
             return customAttributes
