@@ -136,11 +136,13 @@ class JwtProvider(
         println("=========== START getUserDetails")
         val userRoleEntities = userRoleRepository.findAllFetchUser(userId)
 
+        println("============= userRoleEntities.stream().findFirst().userEntity")
         val userEntity = userRoleEntities.stream()
             .findFirst()
             .orElseThrow{ CustomException(ExceptionCode.USER_NOT_FOUND) }
             .userEntity
 
+        println("============= userRoleEntities.stream().toList()")
         val grantedAuthorities = userRoleEntities.stream()
             .map { userRoleEntity -> SimpleGrantedAuthority(userRoleEntity.role.name) }
             .toList()

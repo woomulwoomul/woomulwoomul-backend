@@ -17,9 +17,9 @@ class UserRoleRepositoryImpl(
             .selectFrom(userRoleEntity)
             .innerJoin(userEntity)
             .on(userEntity.id.eq(userRoleEntity.userEntity.id)
+                .and(userEntity.id.eq(userId))
                 .and(userEntity.serviceStatus.eq(ACTIVE)))
             .fetchJoin()
-            .where(userEntity.id.eq(userId))
             .fetch()
     }
 }
