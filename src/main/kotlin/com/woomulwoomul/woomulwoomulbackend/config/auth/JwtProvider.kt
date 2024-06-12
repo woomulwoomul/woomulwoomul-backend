@@ -43,7 +43,6 @@ class JwtProvider(
      * @return HTTP 헤더
      */
     fun createToken(userId: Long): HttpHeaders {
-        println("=========== START createToken")
         val userDetails = getUserDetails(userId)
         val time = System.currentTimeMillis()
 
@@ -82,7 +81,6 @@ class JwtProvider(
             is Either.Right -> headers.add(REFRESH_TOKEN, signedJWT.value.rendered)
         }
 
-        println("=========== END createToken")
         return headers
     }
 
@@ -133,22 +131,17 @@ class JwtProvider(
      * @return 회원 정보
      */
     private fun getUserDetails (userId: Long): User {
-        println("=========== START getUserDetails")
-        println("userId=".plus(userId))
-        val userRoleEntities = userRoleRepository.findAllFetchUser(userId)
+        val userRoles = userRoleRepository.findAllFetchUser(userId)
 
-        println("============= userRoleEntities.stream().findFirst().userEntity")
-        val userEntity = userRoleEntities.stream()
+        val user = userRoles.stream()
             .findFirst()
             .orElseThrow{ CustomException(ExceptionCode.USER_NOT_FOUND) }
             .user
 
-        println("============= userRoleEntities.stream().toList()")
-        val grantedAuthorities = userRoleEntities.stream()
-            .map { userRoleEntity -> SimpleGrantedAuthority(userRoleEntity.role.name) }
+        val grantedAuthorities = userRoles.stream()
+            .map { SimpleGrantedAuthority(it.role.name) }
             .toList()
 
-        println("=========== END getUserDetails")
-        return User(userEntity.id.toString(), "", grantedAuthorities)
+        return User(user.id.toString(), "", grantedAuthorities)
     }
 }
