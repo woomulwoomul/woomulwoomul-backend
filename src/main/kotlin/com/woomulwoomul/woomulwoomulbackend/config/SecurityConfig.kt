@@ -34,12 +34,10 @@ class SecurityConfig(
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .oauth2Login{ it ->
                 it.userInfoEndpoint{ it.userService(customOAuth2UserService) }
-                    .defaultSuccessUrl("/api/user")
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler)
             }.authorizeHttpRequests {
-                it.requestMatchers("/api/login").permitAll()
-                    .anyRequest().permitAll()
+                it.anyRequest().permitAll()
             }.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling{ it.authenticationEntryPoint(customAuthenticationEntryPoint) }
             .build()

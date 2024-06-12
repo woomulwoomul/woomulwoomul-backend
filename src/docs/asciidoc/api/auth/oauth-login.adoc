@@ -17,7 +17,13 @@ Content-Type: application/json
 
 {
   "code" : "OAUTH2_LOGIN",
-  "message" : "SNS 로그인을 했습니다."
+  "message" : "SNS 로그인을 했습니다.",
+  "data": {
+    "userId": 1,
+    "username": "tester",
+    "imageUrl": "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+    "email": "tester@woomulwoomul.com"
+  }
 }
 ----
 
