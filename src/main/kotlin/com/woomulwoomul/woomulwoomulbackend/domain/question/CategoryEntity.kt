@@ -4,21 +4,16 @@ import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
 
-@Table(name = "question")
+@Table(name = "category")
 @Entity
-class QuestionEntity(
+class CategoryEntity(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "question_id")
+    @Column(name = "category_id")
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    val user: UserEntity,
-
-    @Column(nullable = false, length = 60)
-    val text: String,
-    @Column(nullable = false, length = 6)
-    val backgroundColor: String,
+    @JoinColumn(name = "admin_id", nullable = false)
+    val admin: UserEntity,
 ) : BasePermanentEntity()
