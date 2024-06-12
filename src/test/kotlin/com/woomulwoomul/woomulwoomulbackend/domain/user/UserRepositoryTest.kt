@@ -30,7 +30,21 @@ class UserRepositoryTest(
 
         // then
         assertThat(result).isEqualTo(expected)
+    }
 
+    @DisplayName("회원 ID로 회원 조회를 하면 정상 작동한다")
+    fun givenValid_whenFind_thenReturn() {
+        // given
+        val user = createAndSaveUser()
+
+        // when
+        val result = userRepository.find(user.id)
+
+        // then
+        assertThat(result)
+            .extracting("username", "email", "imageUrl", "serviceStatus", "createDateTime", "updateDateTime")
+            .containsExactly(user.username, user.email, user.imageUrl, user.serviceStatus, user.createDateTime,
+                user.updateDateTime)
     }
 
     private fun createAndSaveUser(): UserEntity {
