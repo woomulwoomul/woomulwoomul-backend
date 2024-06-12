@@ -39,6 +39,7 @@ class JwtProvider(
     /**
      * JWT 토큰 생성
      * @param userId 회원 식별자
+     * @throws USER_NOT_FOUND 404
      * @throws SERVER_ERROR 500
      * @return HTTP 헤더
      */

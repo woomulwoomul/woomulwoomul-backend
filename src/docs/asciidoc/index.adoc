@@ -17,6 +17,8 @@ include::api/develop/health-check.adoc[]
 [[Auth-API]]
 === Auth API
 
+include::api/auth/oauth-login.adoc[]
+
 [[User-API]]
 === User API
 
