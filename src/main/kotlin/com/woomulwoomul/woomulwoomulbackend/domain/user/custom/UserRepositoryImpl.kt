@@ -25,7 +25,7 @@ class UserRepositoryImpl(
         return queryFactory
             .selectFrom(userEntity)
             .where(
-                userEntity.serviceStatus.eq(ACTIVE),
+                userEntity.status.eq(ACTIVE),
                 eqUserId(userId)
             ).fetchFirst()
     }

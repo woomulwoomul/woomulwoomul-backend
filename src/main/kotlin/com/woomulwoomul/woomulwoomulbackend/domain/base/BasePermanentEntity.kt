@@ -11,7 +11,7 @@ abstract class BasePermanentEntity(
 
     @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
-    var serviceStatus: ServiceStatus = ServiceStatus.ACTIVE,
+    var status: ServiceStatus = ServiceStatus.ACTIVE,
 
     createDateTime: LocalDateTime? = null,
     updateDateTime: LocalDateTime? = null,

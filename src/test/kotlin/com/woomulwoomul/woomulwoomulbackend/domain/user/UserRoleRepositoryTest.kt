@@ -32,19 +32,19 @@ class UserRoleRepositoryTest(
         assertAll(
             {
                 assertThat(foundUserRoles)
-                    .extracting("id", "role", "serviceStatus", "createDateTime", "updateDateTime")
+                    .extracting("id", "role", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        Tuple.tuple(userRole.id, userRole.role, userRole.serviceStatus,
+                        Tuple.tuple(userRole.id, userRole.role, userRole.status,
                             userRole.createDateTime, userRole.updateDateTime)
                     )
             },
             {
                 assertThat(foundUserRoles)
                     .extracting("user")
-                    .extracting("id", "username", "imageUrl", "serviceStatus", "createDateTime", "updateDateTime")
+                    .extracting("id", "username", "imageUrl", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
                         Tuple.tuple(userRole.user.id, userRole.user.username,
-                            userRole.user.imageUrl, userRole.user.serviceStatus,
+                            userRole.user.imageUrl, userRole.user.status,
                             userRole.user.createDateTime, userRole.user.updateDateTime)
                     )
             }

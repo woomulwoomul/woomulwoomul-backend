@@ -42,8 +42,8 @@ class UserRepositoryTest(
 
         // then
         assertThat(result)
-            .extracting("username", "email", "imageUrl", "serviceStatus", "createDateTime", "updateDateTime")
-            .containsExactly(user.username, user.email, user.imageUrl, user.serviceStatus, user.createDateTime,
+            .extracting("username", "email", "imageUrl", "status", "createDateTime", "updateDateTime")
+            .containsExactly(user.username, user.email, user.imageUrl, user.status, user.createDateTime,
                 user.updateDateTime)
     }
 

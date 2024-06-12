@@ -32,18 +32,16 @@ class UserProviderRepositoryTest(
         assertAll(
             {
                 assertThat(foundUserProvider)
-                    .extracting("id", "provider", "providerId", "serviceStatus", "createDateTime", "updateDateTime")
-                    .containsExactly(userProvider.id, userProvider.provider,
-                        userProvider.providerId, userProvider.serviceStatus,
-                        userProvider.createDateTime, userProvider.updateDateTime)
+                    .extracting("id", "provider", "providerId", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(userProvider.id, userProvider.provider, userProvider.providerId,
+                        userProvider.status, userProvider.createDateTime, userProvider.updateDateTime)
             },
             {
                 assertThat(foundUserProvider!!.user)
-                    .extracting("id", "username", "email", "imageUrl", "serviceStatus", "createDateTime",
+                    .extracting("id", "username", "email", "imageUrl", "status", "createDateTime",
                         "updateDateTime")
-                    .containsExactly(userProvider.id, userProvider.user.username,
-                        userProvider.user.email, userProvider.user.imageUrl,
-                        userProvider.user.serviceStatus, userProvider.user.createDateTime,
+                    .containsExactly(userProvider.id, userProvider.user.username, userProvider.user.email,
+                        userProvider.user.imageUrl, userProvider.user.status, userProvider.user.createDateTime,
                         userProvider.user.updateDateTime)
             }
         )
