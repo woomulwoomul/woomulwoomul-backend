@@ -14,6 +14,8 @@ Content-Type: application/json
 ----
 HTTP/1.1 200 OK
 Content-Type: application/json
+Authorization: access-token
+Refresh-Token: refresh-token
 
 {
   "code" : "OAUTH2_LOGIN",
