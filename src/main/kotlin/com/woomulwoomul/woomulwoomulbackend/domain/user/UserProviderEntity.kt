@@ -13,7 +13,7 @@ class UserProviderEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val userEntity: UserEntity,
+    val user: UserEntity,
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 10)

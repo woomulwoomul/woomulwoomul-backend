@@ -23,10 +23,10 @@ class UserRoleRepositoryTest(
     @Test
     fun givenValid_whenFindAllFetchUser_thenReturn() {
         // given
-        val userRoleEntity = createAndSaveUserRole(USER)
+        val userRole = createAndSaveUserRole(USER)
 
         // when
-        val foundUserRoles = userRoleRepository.findAllFetchUser(userRoleEntity.userEntity.id!!)
+        val foundUserRoles = userRoleRepository.findAllFetchUser(userRole.user.id!!)
 
         // then
         assertAll(
@@ -34,29 +34,29 @@ class UserRoleRepositoryTest(
                 assertThat(foundUserRoles)
                     .extracting("id", "role", "serviceStatus", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        Tuple.tuple(userRoleEntity.id, userRoleEntity.role, userRoleEntity.serviceStatus,
-                            userRoleEntity.createDateTime, userRoleEntity.updateDateTime)
+                        Tuple.tuple(userRole.id, userRole.role, userRole.serviceStatus,
+                            userRole.createDateTime, userRole.updateDateTime)
                     )
             },
             {
                 assertThat(foundUserRoles)
-                    .extracting("userEntity")
+                    .extracting("user")
                     .extracting("id", "username", "imageUrl", "serviceStatus", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        Tuple.tuple(userRoleEntity.userEntity.id, userRoleEntity.userEntity.username,
-                            userRoleEntity.userEntity.imageUrl, userRoleEntity.userEntity.serviceStatus,
-                            userRoleEntity.userEntity.createDateTime, userRoleEntity.userEntity.updateDateTime)
+                        Tuple.tuple(userRole.user.id, userRole.user.username,
+                            userRole.user.imageUrl, userRole.user.serviceStatus,
+                            userRole.user.createDateTime, userRole.user.updateDateTime)
                     )
             }
         )
     }
 
     private fun createAndSaveUserRole(role: Role): UserRoleEntity {
-        val userEntity = userRepository.save(UserEntity(
+        val user = userRepository.save(UserEntity(
             username = "tester",
             email = "tester@woomulwoomul.com",
             imageUrl = "https://www.google.com"
         ))
-        return userRoleRepository.save(UserRoleEntity(userEntity = userEntity, role = role))
+        return userRoleRepository.save(UserRoleEntity(user = user, role = role))
     }
 }

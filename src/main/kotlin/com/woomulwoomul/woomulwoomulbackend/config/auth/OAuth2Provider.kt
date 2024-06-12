@@ -28,12 +28,12 @@ class OAuth2Provider {
             return UserEntity(username = username, email = email, imageUrl = imageUrl)
         }
 
-        fun toUserProviderEntity(userEntity: UserEntity, provider: ProviderType, providerId: String): UserProviderEntity {
-            return UserProviderEntity(userEntity = userEntity, provider = provider, providerId = providerId)
+        fun toUserProviderEntity(user: UserEntity, provider: ProviderType, providerId: String): UserProviderEntity {
+            return UserProviderEntity(user = user, provider = provider, providerId = providerId)
         }
 
-        fun toUserRoleEntity(userEntity: UserEntity): UserRoleEntity {
-            return UserRoleEntity(userEntity = userEntity, role = Role.USER)
+        fun toUserRoleEntity(user: UserEntity): UserRoleEntity {
+            return UserRoleEntity(user = user, role = Role.USER)
         }
 
         private fun ofKakao(userNameAttributeName: String, attributes: Map<String, Any>): MutableMap<String, String> {

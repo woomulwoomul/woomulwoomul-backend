@@ -14,7 +14,7 @@ class UserRoleEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    val userEntity: UserEntity,
+    val user: UserEntity,
 
     @Column(nullable = false, length = 6)
     @Enumerated(EnumType.STRING)

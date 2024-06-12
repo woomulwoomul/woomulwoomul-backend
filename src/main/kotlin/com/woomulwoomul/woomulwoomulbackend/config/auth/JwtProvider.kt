@@ -141,7 +141,7 @@ class JwtProvider(
         val userEntity = userRoleEntities.stream()
             .findFirst()
             .orElseThrow{ CustomException(ExceptionCode.USER_NOT_FOUND) }
-            .userEntity
+            .user
 
         println("============= userRoleEntities.stream().toList()")
         val grantedAuthorities = userRoleEntities.stream()

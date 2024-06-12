@@ -17,7 +17,7 @@ class UserProviderRepositoryImpl(
             .select(userProviderEntity)
             .from(userProviderEntity)
             .innerJoin(userEntity)
-            .on(userEntity.id.eq(userProviderEntity.userEntity.id)
+            .on(userEntity.id.eq(userProviderEntity.user.id)
                 .and(userEntity.serviceStatus.eq(ServiceStatus.ACTIVE)))
             .fetchJoin()
             .where(userProviderEntity.providerId.eq(providerId))

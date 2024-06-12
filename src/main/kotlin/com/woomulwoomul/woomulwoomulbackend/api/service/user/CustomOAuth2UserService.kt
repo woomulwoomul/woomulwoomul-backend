@@ -36,29 +36,29 @@ class CustomOAuth2UserService(
         val oAuth2User = super.loadUser(userRequest)
         val attributes = OAuth2Provider.of(provider, userNameAttributeName, oAuth2User.attributes)
 
-        var userProviderEntity = userProviderRepository.findFetchUser(attributes[PROVIDER_ID_CONST]!!)
-        val userRoleEntities = if (userProviderEntity == null) {
+        var userProvider = userProviderRepository.findFetchUser(attributes[PROVIDER_ID_CONST]!!)
+        val userRoles = if (userProvider == null) {
             attributes["username"] = createRandomUsername(attributes["email"]!!)
-            val userEntity = userRepository.save(OAuth2Provider.toUserEntity(
+            val user = userRepository.save(OAuth2Provider.toUserEntity(
                 attributes["username"]!!,
                 attributes["email"]!!,
                 attributes["imageUrl"]!!
             ))
 
-            userProviderEntity = userProviderRepository.save(OAuth2Provider.toUserProviderEntity(
-                userEntity = userEntity,
+            userProvider = userProviderRepository.save(OAuth2Provider.toUserProviderEntity(
+                user = user,
                 provider = provider,
                 providerId = attributes[PROVIDER_ID_CONST]!!
             ))
 
-            listOf(userRoleRepository.save(OAuth2Provider.toUserRoleEntity(userEntity)))
+            listOf(userRoleRepository.save(OAuth2Provider.toUserRoleEntity(user)))
         } else {
-            userRoleRepository.findAllFetchUser(userProviderEntity.userEntity.id!!)
+            userRoleRepository.findAllFetchUser(userProvider.user.id!!)
         }
 
-        attributes[USER_ID_CONST] = userProviderEntity.userEntity.id.toString()
+        attributes[USER_ID_CONST] = userProvider.user.id.toString()
 
-        val authorities: List<GrantedAuthority> = Role.getSimpleGrantedAuthorities(userRoleEntities)
+        val authorities: List<GrantedAuthority> = Role.getSimpleGrantedAuthorities(userRoles)
 
         return DefaultOAuth2User(authorities, attributes.toMap(), USER_ID_CONST)
     }

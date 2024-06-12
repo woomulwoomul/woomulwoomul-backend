@@ -23,41 +23,41 @@ class UserProviderRepositoryTest(
     @Test
     fun givenValid_whenFind_thenReturn() {
         // given
-        val userProviderEntity = createAndSaveUserProvider()
+        val userProvider = createAndSaveUserProvider()
 
         // when
-        val foundUserProviderEntity = userProviderRepository.findFetchUser(userProviderEntity.providerId)
+        val foundUserProvider = userProviderRepository.findFetchUser(userProvider.providerId)
 
         // then
         assertAll(
             {
-                assertThat(foundUserProviderEntity)
+                assertThat(foundUserProvider)
                     .extracting("id", "provider", "providerId", "serviceStatus", "createDateTime", "updateDateTime")
-                    .containsExactly(userProviderEntity.id, userProviderEntity.provider,
-                            userProviderEntity.providerId, userProviderEntity.serviceStatus,
-                            userProviderEntity.createDateTime, userProviderEntity.updateDateTime)
+                    .containsExactly(userProvider.id, userProvider.provider,
+                        userProvider.providerId, userProvider.serviceStatus,
+                        userProvider.createDateTime, userProvider.updateDateTime)
             },
             {
-                assertThat(foundUserProviderEntity!!.userEntity)
+                assertThat(foundUserProvider!!.user)
                     .extracting("id", "username", "email", "imageUrl", "serviceStatus", "createDateTime",
                         "updateDateTime")
-                    .containsExactly(userProviderEntity.id, userProviderEntity.userEntity.username,
-                            userProviderEntity.userEntity.email, userProviderEntity.userEntity.imageUrl,
-                            userProviderEntity.userEntity.serviceStatus, userProviderEntity.userEntity.createDateTime,
-                            userProviderEntity.userEntity.updateDateTime)
+                    .containsExactly(userProvider.id, userProvider.user.username,
+                        userProvider.user.email, userProvider.user.imageUrl,
+                        userProvider.user.serviceStatus, userProvider.user.createDateTime,
+                        userProvider.user.updateDateTime)
             }
         )
     }
 
     private fun createAndSaveUserProvider(): UserProviderEntity {
-        val userEntity = userRepository.save(UserEntity(
+        val user = userRepository.save(UserEntity(
             username = "tester",
             email = "tester@woomulwoomul.com",
             imageUrl = "https://www.google.com"
         ))
 
         return userProviderRepository.save(UserProviderEntity(
-            userEntity = userEntity,
+            user = user,
             provider = KAKAO,
             providerId = "tester"
         ))
