@@ -21,7 +21,7 @@ import org.springframework.stereotype.Component
 class OAuth2AuthenticationSuccessHandler(
     private val jwtProvider: JwtProvider,
     private val userRepository: UserRepository,
-    private val objectMapper: ObjectMapper = ObjectMapper(),
+    private val objectMapper: ObjectMapper,
 ) : SimpleUrlAuthenticationSuccessHandler() {
 
     override fun onAuthenticationSuccess(

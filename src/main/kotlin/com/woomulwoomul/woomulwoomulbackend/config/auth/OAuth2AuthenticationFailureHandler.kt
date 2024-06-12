@@ -5,6 +5,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.OAUTH_
 import com.woomulwoomul.woomulwoomulbackend.common.response.ExceptionResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.apache.http.Consts.UTF_8
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
@@ -22,6 +23,7 @@ class OAuth2AuthenticationFailureHandler(
     ) {
         response!!.status = OAUTH_UNAUTHENTICATED.httpStatus.value()
         response.contentType = APPLICATION_JSON_VALUE
+        response.characterEncoding = UTF_8.name()
 
         val responseBody: String = objectMapper.writeValueAsString(ExceptionResponse.toResponseEntity(OAUTH_UNAUTHENTICATED))
         val outputStream = response.outputStream
