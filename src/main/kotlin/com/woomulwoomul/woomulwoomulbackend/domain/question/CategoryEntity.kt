@@ -6,7 +6,7 @@ import jakarta.persistence.*
 
 @Table(name = "category")
 @Entity
-class CategoryEntity(
+class CategoryEntity (
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,4 +16,7 @@ class CategoryEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id", nullable = false)
     val admin: UserEntity,
+
+    @Column(nullable = false, length = 10)
+    val name: String,
 ) : BasePermanentEntity()

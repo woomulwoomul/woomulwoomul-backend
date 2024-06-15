@@ -4,6 +4,7 @@ import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
 import jakarta.persistence.*
 
 @Table(name = "question_category")
+@Entity
 class QuestionCategoryEntity(
 
     @Id

@@ -118,7 +118,7 @@ CREATE TABLE question_category
 CREATE TABLE answer
 (
     answer_id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
-    context                     VARCHAR(280),
+    text                        VARCHAR(280),
     image_url                   VARCHAR(500),
     status                      VARCHAR(10)                 NOT NULL,
     create_date_time            DATETIME(6)                 NOT NULL,
@@ -128,10 +128,15 @@ CREATE TABLE answer
 CREATE TABLE question_answer
 (
     question_answer_id          BIGINT AUTO_INCREMENT PRIMARY KEY,
+    status                      VARCHAR(10)                 NOT NULL,
+    create_date_time            DATETIME(6)                 NOT NULL,
+    update_date_time            DATETIME(6)                 NOT NULL,
+    sender_id                   BIGINT                      NOT NULL,
+    receiver_id                 BIGINT                      NOT NULL,
     question_id                 BIGINT                      NOT NULL,
-    receiver_id                 BIGINT,
-    sender_id                   BIGINT,
-    CONSTRAINT fk_question_answer_question FOREIGN KEY (question_id) REFERENCES question(question_id),
+    answer_id                   BIGINT,
+    CONSTRAINT fk_question_answer_sender FOREIGN KEY (sender_id) REFERENCES users(user_id),
     CONSTRAINT fk_question_answer_receiver FOREIGN KEY (receiver_id) REFERENCES users(user_id),
-    CONSTRAINT fk_question_answer_sender FOREIGN KEY (sender_id) REFERENCES users(user_id)
+    CONSTRAINT fk_question_answer_question FOREIGN KEY (question_id) REFERENCES question(question_id),
+    CONSTRAINT fk_question_answer_answer FOREIGN KEY (answer_id) REFERENCES answer(answer_id)
 );

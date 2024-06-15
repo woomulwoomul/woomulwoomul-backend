@@ -12,8 +12,8 @@ class AnswerEntity(
     @Column(name = "answer_id")
     val id: Long? = null,
 
-    @Column(nullable = false, length = 200)
-    val context: String,
-    @Column(nullable = false, length = 500)
+    @Column(length = 280)
+    val text: String,
+    @Column(length = 500)
     val imageUrl: String,
 ) : BasePermanentEntity()

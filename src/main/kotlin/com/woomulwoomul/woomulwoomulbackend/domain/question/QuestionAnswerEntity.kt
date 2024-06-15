@@ -1,5 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question
 
+import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
 
@@ -13,14 +14,18 @@ class QuestionAnswerEntity(
     val id: Long? = null,
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receiver_id", nullable = false)
+    val receiver: UserEntity,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
+    val sender: UserEntity,
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)
     val question: QuestionEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "receiver_id")
-    val receiver: UserEntity,
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id")
-    val sender: UserEntity,
-)
+    @JoinColumn(name = "answer_id")
+    val answer: AnswerEntity,
+) : BasePermanentEntity()
