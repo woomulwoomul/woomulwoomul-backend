@@ -1,4 +1,4 @@
-package com.woomulwoomul.woomulwoomulbackend.api.service
+package com.woomulwoomul.woomulwoomulbackend.api.service.develop
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.develop.DevelopService
 import org.assertj.core.api.Assertions.assertThat

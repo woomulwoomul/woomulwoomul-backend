@@ -5,13 +5,15 @@ import com.woomulwoomul.woomulwoomulbackend.api.service.develop.DevelopService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
-import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation
+import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.operation.preprocess.Preprocessors
+import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
+import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class DevelopControllerTest : RestDocsSupport() {
 
@@ -23,20 +25,20 @@ class DevelopControllerTest : RestDocsSupport() {
 
     @DisplayName("헬스 체크를 하면 200을 반환한다")
     @Test
-    fun givenValid_whenHealthCheck_return200() {
+    fun givenValid_whenHealthCheck_thenReturn200() {
         // when & then
         mockMvc.perform(
-            MockMvcRequestBuilders.get("/api/health")
-        ).andDo(MockMvcResultHandlers.print())
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            get("/api/health")
+        ).andDo(print())
+            .andExpect(status().isOk)
             .andDo(
-                MockMvcRestDocumentation.document(
+                document(
                     "develop/health",
-                    Preprocessors.preprocessResponse(Preprocessors.prettyPrint()),
-                    PayloadDocumentation.responseFields(
-                        PayloadDocumentation.fieldWithPath("code").type(JsonFieldType.STRING)
+                    preprocessResponse(Preprocessors.prettyPrint()),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
                             .description("코드"),
-                        PayloadDocumentation.fieldWithPath("message").type(JsonFieldType.STRING)
+                        fieldWithPath("message").type(JsonFieldType.STRING)
                             .description("메세지")
                     )
                 )

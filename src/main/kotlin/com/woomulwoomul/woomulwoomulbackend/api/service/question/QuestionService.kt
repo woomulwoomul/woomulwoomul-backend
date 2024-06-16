@@ -1,7 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindResponse
-import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -30,13 +29,5 @@ class QuestionService(
         return questionCategoryMap.entries.map { (question, categories) ->
             QuestionFindResponse(question, categories)
         }
-    }
-
-    /**
-     * 관리자 생성 랜덤 질문 조회
-     * @return 관리자 생성 랜덤 질문
-     */
-    private fun getRandomAdminQuestions(): List<QuestionCategoryEntity> {
-        return listOf()
     }
 }

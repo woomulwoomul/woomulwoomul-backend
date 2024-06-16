@@ -1,0 +1,20 @@
+[[get-default-questions]]
+=== 기본 질문 조회
+
+==== HTTP Request
+include::{snippets}/question/get-default-questions/http-request.adoc[]
+include::{snippets}/question/get-default-questions/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/question/get-default-questions/http-response.adoc[]
+include::{snippets}/question/get-default-questions/response-fields.adoc[]
+
+==== Exception
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----

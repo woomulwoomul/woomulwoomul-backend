@@ -40,7 +40,7 @@ class UserProviderRepositoryTest(
                 assertThat(foundUserProvider!!.user)
                     .extracting("id", "username", "email", "imageUrl", "status", "createDateTime",
                         "updateDateTime")
-                    .containsExactly(userProvider.id, userProvider.user.username, userProvider.user.email,
+                    .containsExactly(userProvider.user.id, userProvider.user.username, userProvider.user.email,
                         userProvider.user.imageUrl, userProvider.user.status, userProvider.user.createDateTime,
                         userProvider.user.updateDateTime)
             }

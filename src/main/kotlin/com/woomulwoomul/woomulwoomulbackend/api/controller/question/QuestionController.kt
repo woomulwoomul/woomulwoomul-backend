@@ -17,7 +17,7 @@ class QuestionController(
 ) {
 
     @GetMapping("/api/questions")
-    fun getAdminQuestions(@RequestParam(required = false) questionIds: List<Long> = listOf()):
+    fun getDefaultQuestions(@RequestParam(required = false, name = "question-ids") questionIds: List<Long> = listOf()):
             ResponseEntity<DefaultListResponse<QuestionFindResponse>> {
         val responses = questionService.getDefaultQuestions(questionIds)
 
