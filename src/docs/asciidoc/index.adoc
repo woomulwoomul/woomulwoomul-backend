@@ -20,7 +20,7 @@ include::api/develop/health-check.adoc[]
 include::api/auth/oauth-login.adoc[]
 
 [[Question-API]]
-
+=== Question API
 include::api/question/get-default-questions.adoc[]
 
 [[User-API]]
