@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.common.constant
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.OK
 
 enum class SuccessCode(
     val httpStatus: HttpStatus,
@@ -13,7 +14,8 @@ enum class SuccessCode(
     // 201 Created
 
     // 200 Ok
-    DEFAULT_QUESTIONS_FOUND(HttpStatus.OK, "기본 질문 조회를 완료했습니다."),
+    DEFAULT_QUESTIONS_FOUND(OK, "기본 질문 조회를 완료했습니다."),
+    ALL_CATEGORIES_FOUND(OK, "전체 카테고리 조회를 완료했습니다."),
 
     /**
      * User Controller

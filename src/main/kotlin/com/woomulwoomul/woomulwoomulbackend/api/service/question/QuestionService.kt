@@ -1,6 +1,10 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindAllCategoryResponse
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindCategoryResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindResponse
+import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -11,7 +15,8 @@ import org.springframework.validation.annotation.Validated
 @Validated
 @Transactional(readOnly = true)
 class QuestionService(
-    private val questionCategoryRepository: QuestionCategoryRepository
+    private val questionCategoryRepository: QuestionCategoryRepository,
+    private val categoryRepository: CategoryRepository,
 ) {
 
     /**
@@ -29,5 +34,16 @@ class QuestionService(
         return questionCategoryMap.entries.map { (question, categories) ->
             QuestionFindResponse(question, categories)
         }
+    }
+
+    /**
+     * 전체 카테고리 조회
+     * @param pageFrom 페이지 시작점
+     * @param pageSize 페이지 크기
+     * @return 전체 카테고리
+     */
+    fun getAllCategories(pageFrom: Long, pageSize: Long): PageData<QuestionFindAllCategoryResponse> {
+        val categories = categoryRepository.findAll(pageFrom, pageSize)
+        return PageData(categories.data.map { QuestionFindAllCategoryResponse(it) }, categories.total)
     }
 }

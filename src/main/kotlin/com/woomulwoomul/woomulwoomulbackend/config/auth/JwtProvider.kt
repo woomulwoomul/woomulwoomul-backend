@@ -91,6 +91,7 @@ class JwtProvider(
      * @param jwtType 토큰 타입
      * @throws TOKEN_UNAUTHENTICATED 401
      * @throws TOKEN_UNAUTHORIZED 403
+     * @throws USER_NOT_FOUND 404
      * @return JWT 토큰
      */
     fun verifyToken(token: String, jwtType: JwtType): JWT<JWSHMAC256Algorithm> {
