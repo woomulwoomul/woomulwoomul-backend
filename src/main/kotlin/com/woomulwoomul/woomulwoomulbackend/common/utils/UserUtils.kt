@@ -2,7 +2,7 @@ package com.woomulwoomul.woomulwoomulbackend.common.utils
 
 import io.netty.util.internal.ThreadLocalRandom
 
-class UsernameUtils {
+class UserUtils {
 
     companion object {
 

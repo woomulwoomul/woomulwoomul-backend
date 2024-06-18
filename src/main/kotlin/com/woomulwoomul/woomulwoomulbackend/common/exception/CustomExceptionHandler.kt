@@ -1,10 +1,17 @@
 package com.woomulwoomul.woomulwoomulbackend.common.exception
 
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ErrorField
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.common.response.ExceptionResponse
 import io.sentry.Sentry
 import jakarta.validation.ConstraintViolationException
+import jakarta.validation.constraints.Email
+import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.NotNull
+import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatusCode
@@ -17,6 +24,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.context.request.WebRequest
 import org.springframework.web.multipart.MaxUploadSizeExceededException
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+import org.thymeleaf.util.StringUtils
 
 @RestControllerAdvice
 class CustomExceptionHandler : ResponseEntityExceptionHandler() {
@@ -35,48 +43,37 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        var responseCode = ex.fieldError?.field?.uppercase()
-        val responseMessage = ex.fieldError?.defaultMessage
+        val fieldError = ex.bindingResult.fieldErrors.firstOrNull() ?: throw CustomException(SERVER_ERROR)
+        val fieldErrorCode = fieldError.code ?: ""
 
-        responseCode?.let { responseCode -> formatIfInnerDto(responseCode) }.also { responseCode = it }
-        responseCode += responseMessage?.let { formatResponseCode(it) }
+        val codePrefix = preFormatCode(fieldErrorCode)
+        val codeSuffix = ErrorField.code[fieldErrorCode.uppercase()]
+        val exceptionCode = ExceptionCode.valueOf(codePrefix + codeSuffix)
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(responseMessage?.let {
-                responseCode?.let {
-                        it1 -> ExceptionResponse(it1, it) }
-            })
+        return ResponseEntity.status(exceptionCode.httpStatus)
+            .body(ExceptionResponse(exceptionCode))
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
     protected fun handleConstraintViolationException(ex: ConstraintViolationException):
             ResponseEntity<ExceptionResponse> {
-        var responseCode: String
-        val responseMessage: String
+        val constraintViolation = ex.constraintViolations.firstOrNull() ?: throw CustomException(SERVER_ERROR)
+        val annotation = constraintViolation.constraintDescriptor.annotation
 
-        if (ex.constraintViolations.stream().findFirst().isPresent) {
-            val constraintViolation = ex.constraintViolations.stream()
-                .findFirst()
-                .get()
-            val propertyPathSize = constraintViolation.propertyPath.toString()
-                .split("\\.")
-                .size
-
-            responseCode = constraintViolation.propertyPath.toString()
-                .split("\\.")[propertyPathSize - 1]
-            responseCode = responseCode.replace("[^\\p{Alnum}]+", "_")
-                .replace("(\\p{Lower})(\\p{Upper})", "$1_$2")
-                .uppercase()
-            responseCode = formatIfInnerDto(responseCode)
-            responseMessage = constraintViolation.messageTemplate
-            responseCode += formatResponseCode(responseMessage)
-            responseCode = responseCode.split(".")[responseCode.split(".").size - 1]
-        } else {
-            throw CustomException(SERVER_ERROR)
+        val codePrefix = preFormatCode(constraintViolation.propertyPath.toString())
+        val suffixCode = when (annotation) {
+            is NotNull -> ErrorField.NOT_NULL_CONST
+            is NotBlank -> ErrorField.NOT_BLANK_CONST
+            is Size -> ErrorField.SIZE_CONST
+            is ByteSize -> ErrorField.BYTE_SIZE_CONST
+            is Pattern -> ErrorField.PATTERN_CONST
+            is Email -> ErrorField.EMAIL_CONST
+            else -> ""
         }
+        val exceptionCode = ExceptionCode.valueOf(codePrefix + suffixCode)
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-            .body(ExceptionResponse(responseCode, responseMessage))
+        return ResponseEntity.status(exceptionCode.httpStatus)
+            .body(ExceptionResponse(exceptionCode))
     }
 
     /**
@@ -131,41 +128,15 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         return ExceptionResponse.toResponseEntity(SERVER_ERROR)
     }
 
-    private fun formatIfInnerDto(responseCode: String): String {
-        if (!responseCode.matches(".*\\d+.*".toRegex()))
-            return responseCode
+    private fun preFormatCode(code: String): String {
+        val lastDotIndex = code.lastIndexOf('.')
+        if (lastDotIndex == -1) return code
 
-        for (i in responseCode.length - 1 downTo 0) {
-            val c = responseCode[i]
-            if (c.isDigit())
-                return responseCode.substring(i + 2)
-        }
+        val lastCode = code.substring(lastDotIndex + 1)
 
-        return responseCode
-    }
-
-    private fun formatResponseCode(responseMessage: String): String {
-        var responseCode = ""
-
-        if (responseMessage.contains("필수 입력입니다.") || responseMessage.contains("첨부해 주세요")) {
-            responseCode = "_FIELD_REQUIRED" // @NotBlank, @NotNull
-        } else if (responseMessage.contains("~")) {
-            responseCode = "_LENGTH_INVALID" // @Size
-        } else if (responseMessage.contains("형식") || responseMessage.contains("조합")) {
-            responseCode = "_FORMAT_INVALID" // @Pattern, @Email - format
-        } else if (responseMessage.contains("중 하나여야 됩니다.")) {
-            if (responseCode.contains("TYPE")) responseCode.removeSurrounding("TYPE")
-            responseCode = "_TYPE_INVALID" // @Pattern - type
-        } else if (responseMessage.contains("까지의 수만")) {
-            responseCode = "_RANGE_INVALID" // @Range
-        } else if (responseMessage.contains("0 또는 양수")) {
-            responseCode = "_POSITIVE_OR_ZERO_ONLY" // @PositiveOrZero
-        } else if (responseMessage.contains("양수")) {
-            responseCode = "_POSITIVE_ONLY" // @Positive
-        } else if (responseMessage.contains("요청")) {
-            responseCode = "REQUEST_INVALID"
-        }
-
-        return responseCode
+        return lastCode.fold(StringBuilder(lastCode.length + 5)) { acc, c ->
+            if (c.isUpperCase() && acc.isNotEmpty()) acc.append('_')
+            acc.append(c)
+        }.toString()
     }
 }
