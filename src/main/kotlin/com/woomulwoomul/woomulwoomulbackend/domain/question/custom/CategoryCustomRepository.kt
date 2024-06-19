@@ -6,4 +6,6 @@ import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryEntity
 interface CategoryCustomRepository {
 
     fun findAll(pageFrom: Long, pageSize: Long): PageData<CategoryEntity>
+
+    fun findByIds(ids: List<Long>): List<CategoryEntity>
 }

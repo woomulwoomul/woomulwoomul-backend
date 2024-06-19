@@ -21,12 +21,12 @@ class UserRepositoryImpl(
             .fetchFirst() != null
     }
 
-    override fun find(userId: Long?): UserEntity? {
+    override fun find(id: Long?): UserEntity? {
         return queryFactory
             .selectFrom(userEntity)
             .where(
                 userEntity.status.eq(ACTIVE),
-                eqUserId(userId)
+                eqId(id)
             ).fetchFirst()
     }
 
@@ -35,7 +35,7 @@ class UserRepositoryImpl(
         else null
     }
 
-    private fun eqUserId(userId: Long?): BooleanExpression? {
+    private fun eqId(userId: Long?): BooleanExpression? {
         return if (userId != null) userEntity.id.eq(userId)
         else null
     }

@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.common.constant
 
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.OK
 
 enum class SuccessCode(
@@ -12,6 +13,7 @@ enum class SuccessCode(
      * Question Controller
      */
     // 201 Created
+    USER_QUESTION_CREATED(CREATED, "회원 질문 생성을 완료했습니다."),
 
     // 200 Ok
     DEFAULT_QUESTIONS_FOUND(OK, "기본 질문 조회를 완료했습니다."),

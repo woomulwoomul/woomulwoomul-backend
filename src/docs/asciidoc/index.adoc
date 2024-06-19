@@ -11,12 +11,10 @@ endif::[]
 
 [[Develop-API]]
 === Develop API
-
 include::api/develop/health-check.adoc[]
 
 [[Auth-API]]
 === Auth API
-
 include::api/auth/oauth-login.adoc[]
 
 [[Question-API]]
@@ -26,5 +24,4 @@ include::api/question/get-all-categories.adoc[]
 
 [[User-API]]
 === User API
-
 

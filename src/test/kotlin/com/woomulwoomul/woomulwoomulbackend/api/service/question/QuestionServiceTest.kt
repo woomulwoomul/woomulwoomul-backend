@@ -1,10 +1,14 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.QuestionUserCreateServiceRequest
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.ADMIN
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.tuple
+import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
+import org.assertj.core.api.Assertions.*
 import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
@@ -140,6 +144,90 @@ class QuestionServiceTest(
                     )
             }
         )
+    }
+
+    @DisplayName("회원 질문 생성이 정상 작동한다")
+    @Test
+    fun givenValid_whenCreateUserQuestion_theReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+
+        // when
+        val response = questionService.createUserQuestion(userRole.user.id!!, request)
+
+        // then
+        assertAll(
+            {
+                assertThat(response.questionId).isNotNull()
+            },
+            {
+                assertThat(response)
+                    .extracting("questionText", "backgroundColor")
+                    .containsExactly(request.text, request.backgroundColor)
+            },
+            {
+                assertThat(response.categories)
+                    .extracting("categoryId", "categoryName")
+                    .containsExactlyInAnyOrder(
+                        tuple(categories[0].id!!, categories[0].name),
+                        tuple(categories[1].id!!, categories[1].name),
+                        tuple(categories[2].id!!, categories[2].name),
+                    )
+            }
+        )
+    }
+
+    @DisplayName("존재하지 않은 회원으로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenNonExistingUser_whenCreateUserQuestion_thenThrow() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN)
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(Long.MAX_VALUE, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(USER_NOT_FOUND)
+    }
+
+    @DisplayName("존재하지 않은 카테고리로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenNonExistingCategory_whenCreateUserQuestion_thenThrows() {
+        // given
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+
+        val request = createValidQuestionUserCreateServiceRequest(listOf(Long.MAX_VALUE))
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
+    private fun createValidQuestionUserCreateServiceRequest(categoryIds: List<Long>): QuestionUserCreateServiceRequest {
+        return QuestionUserCreateServiceRequest("질문", "0F0F0F", categoryIds)
     }
 
 

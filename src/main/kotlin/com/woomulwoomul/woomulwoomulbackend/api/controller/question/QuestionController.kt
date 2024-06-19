@@ -1,17 +1,19 @@
 package com.woomulwoomul.woomulwoomulbackend.api.controller.question
 
+import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.QuestionUserCreateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.QuestionService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindResponse
-import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.ALL_CATEGORIES_FOUND
-import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.DEFAULT_QUESTIONS_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultListResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
+import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
+import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import java.security.Principal
 
 @Validated
 @RestController
@@ -35,5 +37,13 @@ class QuestionController(
         val response = questionService.getAllCategories(pageFrom, pageSize)
 
         return DefaultPageResponse.toResponseEntity(ALL_CATEGORIES_FOUND, response)
+    }
+
+    @PostMapping("/api/users/questions")
+    fun createUserQuestion(principal: Principal, @RequestBody @Valid request: QuestionUserCreateRequest)
+    : ResponseEntity<DefaultSingleResponse> {
+        val response = questionService.createUserQuestion(UserUtils.getUserId(principal), request.toServiceRequest())
+
+        return DefaultSingleResponse.toResponseEntity(USER_QUESTION_CREATED, response)
     }
 }

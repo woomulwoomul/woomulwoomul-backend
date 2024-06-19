@@ -6,5 +6,5 @@ interface UserCustomRepository {
 
     fun exists(username: String?): Boolean
 
-    fun find(userId: Long?): UserEntity?
+    fun find(id: Long?): UserEntity?
 }

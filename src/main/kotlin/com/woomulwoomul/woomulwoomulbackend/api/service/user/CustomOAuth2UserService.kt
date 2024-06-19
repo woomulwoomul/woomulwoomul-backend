@@ -3,7 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.user
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.OAUTH_UNAUTHENTICATED
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USERNAME_GENERATE_FAIL
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
-import com.woomulwoomul.woomulwoomulbackend.common.utils.UsernameUtils
+import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
 import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2Provider
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import org.springframework.security.core.GrantedAuthority
@@ -65,7 +65,7 @@ class CustomOAuth2UserService(
 
     private fun createRandomUsername(email: String): String {
         repeat(100) {
-            val username = UsernameUtils.generateRandomUsername(email)
+            val username = UserUtils.generateRandomUsername(email)
             if (!userRepository.exists(username)) return username
         }
         throw CustomException(USERNAME_GENERATE_FAIL)

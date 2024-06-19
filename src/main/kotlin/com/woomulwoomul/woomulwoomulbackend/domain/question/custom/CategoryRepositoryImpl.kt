@@ -31,4 +31,13 @@ class CategoryRepositoryImpl(
 
         return PageData<CategoryEntity>(data, total)
     }
+
+    override fun findByIds(ids: List<Long>): List<CategoryEntity> {
+        return queryFactory
+            .selectFrom(categoryEntity)
+            .where(
+                categoryEntity.status.eq(ACTIVE),
+                categoryEntity.id.`in`(ids)
+            ).fetch()
+    }
 }

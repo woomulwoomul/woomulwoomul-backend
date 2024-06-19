@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.common.utils
 
 import io.netty.util.internal.ThreadLocalRandom
+import java.security.Principal
 
 class UserUtils {
 
@@ -10,6 +11,10 @@ class UserUtils {
 
         fun generateRandomUsername(email: String): String {
             return email.split("@")[0].plus(threadLocalRandom.nextInt(1, 1000))
+        }
+
+        fun getUserId(principal: Principal): Long {
+            return principal.name.toLong()
         }
     }
 }
