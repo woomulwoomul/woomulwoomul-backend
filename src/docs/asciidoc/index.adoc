@@ -21,6 +21,7 @@ include::api/auth/oauth-login.adoc[]
 === Question API
 include::api/question/get-default-questions.adoc[]
 include::api/question/get-all-categories.adoc[]
+include::api/question/create-user-question.adoc[]
 
 [[User-API]]
 === User API
