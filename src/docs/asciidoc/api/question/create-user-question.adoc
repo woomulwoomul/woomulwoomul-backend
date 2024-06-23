@@ -1,5 +1,5 @@
-[[get-default-questions]]
-=== 기본 질문 조회
+[[create-user-question]]
+=== 회원 질문 작성
 
 ==== HTTP Request
 include::{snippets}/question/create-user-question/http-request.adoc[]
