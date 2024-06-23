@@ -1,13 +1,13 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.QuestionUserCreateServiceRequest
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.ADMIN
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
+import jakarta.validation.ConstraintViolationException
 import org.assertj.core.api.Assertions.*
 import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.Assertions.assertAll
@@ -174,7 +174,7 @@ class QuestionServiceTest(
             {
                 assertThat(response)
                     .extracting("questionText", "backgroundColor")
-                    .containsExactly(request.text, request.backgroundColor)
+                    .containsExactly(request.questionText, request.questionBackgroundColor)
             },
             {
                 assertThat(response.categories)
@@ -215,7 +215,7 @@ class QuestionServiceTest(
     @Test
     fun givenNonExistingCategory_whenCreateUserQuestion_thenThrows() {
         // given
-        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester", "tester@woomulwoomul.com")
 
         val request = createValidQuestionUserCreateServiceRequest(listOf(Long.MAX_VALUE))
 
@@ -226,10 +226,113 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
+    @DisplayName("질문 내용 1바이트 미만으로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenLesserThan1ByteSizeQuestionText_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+        request.questionText = ""
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_BYTE_SIZE_INVALID.message)
+    }
+
+    @DisplayName("질문 내용 60바이트 초과로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenGreaterThan60ByteSizeQuestionText_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+        request.questionText = "가".repeat(31)
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_BYTE_SIZE_INVALID.message)
+    }
+
+    @DisplayName("질문 배경 색상 6자 미만으로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenLesserThan6SizeQuestionBackgroundColor_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+        request.questionBackgroundColor = "0F0F0"
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
+    }
+
+    @DisplayName("질문 배경 색상 6자 초과로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenGreaterThan6SizeQuestionBackgroundColor_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+        request.questionBackgroundColor = "0F0F0FF"
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
+    }
+
     private fun createValidQuestionUserCreateServiceRequest(categoryIds: List<Long>): QuestionUserCreateServiceRequest {
         return QuestionUserCreateServiceRequest("질문", "0F0F0F", categoryIds)
     }
-
 
     private fun createAndSaveCategory(
         user: UserEntity,

@@ -11,9 +11,14 @@ enum class ExceptionCode(
      * 400 Bad Request
      */
     // @NotBlank, @NotNull
+    QUESTION_TEXT_FIELD_REQUIRED(HttpStatus.BAD_REQUEST, "질문은 필수 입력입니다."),
+    QUESTION_BACKGROUND_COLOR_FIELD_REQUIRED(HttpStatus.BAD_REQUEST, "질문 배경 색상은 필수 입력입니다."),
+    CATEGORY_IDS_FIELD_REQUIRED(HttpStatus.BAD_REQUEST, "카테고리 ID는 필수 입력입니다."),
 
-    // @Size
-    USERNAME_LENGTH_INVALID(HttpStatus.BAD_REQUEST, "아이디는 5~20자만 가능합니다."),
+    // @Size, @ByteSize
+    USERNAME_SIZE_INVALID(HttpStatus.BAD_REQUEST, "아이디는 5~20자만 가능합니다."),
+    QUESTION_TEXT_BYTE_SIZE_INVALID(HttpStatus.BAD_REQUEST, "질문 내용은 1~60 바이트만 가능합니다."),
+    QUESTION_BACKGROUND_COLOR_SIZE_INVALID(HttpStatus.BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(HttpStatus.BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),
