@@ -14,8 +14,7 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
-import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
@@ -116,6 +115,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "question/get-all-categories",
+                    preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
@@ -168,6 +168,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "question/create-user-question",
+                    preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
@@ -223,6 +224,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "question/create-user-question/question-text-field-required",
+                    preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
@@ -258,6 +260,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "question/create-user-question/question-background-color-field-required",
+                    preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
@@ -293,6 +296,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "question/create-user-question/category-ids-field-required",
+                    preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
                         headerWithName(AUTHORIZATION).description("액세스 토큰")
