@@ -173,7 +173,7 @@ class QuestionServiceTest(
             },
             {
                 assertThat(response)
-                    .extracting("questionText", "backgroundColor")
+                    .extracting("questionText", "questionBackgroundColor")
                     .containsExactly(request.questionText, request.questionBackgroundColor)
             },
             {

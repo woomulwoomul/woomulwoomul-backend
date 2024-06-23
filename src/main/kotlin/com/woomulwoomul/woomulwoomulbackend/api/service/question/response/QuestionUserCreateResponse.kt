@@ -6,7 +6,7 @@ import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionEntity
 data class QuestionUserCreateResponse(
     val questionId: Long,
     val questionText: String,
-    val backgroundColor: String,
+    val questionBackgroundColor: String,
     val categories: List<QuestionUserCreateCategoryResponse>
 ) {
 
