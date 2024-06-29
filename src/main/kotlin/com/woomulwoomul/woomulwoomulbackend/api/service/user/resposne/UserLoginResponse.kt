@@ -4,10 +4,10 @@ import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 
 data class UserLoginResponse(
     val userId: Long,
-    val username: String,
+    val nickname: String,
     val imageUrl: String,
     val email: String,
 ) {
 
-    constructor(user: UserEntity): this(user.id ?: 0, user.username, user.imageUrl, user.email)
+    constructor(user: UserEntity): this(user.id ?: 0, user.nickname, user.imageUrl, user.email)
 }

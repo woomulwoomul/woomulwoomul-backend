@@ -1,7 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.OAUTH_UNAUTHENTICATED
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USERNAME_GENERATE_FAIL
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.NICKNAME_GENERATE_FAIL
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
 import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2Provider
@@ -38,9 +38,9 @@ class CustomOAuth2UserService(
 
         var userProvider = userProviderRepository.findFetchUser(attributes[PROVIDER_ID_CONST]!!)
         val userRoles = if (userProvider == null) {
-            attributes["username"] = createRandomUsername(attributes["email"]!!)
+            attributes["nickname"] = createRandomNickname(attributes["email"]!!)
             val user = userRepository.save(OAuth2Provider.toUserEntity(
-                attributes["username"]!!,
+                attributes["nickname"]!!,
                 attributes["email"]!!,
                 attributes["imageUrl"]!!
             ))
@@ -63,11 +63,11 @@ class CustomOAuth2UserService(
         return DefaultOAuth2User(authorities, attributes.toMap(), USER_ID_CONST)
     }
 
-    private fun createRandomUsername(email: String): String {
+    private fun createRandomNickname(email: String): String {
         repeat(100) {
-            val username = UserUtils.generateRandomUsername(email)
-            if (!userRepository.exists(username)) return username
+            val nickname = UserUtils.generateRandomNickname(email)
+            if (!userRepository.exists(nickname)) return nickname
         }
-        throw CustomException(USERNAME_GENERATE_FAIL)
+        throw CustomException(NICKNAME_GENERATE_FAIL)
     }
 }

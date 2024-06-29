@@ -13,10 +13,12 @@ class UserEntity(
     val id: Long? = null,
 
     @Column(nullable = false, length = 30, unique = true)
-    val username: String,
+    val nickname: String,
     @Column(nullable = false, length = 100, unique = true)
     val email: String,
     @Column(nullable = false, length = 500)
     val imageUrl: String,
+    @Column(length = 30)
+    val introduction: String? = null,
 ) : BasePermanentEntity() {
 }

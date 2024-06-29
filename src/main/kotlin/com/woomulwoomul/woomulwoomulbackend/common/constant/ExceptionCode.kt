@@ -16,7 +16,7 @@ enum class ExceptionCode(
     CATEGORY_IDS_FIELD_REQUIRED(HttpStatus.BAD_REQUEST, "카테고리 ID는 필수 입력입니다."),
 
     // @Size, @ByteSize
-    USERNAME_SIZE_INVALID(HttpStatus.BAD_REQUEST, "아이디는 5~20자만 가능합니다."),
+    NICKNAME_SIZE_INVALID(HttpStatus.BAD_REQUEST, "닉네임는 5~20자만 가능합니다."),
     QUESTION_TEXT_BYTE_SIZE_INVALID(HttpStatus.BAD_REQUEST, "질문 내용은 1~60 바이트만 가능합니다."),
     QUESTION_BACKGROUND_COLOR_SIZE_INVALID(HttpStatus.BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
 
@@ -59,7 +59,7 @@ enum class ExceptionCode(
      * 409 Conflict
      */
     EXISTING_USER(HttpStatus.CONFLICT, "해당 이메일로 이미 가입된 회원이 있습니다."),
-    USERNAME_GENERATE_FAIL(HttpStatus.CONFLICT, "아이디 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."),
+    NICKNAME_GENERATE_FAIL(HttpStatus.CONFLICT, "닉네임 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."),
 
     /**
      * 413 Payload too large

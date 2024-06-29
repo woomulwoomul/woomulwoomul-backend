@@ -14,13 +14,14 @@ DROP TABLE IF EXISTS users;
 CREATE TABLE users
 (
     user_id                     BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username                    VARCHAR(30)                 NOT NULL,
+    nickname                    VARCHAR(30)                 NOT NULL,
     email                       VARCHAR(100)                NOT NULL,
     image_url                   VARCHAR(500)                NOT NULL,
+    introduction                VARCHAR(30),
     status                      VARCHAR(10)                 NOT NULL,
     create_date_time            DATETIME(6)                 NOT NULL,
     update_date_time            DATETIME(6)                 NOT NULL,
-    CONSTRAINT uq_user_username UNIQUE (username),
+    CONSTRAINT uq_user_nickname UNIQUE (nickname),
     CONSTRAINT uq_user_email UNIQUE (email)
 );
 

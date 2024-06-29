@@ -18,15 +18,15 @@ class UserRepositoryTest(
     @Autowired private val userRepository: UserRepository,
 ) {
 
-    @ParameterizedTest(name = "[{index}] 회원 이름 {0}로 회원 존재 여부를 조회하면 {1}를 반환한다")
+    @ParameterizedTest(name = "[{index}] 회원 닉네임 {0}로 회원 존재 여부를 조회하면 {1}를 반환한다")
     @MethodSource("providerExists")
     @DisplayName("회원 이름으로 회원 존재 여부 조회를 하면 정상 작동한다")
-    fun givenProvider_whenExists_thenReturn(username: String, expected: Boolean) {
+    fun givenProvider_whenExists_thenReturn(nickname: String, expected: Boolean) {
         // given
         if (expected) createAndSaveUser()
 
         // when
-        val result = userRepository.exists(username)
+        val result = userRepository.exists(nickname)
 
         // then
         assertThat(result).isEqualTo(expected)
@@ -42,14 +42,14 @@ class UserRepositoryTest(
 
         // then
         assertThat(result)
-            .extracting("username", "email", "imageUrl", "status", "createDateTime", "updateDateTime")
-            .containsExactly(user.username, user.email, user.imageUrl, user.status, user.createDateTime,
+            .extracting("nickname", "email", "imageUrl", "status", "createDateTime", "updateDateTime")
+            .containsExactly(user.nickname, user.email, user.imageUrl, user.status, user.createDateTime,
                 user.updateDateTime)
     }
 
     private fun createAndSaveUser(): UserEntity {
         return userRepository.save(UserEntity(
-            username = "tester",
+            nickname = "tester",
             email = "tester@woomulwoomul.com",
             imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
         ))

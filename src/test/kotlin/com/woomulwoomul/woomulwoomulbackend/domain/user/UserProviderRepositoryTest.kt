@@ -2,7 +2,6 @@ package com.woomulwoomul.woomulwoomulbackend.domain.user
 
 import com.woomulwoomul.woomulwoomulbackend.domain.user.ProviderType.KAKAO
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.groups.Tuple
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
@@ -38,9 +37,8 @@ class UserProviderRepositoryTest(
             },
             {
                 assertThat(foundUserProvider!!.user)
-                    .extracting("id", "username", "email", "imageUrl", "status", "createDateTime",
-                        "updateDateTime")
-                    .containsExactly(userProvider.user.id, userProvider.user.username, userProvider.user.email,
+                    .extracting("id", "nickname", "email", "imageUrl", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(userProvider.user.id, userProvider.user.nickname, userProvider.user.email,
                         userProvider.user.imageUrl, userProvider.user.status, userProvider.user.createDateTime,
                         userProvider.user.updateDateTime)
             }
@@ -49,7 +47,7 @@ class UserProviderRepositoryTest(
 
     private fun createAndSaveUserProvider(): UserProviderEntity {
         val user = userRepository.save(UserEntity(
-            username = "tester",
+            nickname = "tester",
             email = "tester@woomulwoomul.com",
             imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
         ))

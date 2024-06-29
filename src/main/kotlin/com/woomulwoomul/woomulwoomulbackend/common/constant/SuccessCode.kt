@@ -26,8 +26,7 @@ enum class SuccessCode(
 
 
     // 200 Ok
-    FOUND_MY_USER_INFO(HttpStatus.OK, "내 회원 정보를 조회했습니다."),
-    USER_IMAGE_UPLOADED(HttpStatus.OK, "회원 이미지를 업로드했습니다."),
+    USER_PROFILE_FOUND(OK, "회원 프로필 조회를 완료했습니다."),
 
     /**
      * Auth Controller

@@ -22,7 +22,7 @@ Refresh-Token: refresh-token
   "message" : "SNS 로그인을 했습니다.",
   "data": {
     "userId": 1,
-    "username": "tester",
+    "nickname": "tester",
     "imageUrl": "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
     "email": "tester@woomulwoomul.com"
   }
@@ -58,10 +58,10 @@ Refresh-Token: refresh-token
 |회원 식별자
 
 
-|`+data.username+`
+|`+data.nickname+`
 |`+String+`
 |
-|회원 아이디
+|회원 닉네임
 
 
 |`+data.imageUrl+`
@@ -99,8 +99,8 @@ Refresh-Token: refresh-token
 ===== 409
 ----
 {
-  "code" : "USERNAME_GENERATE_FAIL",
-  "message" : "아이디 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."
+  "code" : "NICKNAME_GENERATE_FAIL",
+  "message" : "닉네임 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."
 }
 ----
 

@@ -24,8 +24,8 @@ class OAuth2Provider {
             }
         }
 
-        fun toUserEntity(username: String, email: String, imageUrl: String): UserEntity {
-            return UserEntity(username = username, email = email, imageUrl = imageUrl)
+        fun toUserEntity(nickname: String, email: String, imageUrl: String): UserEntity {
+            return UserEntity(nickname = nickname, email = email, imageUrl = imageUrl)
         }
 
         fun toUserProviderEntity(user: UserEntity, provider: ProviderType, providerId: String): UserProviderEntity {

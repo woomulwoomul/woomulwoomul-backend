@@ -3,7 +3,6 @@ package com.woomulwoomul.woomulwoomulbackend.api.controller.question
 import com.woomulwoomul.woomulwoomulbackend.api.controller.RestDocsSupport
 import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.QuestionUserCreateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.QuestionService
-import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.QuestionUserCreateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import org.junit.jupiter.api.DisplayName

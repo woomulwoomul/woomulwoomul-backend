@@ -13,11 +13,11 @@ class UserRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : UserCustomRepository {
 
-    override fun exists(username: String?): Boolean {
+    override fun exists(nickname: String?): Boolean {
         return queryFactory
             .select(userEntity.id)
             .from(userEntity)
-            .where(eqUsername(username))
+            .where(eqNickname(nickname))
             .fetchFirst() != null
     }
 
@@ -30,8 +30,8 @@ class UserRepositoryImpl(
             ).fetchFirst()
     }
 
-    private fun eqUsername(username: String?): BooleanExpression? {
-        return if (StringUtils.isNotBlank(username)) userEntity.username.eq(username)
+    private fun eqNickname(nickname: String?): BooleanExpression? {
+        return if (StringUtils.isNotBlank(nickname)) userEntity.nickname.eq(nickname)
         else null
     }
 

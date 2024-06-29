@@ -41,9 +41,9 @@ class UserRoleRepositoryTest(
             {
                 assertThat(foundUserRoles)
                     .extracting("user")
-                    .extracting("id", "username", "imageUrl", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "nickname", "imageUrl", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        Tuple.tuple(userRole.user.id, userRole.user.username,
+                        Tuple.tuple(userRole.user.id, userRole.user.nickname,
                             userRole.user.imageUrl, userRole.user.status,
                             userRole.user.createDateTime, userRole.user.updateDateTime)
                     )
@@ -53,7 +53,7 @@ class UserRoleRepositoryTest(
 
     private fun createAndSaveUserRole(role: Role): UserRoleEntity {
         val user = userRepository.save(UserEntity(
-            username = "tester",
+            nickname = "tester",
             email = "tester@woomulwoomul.com",
             imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
         ))
