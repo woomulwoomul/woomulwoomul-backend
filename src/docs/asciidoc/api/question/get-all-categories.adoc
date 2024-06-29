@@ -1,5 +1,5 @@
 [[get-all-categories]]
-=== 전체 카테고리 조회
+=== 카테고리 전체 조회
 
 ==== HTTP Request
 include::{snippets}/question/get-all-categories/http-request.adoc[]
