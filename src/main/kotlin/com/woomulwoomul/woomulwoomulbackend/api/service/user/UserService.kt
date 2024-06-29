@@ -3,9 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.user
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetProfileResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
-import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionAnswerRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
-import com.woomulwoomul.woomulwoomulbackend.domain.user.UserVisitRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
