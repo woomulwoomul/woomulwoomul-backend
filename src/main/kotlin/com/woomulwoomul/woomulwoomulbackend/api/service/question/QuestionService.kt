@@ -6,6 +6,7 @@ import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.Questi
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionUserCreateResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryRepository
@@ -31,7 +32,7 @@ class QuestionService(
     /**
      * 기본 질문들 조회
      * @param questionIds 질문 ID들
-     * @return 기본 질문
+     * @return 기본 질문 응답
      */
     fun getDefaultQuestions(questionIds: List<Long>): List<QuestionFindResponse> {
         val questionCategories = if (CollectionUtils.isEmpty(questionIds)) questionCategoryRepository.findRandom()
@@ -47,12 +48,11 @@ class QuestionService(
 
     /**
      * 전체 카테고리 조회
-     * @param pageFrom 페이지 시작점
-     * @param pageSize 페이지 크기
-     * @return 전체 카테고리
+     * @param pageRequest 페이징 요청
+     * @return 전체 카테고리 응답
      */
-    fun getAllCategories(pageFrom: Long, pageSize: Long): PageData<QuestionFindAllCategoryResponse> {
-        val categories = categoryRepository.findAll(pageFrom, pageSize)
+    fun getAllCategories(pageRequest: PageRequest): PageData<QuestionFindAllCategoryResponse> {
+        val categories = categoryRepository.findAll(pageRequest)
         return PageData(categories.data.map { QuestionFindAllCategoryResponse(it) }, categories.total)
     }
 

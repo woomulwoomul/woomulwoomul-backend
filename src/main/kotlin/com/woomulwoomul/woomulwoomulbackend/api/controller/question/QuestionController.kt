@@ -5,6 +5,7 @@ import com.woomulwoomul.woomulwoomulbackend.api.service.question.QuestionService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultListResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
@@ -34,7 +35,7 @@ class QuestionController(
         @RequestParam(name = "page-from", defaultValue = "0") pageFrom: Long,
         @RequestParam(name = "page-size", defaultValue = "20") pageSize: Long,
     ): ResponseEntity<DefaultPageResponse<QuestionFindAllCategoryResponse>> {
-        val response = questionService.getAllCategories(pageFrom, pageSize)
+        val response = questionService.getAllCategories(PageRequest.of(pageFrom, pageSize))
 
         return DefaultPageResponse.toResponseEntity(ALL_CATEGORIES_FOUND, response)
     }

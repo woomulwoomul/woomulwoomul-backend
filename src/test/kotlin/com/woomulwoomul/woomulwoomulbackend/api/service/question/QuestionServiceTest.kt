@@ -2,6 +2,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.QuestionUserCreateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
@@ -124,11 +125,10 @@ class QuestionServiceTest(
             createAndSaveCategory(adminRole.user, "카테고리4"),
             createAndSaveCategory(adminRole.user, "카테고리5")
         )
-        val pageFrom = 1L
-        val pageSize = 2L
+        val pageRequest = PageRequest(1L, 2L)
 
         // when
-        val result = questionService.getAllCategories(pageFrom, pageSize)
+        val result = questionService.getAllCategories(pageRequest)
 
         // then
         assertAll(

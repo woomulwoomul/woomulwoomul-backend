@@ -36,7 +36,7 @@ class CustomOAuth2UserService(
         val oAuth2User = super.loadUser(userRequest)
         val attributes = OAuth2Provider.of(provider, userNameAttributeName, oAuth2User.attributes)
 
-        var userProvider = userProviderRepository.findFetchUser(attributes[PROVIDER_ID_CONST]!!)
+        var userProvider = userProviderRepository.findInnerFetchJoinUser(attributes[PROVIDER_ID_CONST]!!)
         val userRoles = if (userProvider == null) {
             attributes["nickname"] = createRandomNickname(attributes["email"]!!)
             val user = userRepository.save(OAuth2Provider.toUserEntity(

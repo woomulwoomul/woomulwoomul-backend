@@ -1,7 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.config.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.woomulwoomul.woomulwoomulbackend.api.service.user.resposne.UserLoginResponse
+import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserLoginResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.CustomHttpHeaders.Companion.REFRESH_TOKEN
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.OAUTH2_LOGIN

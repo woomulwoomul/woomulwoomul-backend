@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question.custom
 
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryEntity
@@ -12,24 +13,24 @@ class CategoryRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : CategoryCustomRepository {
 
-    override fun findAll(pageFrom: Long, pageSize: Long): PageData<CategoryEntity> {
+    override fun findAll(pageRequest: PageRequest): PageData<CategoryEntity> {
         val total = queryFactory
             .select(categoryEntity.id.count())
             .from(categoryEntity)
             .where(categoryEntity.status.eq(ACTIVE))
             .fetchFirst() ?: 0L
 
-        if (total == 0L) return PageData(listOf(), total)
+        if (total == 0L) return PageData(emptyList(), total)
 
         val data = queryFactory
             .selectFrom(categoryEntity)
             .where(categoryEntity.status.eq(ACTIVE))
             .orderBy(categoryEntity.id.asc())
-            .offset(pageFrom)
-            .limit(pageSize)
+            .offset(pageRequest.from)
+            .limit(pageRequest.size)
             .fetch()
 
-        return PageData<CategoryEntity>(data, total)
+        return PageData(data, total)
     }
 
     override fun findByIds(ids: List<Long>): List<CategoryEntity> {

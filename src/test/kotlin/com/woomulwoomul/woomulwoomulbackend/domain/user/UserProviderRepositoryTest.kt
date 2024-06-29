@@ -25,7 +25,7 @@ class UserProviderRepositoryTest(
         val userProvider = createAndSaveUserProvider()
 
         // when
-        val foundUserProvider = userProviderRepository.findFetchUser(userProvider.providerId)
+        val foundUserProvider = userProviderRepository.findInnerFetchJoinUser(userProvider.providerId)
 
         // then
         assertAll(

@@ -1,5 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question
 
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
@@ -32,11 +33,10 @@ class CategoryRepositoryTest(
             createAndSaveCategory(adminRole.user, "카테고리4"),
             createAndSaveCategory(adminRole.user, "카테고리5")
         )
-        val pageFrom = 1L
-        val pageSize = 2L
+        val pageRequest = PageRequest(1L, 2L)
 
         // when
-        val foundCategories = categoryRepository.findAll(pageFrom, pageSize)
+        val foundCategories = categoryRepository.findAll(pageRequest)
 
         // then
         assertAll(
@@ -64,11 +64,10 @@ class CategoryRepositoryTest(
     @Test
     fun givenEmpty_whenFindAll_thenReturn() {
         // given
-        val pageFrom = 0L
-        val pageSize = 1L
+        val pageRequest = PageRequest(0L, 1L)
 
         // when
-        val categories = categoryRepository.findAll(pageFrom, pageSize)
+        val categories = categoryRepository.findAll(pageRequest)
 
         // then
         assertAll(

@@ -12,7 +12,7 @@ class UserProviderRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : UserProviderCustomRepository {
 
-    override fun findFetchUser(providerId: String): UserProviderEntity? {
+    override fun findInnerFetchJoinUser(providerId: String): UserProviderEntity? {
         return queryFactory
             .select(userProviderEntity)
             .from(userProviderEntity)

@@ -4,6 +4,7 @@ import com.woomulwoomul.woomulwoomulbackend.api.controller.RestDocsSupport
 import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.QuestionUserCreateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.QuestionService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.*
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -92,11 +93,10 @@ class QuestionControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllCategories_thenReturn200() {
         // given
-        val pageFrom = 0L
-        val pageSize = 20L
+        val pageRequest = PageRequest(0, 20)
         val total = 100L
 
-        `when`(questionService.getAllCategories(pageFrom, pageSize))
+        `when`(questionService.getAllCategories(any()))
             .thenReturn(PageData(listOf(
                 QuestionFindAllCategoryResponse(1L, "카테고리1"),
                 QuestionFindAllCategoryResponse(2L, "카테고리2")), total))
@@ -106,8 +106,8 @@ class QuestionControllerTest : RestDocsSupport() {
             get("/api/categories")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
-                .queryParam("page-from", pageFrom.toString())
-                .queryParam("page-size", pageSize.toString())
+                .queryParam("page-from", pageRequest.from.toString())
+                .queryParam("page-size", pageRequest.size.toString())
                 .contentType(APPLICATION_JSON_VALUE)
         ).andDo(print())
             .andExpect(status().isOk)

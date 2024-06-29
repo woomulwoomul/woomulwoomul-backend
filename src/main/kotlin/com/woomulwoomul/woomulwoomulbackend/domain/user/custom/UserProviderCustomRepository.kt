@@ -4,5 +4,5 @@ import com.woomulwoomul.woomulwoomulbackend.domain.user.UserProviderEntity
 
 interface UserProviderCustomRepository {
 
-    fun findFetchUser(providerId: String): UserProviderEntity?
+    fun findInnerFetchJoinUser(providerId: String): UserProviderEntity?
 }

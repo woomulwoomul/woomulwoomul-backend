@@ -1,4 +1,4 @@
-package com.woomulwoomul.woomulwoomulbackend.api.service.user.resposne
+package com.woomulwoomul.woomulwoomulbackend.api.service.user.response
 
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 
