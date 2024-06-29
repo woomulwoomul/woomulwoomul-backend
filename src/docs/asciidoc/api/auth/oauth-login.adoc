@@ -76,6 +76,11 @@ Refresh-Token: refresh-token
 |회원 이메일
 
 
+|`+data.introduction+`
+|`+String+`
+|
+|회원 소개
+
 |===
 
 ==== Exception

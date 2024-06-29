@@ -7,7 +7,14 @@ data class UserLoginResponse(
     val nickname: String,
     val imageUrl: String,
     val email: String,
+    val introduction: String,
 ) {
 
-    constructor(user: UserEntity): this(user.id ?: 0, user.nickname, user.imageUrl, user.email)
+    constructor(user: UserEntity): this(
+        user.id ?: 0,
+        user.nickname,
+        user.imageUrl,
+        user.email,
+        user.introduction ?: "",
+    )
 }
