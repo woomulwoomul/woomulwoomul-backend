@@ -47,9 +47,9 @@ class QuestionService(
     }
 
     /**
-     * 전체 카테고리 조회
+     * 카테고리 전체 조회
      * @param pageRequest 페이징 요청
-     * @return 전체 카테고리 응답
+     * @return 카테고리 전체 응답
      */
     fun getAllCategories(pageRequest: PageRequest): PageData<QuestionFindAllCategoryResponse> {
         val categories = categoryRepository.findAll(pageRequest)

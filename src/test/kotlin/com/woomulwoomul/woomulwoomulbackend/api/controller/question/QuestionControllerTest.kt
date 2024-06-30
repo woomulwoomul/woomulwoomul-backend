@@ -89,7 +89,7 @@ class QuestionControllerTest : RestDocsSupport() {
             )
     }
 
-    @DisplayName("전체 카테고리 조회하면 200을 반환한다")
+    @DisplayName("전체 카테고리 조회를 하면 200을 반환한다")
     @Test
     fun givenValid_whenGetAllCategories_thenReturn200() {
         // given
@@ -130,8 +130,8 @@ class QuestionControllerTest : RestDocsSupport() {
                             .description("데이터들"),
                         fieldWithPath("data[].categoryId").type(JsonFieldType.NUMBER)
                             .description("카테고리 ID"),
-                        fieldWithPath("data[].categoryName").type(JsonFieldType.STRING)
-                            .description("카테고리"),
+                        fieldWithPath("data[].name").type(JsonFieldType.STRING)
+                            .description("카테고리명"),
                     ),
                     queryParameters(
                         parameterWithName("page-from").description("페이지 시작점").optional(),

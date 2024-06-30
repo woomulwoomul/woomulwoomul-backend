@@ -17,14 +17,17 @@ include::api/develop/health-check.adoc[]
 === Auth API
 include::api/auth/oauth-login.adoc[]
 
+[[User-API]]
+=== User API
+include::api/user/get-user-profile.adoc[]
+include::api/user/update-user-profile.adoc[]
+
 [[Question-API]]
 === Question API
 include::api/question/get-default-questions.adoc[]
 include::api/question/get-all-categories.adoc[]
 include::api/question/create-user-question.adoc[]
 
-[[User-API]]
-=== User API
-include::api/user/get-user-profile.adoc[]
-include::api/user/update-user-profile.adoc[]
-
+[[Answer-API]]
+=== Answer API
+include::api/question/get-all-answers.adoc[]

@@ -137,7 +137,7 @@ class QuestionServiceTest(
             },
             {
                 assertThat(result.data)
-                    .extracting("categoryId", "categoryName")
+                    .extracting("categoryId", "name")
                     .containsExactly(
                         tuple(categories[1].id, categories[1].name),
                         tuple(categories[2].id, categories[2].name),

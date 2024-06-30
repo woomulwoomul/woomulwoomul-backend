@@ -28,5 +28,5 @@ class QuestionAnswerEntity(
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
-    val answer: AnswerEntity,
+    var answer: AnswerEntity? = null,
 ) : BaseDetailPermanentEntity(INCOMPLETE)
