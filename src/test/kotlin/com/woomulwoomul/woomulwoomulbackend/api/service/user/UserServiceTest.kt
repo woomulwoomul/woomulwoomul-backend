@@ -5,6 +5,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
+import jakarta.validation.ConstraintViolationException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
@@ -67,6 +68,74 @@ class UserServiceTest(
         assertThat(response)
             .extracting("userId", "nickname", "imageUrl", "introduction")
             .containsExactly(userRole.user.id!!, userRole.user.nickname, request.userImageUrl, request.userIntroduction)
+    }
+
+    @DisplayName("회원 닉네임이 2자 미만일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenUserNicknameLesserThan2Size_whenUpdateUserProfile_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+
+        val request = createValidUserProfileUpdateServiceRequest()
+        request.userNickname = "a"
+
+        // when & then
+        assertThatThrownBy { userService.updateUserProfile(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(USER_NICKNAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("회원 닉네임이 30자 초과일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenUserNicknameGreaterThan30Size_whenUpdateUserProfile_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+
+        val request = createValidUserProfileUpdateServiceRequest()
+        request.userNickname = "a".repeat(31)
+
+        // when & then
+        assertThatThrownBy { userService.updateUserProfile(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(USER_NICKNAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("회원 이미지 URL이 500자 초과일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenUserImageUrlGreaterThan500Size_whenUpdateUserProfile_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+
+        val request = createValidUserProfileUpdateServiceRequest()
+        request.userImageUrl = "a".repeat(501)
+
+        // when & then
+        assertThatThrownBy { userService.updateUserProfile(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(USER_IMAGE_URL_SIZE_INVALID.message)
+    }
+
+    @DisplayName("회원 소개글이 30자 초과일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenUserIntroductionGreaterThan500Size_whenUpdateUserProfile_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+
+        val request = createValidUserProfileUpdateServiceRequest()
+        request.userIntroduction = "a".repeat(31)
+
+        // when & then
+        assertThatThrownBy { userService.updateUserProfile(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(USER_INTRODUCTION_SIZE_INVALID.message)
     }
 
     @DisplayName("존재하지 않은 회원 ID로 회원 프로필 업데이트를 하면 예외가 발생한다")

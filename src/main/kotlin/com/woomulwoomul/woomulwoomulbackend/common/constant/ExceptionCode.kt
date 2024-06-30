@@ -18,7 +18,7 @@ enum class ExceptionCode(
     CATEGORY_IDS_FIELD_REQUIRED(HttpStatus.BAD_REQUEST, "카테고리 ID는 필수 입력입니다."),
 
     // @Size, @ByteSize
-    USER_NICKNAME_SIZE_INVALID(HttpStatus.BAD_REQUEST, "회원 닉네임는 5~30자만 가능합니다."),
+    USER_NICKNAME_SIZE_INVALID(HttpStatus.BAD_REQUEST, "회원 닉네임는 2~30자만 가능합니다."),
     USER_IMAGE_URL_SIZE_INVALID(HttpStatus.BAD_REQUEST, "회원 이미지 URL은 0~500자만 가능합니다."),
     USER_INTRODUCTION_SIZE_INVALID(HttpStatus.BAD_REQUEST, "회원 소개글은 0~30자만 가능합니다."),
     QUESTION_TEXT_BYTE_SIZE_INVALID(HttpStatus.BAD_REQUEST, "질문 내용은 1~60 바이트만 가능합니다."),

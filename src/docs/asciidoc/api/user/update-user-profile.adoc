@@ -20,7 +20,7 @@ include::{snippets}/user/update-user-profile/response-fields.adoc[]
 ----
 {
   "code" : "USER_NICKNAME_SIZE_INVALID",
-  "message" : "회원 닉네임는 5~30자만 가능합니다."
+  "message" : "회원 닉네임는 2~30자만 가능합니다."
 }
 ----
 ----
