@@ -1,13 +1,14 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllCategoryResponse
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
+import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.tuple
+import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -60,7 +61,7 @@ class AnswerServiceTest(
         val pageRequest = PageRequest.of(0, 1)
 
         // when
-        val response = answerService.getAllAnswers(user.id!!, pageRequest)
+        val response = answerService.getAllAnswers(admin.id!!, user.id!!, pageRequest)
 
         // then
         assertAll(
@@ -85,12 +86,13 @@ class AnswerServiceTest(
     @Test
     fun givenNonExistingAnswer_whenGetAllAnswers_thenReturn() {
         // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
 
         val pageRequest = PageRequest.of(0, 1)
 
         // when
-        val response = answerService.getAllAnswers(user.id!!, pageRequest)
+        val response = answerService.getAllAnswers(admin.id!!, user.id!!, pageRequest)
 
         // then
         assertAll(
@@ -101,6 +103,38 @@ class AnswerServiceTest(
                 assertThat(response.data).isEmpty()
             }
         )
+    }
+
+    @DisplayName("존재하지 않은 회원 답변 전체 조회를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingUser_whenGetAllAnswers_thenThrow() {
+        // given
+        val visitorUserId = 1L
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val pageRequest = PageRequest.of(0, 1)
+
+        // when & then
+        assertThatThrownBy { answerService.getAllAnswers(visitorUserId, user.id!!, pageRequest) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ExceptionCode.USER_NOT_FOUND)
+    }
+
+    @DisplayName("존재하지 않은 방문자 회원으로 회원 답변 전체 조회를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingVisitorUser_whenGetAllAnswers_thenThrow() {
+        // given
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+        val userId = 1L
+
+        val pageRequest = PageRequest.of(0, 1)
+
+        // when & then
+        assertThatThrownBy { answerService.getAllAnswers(user.id!!, userId, pageRequest) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ExceptionCode.USER_NOT_FOUND)
     }
 
     private fun createAndSaveAnswer(questionAnswer: QuestionAnswerEntity, text: String, imageUrl: String): AnswerEntity {

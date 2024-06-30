@@ -36,7 +36,7 @@ class AnswerControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllAnswers_thenReturn200() {
         // given
-        `when`(answerService.getAllAnswers(anyLong(), any()))
+        `when`(answerService.getAllAnswers(anyLong(), anyLong(), any()))
             .thenReturn(PageData(
                 listOf(
                     AnswerFindAllResponse(1L, 1L, "0F0F0F", listOf(

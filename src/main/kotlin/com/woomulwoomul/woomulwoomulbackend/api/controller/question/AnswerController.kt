@@ -6,6 +6,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.FOUND_USER_ANSWER
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
+import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,7 +27,7 @@ class AnswerController(
                       @RequestParam(required = false, name = "page-size", defaultValue = "10") pageSize: Long,
                       principal: Principal):
             ResponseEntity<DefaultPageResponse<AnswerFindAllResponse>> {
-        val response = answerService.getAllAnswers(userId, PageRequest.of(pageFrom, pageSize))
+        val response = answerService.getAllAnswers(UserUtils.getUserId(principal), userId, PageRequest.of(pageFrom, pageSize))
 
         return DefaultPageResponse.toResponseEntity(FOUND_USER_ANSWER, response)
     }

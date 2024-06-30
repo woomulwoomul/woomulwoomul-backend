@@ -59,7 +59,7 @@ CREATE TABLE user_provider
 
 CREATE TABLE user_visit
 (
-    user_visit                  BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_visit_id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     status                      VARCHAR(10)                 NOT NULL,
     create_date_time            DATETIME(6)                 NOT NULL,
     update_date_time            DATETIME(6)                 NOT NULL,
