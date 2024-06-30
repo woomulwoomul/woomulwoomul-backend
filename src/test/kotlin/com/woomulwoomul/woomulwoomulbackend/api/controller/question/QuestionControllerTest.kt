@@ -222,7 +222,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andExpect(status().isBadRequest)
             .andDo(
                 document(
-                    "question/create-user-question/question-text-field-required",
+                    "question/create-user-question/question-text-blank",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
@@ -258,7 +258,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andExpect(status().isBadRequest)
             .andDo(
                 document(
-                    "question/create-user-question/question-background-color-field-required",
+                    "question/create-user-question/question-background-color-blank",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(
@@ -294,7 +294,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .andExpect(status().isBadRequest)
             .andDo(
                 document(
-                    "question/create-user-question/category-ids-field-required",
+                    "question/create-user-question/category-ids-blank",
                     preprocessRequest(prettyPrint()),
                     preprocessResponse(prettyPrint()),
                     requestHeaders(

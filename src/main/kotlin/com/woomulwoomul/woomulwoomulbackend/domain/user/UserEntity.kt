@@ -13,12 +13,21 @@ class UserEntity(
     val id: Long? = null,
 
     @Column(nullable = false, length = 30, unique = true)
-    val nickname: String,
+    var nickname: String,
     @Column(nullable = false, length = 100, unique = true)
     val email: String,
     @Column(nullable = false, length = 500)
-    val imageUrl: String,
+    var imageUrl: String,
     @Column(length = 30)
-    val introduction: String? = null,
+    var introduction: String? = null,
 ) : BasePermanentEntity() {
+
+    /**
+     * 회원 프로필 업데이트
+     */
+    fun updateProfile(nickname: String, imageUrl: String, introduction: String?) {
+        this.nickname = nickname
+        this.imageUrl = imageUrl
+        this.introduction = introduction
+    }
 }

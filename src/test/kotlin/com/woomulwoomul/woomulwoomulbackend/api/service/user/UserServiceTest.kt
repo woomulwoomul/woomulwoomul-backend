@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode
+import com.woomulwoomul.woomulwoomulbackend.api.service.user.request.UserProfileUpdateServiceRequest
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
@@ -24,7 +25,7 @@ class UserServiceTest(
 
     @DisplayName("회원 프로필 조회가 정상 작동한다")
     @Test
-    fun given_whenGetUserProfile_thenReturn() {
+    fun givenValid_whenGetUserProfile_thenReturn() {
         // given
         val userRole = createAndSaveUserRole(USER)
 
@@ -40,7 +41,7 @@ class UserServiceTest(
 
     @DisplayName("존재하지 않은 회원 ID로 회원 프로필 조회를 하면 예외가 발생한다")
     @Test
-    fun given_whenGetUserProfile_thenThrow() {
+    fun givenNonExistingUserId_whenGetUserProfile_thenThrow() {
         // given
         val userId = Long.MAX_VALUE
 
@@ -48,7 +49,42 @@ class UserServiceTest(
         assertThatThrownBy { userService.getUserProfile(userId) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
-            .isEqualTo(ExceptionCode.USER_NOT_FOUND)
+            .isEqualTo(USER_NOT_FOUND)
+    }
+
+    @DisplayName("회원 프로필 업데이트가 정상 작동한다")
+    @Test
+    fun givenValid_whenUpdateUserProfile_thenReturn() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+
+        val request = createValidUserProfileUpdateServiceRequest()
+
+        // when
+        val response = userService.updateUserProfile(userRole.user.id!!, request)
+
+        // then
+        assertThat(response)
+            .extracting("userId", "nickname", "imageUrl", "introduction")
+            .containsExactly(userRole.user.id!!, userRole.user.nickname, request.userImageUrl, request.userIntroduction)
+    }
+
+    @DisplayName("존재하지 않은 회원 ID로 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingUser_whenUpdateUserProfile_thenThrow() {
+        // given
+        val userId = 1L
+        val request = createValidUserProfileUpdateServiceRequest()
+
+        // when & then
+        assertThatThrownBy { userService.updateUserProfile(userId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(USER_NOT_FOUND)
+    }
+
+    private fun createValidUserProfileUpdateServiceRequest(): UserProfileUpdateServiceRequest {
+        return UserProfileUpdateServiceRequest("woomul", "https://www.google.com", "")
     }
 
     private fun createAndSaveUserRole(

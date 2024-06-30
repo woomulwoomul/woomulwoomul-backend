@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question
 
-import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.base.BaseDetailPermanentEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.INCOMPLETE
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
 
@@ -28,4 +29,4 @@ class QuestionAnswerEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
     val answer: AnswerEntity,
-) : BasePermanentEntity()
+) : BaseDetailPermanentEntity(INCOMPLETE)

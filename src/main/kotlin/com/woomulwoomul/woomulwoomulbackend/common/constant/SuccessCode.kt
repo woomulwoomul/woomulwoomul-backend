@@ -27,6 +27,7 @@ enum class SuccessCode(
 
     // 200 Ok
     USER_PROFILE_FOUND(OK, "회원 프로필 조회를 완료했습니다."),
+    USER_PROFILE_UPDATED(OK, "회원 프로필 업데이트를 완료했습니다."),
 
     /**
      * Auth Controller
