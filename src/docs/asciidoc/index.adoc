@@ -25,4 +25,6 @@ include::api/question/create-user-question.adoc[]
 
 [[User-API]]
 === User API
+include::api/user/get-user-profile.adoc[]
+include::api/user/update-user-profile.adoc[]
 
