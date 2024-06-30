@@ -10,7 +10,7 @@ class UserUtils {
         private val threadLocalRandom = ThreadLocalRandom.current()
 
         fun generateRandomNickname(email: String): String {
-            return email.split("@")[0].plus(threadLocalRandom.nextInt(1, 1000))
+            return email.split("@")[0].plus("_").plus(threadLocalRandom.nextInt(1, 1000))
         }
 
         fun getUserId(principal: Principal): Long {
