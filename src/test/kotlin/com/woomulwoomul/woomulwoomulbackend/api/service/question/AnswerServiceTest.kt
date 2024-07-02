@@ -2,6 +2,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllCategoryResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.ANSWER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus
@@ -9,7 +10,7 @@ import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import org.assertj.core.api.Assertions.*
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -46,7 +47,6 @@ class AnswerServiceTest(
             createAndSaveQuestion(categories, admin, "질문1"),
             createAndSaveQuestion(categories, admin, "질문2"),
             createAndSaveQuestion(categories, admin, "질문3")
-
         )
         val questionAnswers = listOf(
             createAndSaveQuestionAnswer(user, admin, questions[0]),
@@ -135,6 +135,63 @@ class AnswerServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(ExceptionCode.USER_NOT_FOUND)
+    }
+
+    @DisplayName("답변 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenGetAnswer_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변1", "")
+
+        // when
+        val response = answerService.getAnswer(user.id!!, answer.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(response)
+                    .extracting("answerId", "answerText", "answerImageUrl", "answerUpdateDateTime", "answeredUserCnt",
+                        "answeredUserImageUrls", "questionId", "questionText", "questionBackgroundColor")
+                    .containsExactly(answer.id, answer.text, answer.imageUrl, answer.updateDateTime, 1L,
+                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor)
+            },
+            {
+                assertThat(response.categories)
+                    .extracting("categoryId", "name")
+                    .containsExactly(
+                        tuple(categories[0].id, categories[0].name),
+                        tuple(categories[1].id, categories[1].name),
+                        tuple(categories[2].id, categories[2].name)
+                    )
+            }
+        )
+    }
+
+    @DisplayName("존재하지 않는 답변을 조회하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingAnswer_whenGetAnswer_thenThrow() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val answerId = 1L
+
+        // when & then
+        assertThatThrownBy { answerService.getAnswer(user.id!!, answerId) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ANSWER_NOT_FOUND)
     }
 
     private fun createAndSaveAnswer(questionAnswer: QuestionAnswerEntity, text: String, imageUrl: String): AnswerEntity {

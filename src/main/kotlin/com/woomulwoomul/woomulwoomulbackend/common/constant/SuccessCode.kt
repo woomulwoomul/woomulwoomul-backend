@@ -15,7 +15,8 @@ enum class SuccessCode(
     // 201 Created
 
     // 200 Ok
-    FOUND_USER_ANSWER(OK, "회원 답변 전체 조회를 완료했습니다."),
+    FOUND_USER_ANSWERS(OK, "회원 답변 전체 조회를 완료했습니다."),
+    FOUND_USER_ANSWER(OK, "회원 답변 조회를 완료했습니다."),
 
     /**
      * Question Controller
@@ -41,11 +42,11 @@ enum class SuccessCode(
      * Auth Controller
      */
     // 200 Ok
-    OAUTH2_LOGIN(HttpStatus.OK, "SNS 로그인을 했습니다."),
+    OAUTH2_LOGIN(OK, "SNS 로그인을 했습니다."),
 
     /**
      * Develop Controller
      */
     // 200 Ok
-    SERVER_OK(HttpStatus.OK, "헬스 체크를 했습니다."),
+    SERVER_OK(OK, "헬스 체크를 했습니다."),
 }

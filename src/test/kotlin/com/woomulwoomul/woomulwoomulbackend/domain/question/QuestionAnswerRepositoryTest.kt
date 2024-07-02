@@ -26,7 +26,7 @@ class QuestionAnswerRepositoryTest(
     @Autowired private val answerRepository: AnswerRepository,
 ) {
 
-    @DisplayName("질문 ID로 질문 카테고리 조회를 하면 정상 작동한다")
+    @DisplayName("질문 ID와 회원 ID로 질문 답변 전체 조회가 정상 작동한다")
     @Test
     fun givenValid_whenFindAllAnswered_thenReturn() {
         // given
@@ -66,9 +66,10 @@ class QuestionAnswerRepositoryTest(
             },
             {
                 assertThat(foundQuestionAnswers.data)
-                    .extracting("status", "createDateTime", "updateDateTime")
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        tuple(questionAnswers[1].status, questionAnswers[1].createDateTime, questionAnswers[1].updateDateTime),
+                        tuple(questionAnswers[1].id, questionAnswers[1].status, questionAnswers[1].createDateTime,
+                            questionAnswers[1].updateDateTime),
                     )
             },
             {
@@ -111,6 +112,134 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
+    @DisplayName("질문 ID와 회원 ID로 질문 답변 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindAnswered_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user = createAndSaveUser("user", "user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변1", "")
+
+        // when
+        val foundQuestionAnswer = questionAnswerRepository.findAnswered(user.id!!, answer.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionAnswer)
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.id, questionAnswer.status, questionAnswer.createDateTime,
+                            questionAnswer.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.receiver)
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(questionAnswer.receiver.id, questionAnswer.receiver.nickname,
+                            questionAnswer.receiver.email, questionAnswer.receiver.imageUrl,
+                            questionAnswer.receiver.introduction, questionAnswer.receiver.status,
+                            questionAnswer.receiver.createDateTime, questionAnswer.receiver.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.sender)
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(questionAnswer.sender.id, questionAnswer.sender.nickname,
+                            questionAnswer.sender.email, questionAnswer.sender.imageUrl,
+                            questionAnswer.sender.introduction, questionAnswer.sender.status,
+                            questionAnswer.sender.createDateTime, questionAnswer.sender.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.question)
+                    .extracting("id", "text", "backgroundColor", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.question.id, questionAnswer.question.text,
+                        questionAnswer.question.backgroundColor, questionAnswer.question.status,
+                        questionAnswer.question.createDateTime, questionAnswer.question.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.answer)
+                    .extracting("id", "text", "imageUrl", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.answer!!.id, questionAnswer.answer!!.text,
+                        questionAnswer.answer!!.imageUrl, questionAnswer.answer!!.status,
+                        questionAnswer.answer!!.createDateTime, questionAnswer.answer!!.updateDateTime)
+            }
+        )
+    }
+
+    @DisplayName("질문 ID로 답변한 회원들의 프로필 이미지들 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindRandomAnsweredUserImageUrls_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
+        val user2 = createAndSaveUser("user2", "user2@woomulwoomul.com")
+        val user3 = createAndSaveUser("user3", "user3@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswers = listOf(
+            createAndSaveQuestionAnswer(user1, admin, question),
+            createAndSaveQuestionAnswer(user2, admin, question),
+            createAndSaveQuestionAnswer(user3, admin, question),
+        )
+        val answers = listOf(
+            createAndSaveAnswer(questionAnswers[0], "답변1", ""),
+            createAndSaveAnswer(questionAnswers[1], "답변2", ""),
+            createAndSaveAnswer(questionAnswers[2], "답변3", "")
+        )
+
+        // when
+        val randomAnsweredImageUrls = questionAnswerRepository.findRandomAnsweredUserImageUrls(question.id!!, 3L)
+
+        // then
+        assertThat(randomAnsweredImageUrls).containsExactlyInAnyOrder(user1.imageUrl, user2.imageUrl, user3.imageUrl)
+    }
+
+    @DisplayName("질문 ID로 답변한 회원들수 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenCountAnsweredUser_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
+        val user2 = createAndSaveUser("user2", "user2@woomulwoomul.com")
+        val user3 = createAndSaveUser("user3", "user3@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswers = listOf(
+            createAndSaveQuestionAnswer(user1, admin, question),
+            createAndSaveQuestionAnswer(user2, admin, question),
+            createAndSaveQuestionAnswer(user3, admin, question),
+        )
+        val answers = listOf(
+            createAndSaveAnswer(questionAnswers[0], "답변1", ""),
+            createAndSaveAnswer(questionAnswers[1], "답변2", ""),
+            createAndSaveAnswer(questionAnswers[2], "답변3", "")
+        )
+
+        // when
+        val answeredUserCnt = questionAnswerRepository.countAnsweredUser(question.id!!)
+
+        // then
+        assertThat(answeredUserCnt).isEqualTo(answers.size.toLong())
+    }
+
     private fun createAndSaveAnswer(questionAnswer: QuestionAnswerEntity, text: String, imageUrl: String): AnswerEntity {
         val answer = answerRepository.save(AnswerEntity(text = text, imageUrl = imageUrl))
 
@@ -148,9 +277,7 @@ class QuestionAnswerRepositoryTest(
     }
 
     private fun createAndSaveCategory(admin: UserEntity, name: String): CategoryEntity {
-        return categoryRepository.save(
-            CategoryEntity(admin = admin, name = name,)
-        )
+        return categoryRepository.save(CategoryEntity(admin = admin, name = name))
     }
 
     private fun createAndSaveUser(nickname: String, email: String): UserEntity {

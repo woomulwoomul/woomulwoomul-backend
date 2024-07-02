@@ -1,6 +1,9 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllResponse
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindResponse
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.ANSWER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
@@ -23,6 +26,8 @@ class AnswerService(
     private val userVisitRepository: UserVisitRepository,
     private val userRepository: UserRepository,
 ) {
+
+    private val ANSWERED_USER_CONST = 3L
 
     /**
      * 답변 전체 조회
@@ -51,5 +56,31 @@ class AnswerService(
         }
 
         return PageData(responses, questionAnswers.total)
+    }
+
+    /**
+     * 답변 조회
+     * @param userId 회원 ID
+     * @param answerId 답변 ID
+     * @throws ANSWER_NOT_FOUND 404
+     * @return 답변 응답
+     */
+    fun getAnswer(userId: Long, answerId: Long): AnswerFindResponse {
+        val questionAnswer = questionAnswerRepository.findAnswered(userId, answerId)
+            ?: throw CustomException(ANSWER_NOT_FOUND)
+        val questionCategories = questionCategoryRepository.findByQuestionIds(listOf(questionAnswer.question.id!!))
+
+        val randomAnsweredImageUrls = questionAnswerRepository.findRandomAnsweredUserImageUrls(
+            questionAnswer.question.id,
+            ANSWERED_USER_CONST
+        )
+        val answeredUserCnt = questionAnswerRepository.countAnsweredUser(questionAnswer.question.id)
+
+        return AnswerFindResponse(
+            questionAnswer,
+            answeredUserCnt,
+            randomAnsweredImageUrls,
+            questionCategories.map { it.category }
+        )
     }
 }
