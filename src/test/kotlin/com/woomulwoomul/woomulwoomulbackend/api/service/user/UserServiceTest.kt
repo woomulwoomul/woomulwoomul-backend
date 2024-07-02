@@ -12,8 +12,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -150,6 +152,62 @@ class UserServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(USER_NOT_FOUND)
+    }
+
+    @DisplayName("회원 이미지 업로드가 정상 작동한다")
+    @Test
+    fun givenValid_whenUploadImage_thenReturn() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
+
+        // when
+        val response = userService.uploadImage(userRole.user.id!!, file)
+
+        // then
+        assertThat(response).isNotNull
+    }
+
+    @DisplayName("파일 없이 회원 이미지 업로드를 하면 예외가 발생한다")
+    @Test
+    fun givenNullFile_whenUploadImage_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+        val file: MultipartFile? = null
+
+        // when & then
+        assertThatThrownBy { userService.uploadImage(userRole.user.id!!, file) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(FILE_FIELD_REQUIRED)
+    }
+
+    @DisplayName("존재하지 않는 회원 ID로 회원 이미지 업로드를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingUser_whenUploadImage_thenThrow() {
+        // given
+        val userId = 1L
+        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
+
+        // when & then
+        assertThatThrownBy { userService.uploadImage(userId, file) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(USER_NOT_FOUND)
+    }
+
+    @DisplayName("존재하지 않는 회원 ID로 회원 이미지 업로드를 하면 예외가 발생한다")
+    @Test
+    fun givenUnsupportedImageType_whenUploadImage_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+        val file = MockMultipartFile("file", "file.doc", "file/doc", ByteArray(1))
+
+        // when & then
+        assertThatThrownBy { userService.uploadImage(userRole.user.id!!, file) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(IMAGE_TYPE_UNSUPPORTED)
     }
 
     private fun createValidUserProfileUpdateServiceRequest(): UserProfileUpdateServiceRequest {

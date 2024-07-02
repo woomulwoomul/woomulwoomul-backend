@@ -21,6 +21,7 @@ include::api/auth/oauth-login.adoc[]
 === User API
 include::api/user/get-user-profile.adoc[]
 include::api/user/update-user-profile.adoc[]
+include::api/user/upload-image.adoc[]
 
 [[Question-API]]
 === Question API

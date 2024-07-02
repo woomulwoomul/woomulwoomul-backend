@@ -7,13 +7,19 @@ import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetPro
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserProfileUpdateResponse
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE
+import org.springframework.mock.web.MockMultipartFile
+import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
+import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
@@ -190,6 +196,44 @@ class UserControllerTest : RestDocsSupport() {
                         fieldWithPath("userIntroduction").type(JsonFieldType.STRING)
                             .description("회원 소개"),
                     ),
+                )
+            )
+    }
+
+    @DisplayName("회원 이미지 업로드를 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenUploadImage_thenReturn200() {
+        // given
+        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
+
+        `when`(userService.uploadImage(anyLong(), Mockito.any()))
+            .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640")
+
+        // when & then
+        mockMvc.perform(
+            MockMvcRequestBuilders.post("/api/users/image")
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+                .contentType(MULTIPART_FORM_DATA_VALUE)
+                .param("file", file.toString())
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "user/upload-image",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                        fieldWithPath("data").type(JsonFieldType.STRING)
+                            .description("데이터")
+                    )
                 )
             )
     }
