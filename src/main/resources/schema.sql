@@ -17,7 +17,7 @@ CREATE TABLE users
     nickname                    VARCHAR(30)                 NOT NULL,
     email                       VARCHAR(100)                NOT NULL,
     image_url                   VARCHAR(500)                NOT NULL,
-    introduction                VARCHAR(30),
+    introduction                VARCHAR(60),
     status                      VARCHAR(10)                 NOT NULL,
     create_date_time            DATETIME(6)                 NOT NULL,
     update_date_time            DATETIME(6)                 NOT NULL,

@@ -18,7 +18,7 @@ class UserEntity(
     val email: String,
     @Column(nullable = false, length = 500)
     var imageUrl: String,
-    @Column(length = 30)
+    @Column(length = 60)
     var introduction: String? = null,
 ) : BasePermanentEntity() {
 

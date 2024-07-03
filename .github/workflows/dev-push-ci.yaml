@@ -52,7 +52,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_check_run: false
           publish_only_summary: true
-          minimum_coverage: 1
+          minimum_coverage: 70
           fail_below_threshold: true
 
       - name: Add Coverage Job Summary
