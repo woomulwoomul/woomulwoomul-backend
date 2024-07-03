@@ -20,8 +20,8 @@ include::{snippets}/question/create-user-question/response-fields.adoc[]
 ----
 ----
 {
-  "code" : "QUESTION_TEXT_BYTE_SIZE_INVALID",
-  "message" : "질문 내용은 1~60 바이트만 가능합니다."
+  "code" : "QUESTION_TEXT_SIZE_INVALID",
+  "message" : "질문 내용은 1~60자만 가능합니다."
 }
 ----
 ----

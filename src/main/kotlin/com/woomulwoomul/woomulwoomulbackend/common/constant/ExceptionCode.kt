@@ -20,9 +20,9 @@ enum class ExceptionCode(
 
     // @Size, @ByteSize
     USER_NICKNAME_SIZE_INVALID(BAD_REQUEST, "회원 닉네임는 2~30자만 가능합니다."),
-    USER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "회원 이미지 URL은 0~500자만 가능합니다."),
-    USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0~30자만 가능합니다."),
-    QUESTION_TEXT_BYTE_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1~60 바이트만 가능합니다."),
+    USER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "회원 이미지 URL은 1~500자만 가능합니다."),
+    USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0~60자만 가능합니다."),
+    QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1~60자만 가능합니다."),
     QUESTION_BACKGROUND_COLOR_SIZE_INVALID(BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
 
     // @Pattern, @Email

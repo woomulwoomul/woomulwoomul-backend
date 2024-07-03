@@ -106,6 +106,23 @@ class UserServiceTest(
             .contains(USER_NICKNAME_SIZE_INVALID.message)
     }
 
+    @DisplayName("회원 이미지 URL이 1자 미만일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenUserImageUrlLesserThan1Size_whenUpdateUserProfile_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+
+        val request = createValidUserProfileUpdateServiceRequest()
+        request.userImageUrl = ""
+
+        // when & then
+        assertThatThrownBy { userService.updateUserProfile(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(USER_IMAGE_URL_SIZE_INVALID.message)
+    }
+
     @DisplayName("회원 이미지 URL이 500자 초과일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
     @Test
     fun givenUserImageUrlGreaterThan500Size_whenUpdateUserProfile_thenThrow() {
@@ -123,14 +140,14 @@ class UserServiceTest(
             .contains(USER_IMAGE_URL_SIZE_INVALID.message)
     }
 
-    @DisplayName("회원 소개글이 30자 초과일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
+    @DisplayName("회원 소개글이 60자 초과일 경우 회원 프로필 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenUserIntroductionGreaterThan500Size_whenUpdateUserProfile_thenThrow() {
+    fun givenUserIntroductionGreaterThan60Size_whenUpdateUserProfile_thenThrow() {
         // given
         val userRole = createAndSaveUserRole(USER)
 
         val request = createValidUserProfileUpdateServiceRequest()
-        request.userIntroduction = "a".repeat(31)
+        request.userIntroduction = "a".repeat(61)
 
         // when & then
         assertThatThrownBy { userService.updateUserProfile(userRole.user.id!!, request) }

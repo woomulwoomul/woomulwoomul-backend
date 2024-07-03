@@ -249,12 +249,12 @@ class QuestionServiceTest(
             .isInstanceOf(ConstraintViolationException::class.java)
             .message()
             .asString()
-            .contains(QUESTION_TEXT_BYTE_SIZE_INVALID.message)
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
-    @DisplayName("질문 내용 60바이트 초과로 회원 질문 생성을 하면 예외를 던진다")
+    @DisplayName("질문 내용 1자 미만으로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenGreaterThan60ByteSizeQuestionText_whenCreateUserQuestion_thenThrows() {
+    fun givenLesserThan1SizeQuestionText_whenCreateUserQuestion_thenThrows() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -268,14 +268,40 @@ class QuestionServiceTest(
             .toList()
 
         val request = createValidQuestionUserCreateServiceRequest(categoryIds)
-        request.questionText = "가".repeat(31)
+        request.questionText = ""
 
         // when & then
         assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
             .isInstanceOf(ConstraintViolationException::class.java)
             .message()
             .asString()
-            .contains(QUESTION_TEXT_BYTE_SIZE_INVALID.message)
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
+    }
+
+    @DisplayName("질문 내용 60자 초과로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenGreaterThan60SizeQuestionText_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+        request.questionText = "가".repeat(61)
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
     @DisplayName("질문 배경 색상 6자 미만으로 회원 질문 생성을 하면 예외를 던진다")
