@@ -201,20 +201,6 @@ class UserServiceTest(
 
     @DisplayName("존재하지 않는 회원 ID로 회원 이미지 업로드를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingUser_whenUploadImage_thenThrow() {
-        // given
-        val userId = 1L
-        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
-
-        // when & then
-        assertThatThrownBy { userService.uploadImage(userId, file) }
-            .isInstanceOf(CustomException::class.java)
-            .extracting("exceptionCode")
-            .isEqualTo(USER_NOT_FOUND)
-    }
-
-    @DisplayName("존재하지 않는 회원 ID로 회원 이미지 업로드를 하면 예외가 발생한다")
-    @Test
     fun givenUnsupportedImageType_whenUploadImage_thenThrow() {
         // given
         val userRole = createAndSaveUserRole(USER)

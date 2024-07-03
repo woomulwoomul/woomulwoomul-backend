@@ -55,15 +55,12 @@ class UserService(
      * @param userId 회원 식별자
      * @param file 파일
      * @throws FILE_FIELD_REQUIRED 400
-     * @throws USER_NOT_FOUND 404
      * @throws IMAGE_TYPE_UNSUPPORTED 415
      * @throws SERVER_ERROR 500
      * @return 회원 이미지 업로드 응답
      */
     @Transactional
     fun uploadImage(userId: Long, file: MultipartFile?): String {
-        val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
-
         return s3Service.uploadFile(file, "users/$userId", UUID.randomUUID().toString())
     }
 }
