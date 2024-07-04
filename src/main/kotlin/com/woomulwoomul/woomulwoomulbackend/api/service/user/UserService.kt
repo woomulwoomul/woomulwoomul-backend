@@ -52,7 +52,7 @@ class UserService(
 
     /**
      * 회원 이미지 업로드
-     * @param userId 회원 식별자
+     * @param userId 회원 ID
      * @param file 파일
      * @throws FILE_FIELD_REQUIRED 400
      * @throws IMAGE_TYPE_UNSUPPORTED 415

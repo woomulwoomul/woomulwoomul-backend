@@ -16,8 +16,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.multipart.MultipartFile
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -409,6 +411,54 @@ class AnswerServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(QUESTION_NOT_FOUND)
+    }
+
+    @DisplayName("답변 이미지 업로드가 정상 작동한다")
+    @Test
+    fun givenValid_whenUploadImage_thenReturn() {
+        // given
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+        val questionId = 1L
+
+        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
+
+        // when
+        val response = answerService.uploadImage(user.id!!, questionId, file)
+
+        // then
+        assertThat(response).isNotNull()
+    }
+
+    @DisplayName("파일 없이 답변 이미지 업로드를 하면 예외가 발생한다")
+    @Test
+    fun givenNullFile_whenUploadImage_thenReturn() {
+        // given
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+        val questionId = 1L
+
+        val file: MultipartFile? = null
+
+        // when & then
+        assertThatThrownBy { answerService.uploadImage(user.id!!, questionId, file) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(FILE_FIELD_REQUIRED)
+    }
+
+    @DisplayName("지원하지 않는 파일 타입으로 답변 이미지 업로드를 하면 예외가 발생한다")
+    @Test
+    fun givenUnsupportedImageType_whenUploadImage_thenThrow() {
+        // given
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+        val questionId = 1L
+
+        val file = MockMultipartFile("file", "file.doc", "file/doc", ByteArray(1))
+
+        // when & then
+        assertThatThrownBy { answerService.uploadImage(user.id!!, questionId, file) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(IMAGE_TYPE_UNSUPPORTED)
     }
 
     private fun createValidAnswerCreateServiceRequest(): AnswerCreateServiceRequest {

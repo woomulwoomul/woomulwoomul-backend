@@ -4,6 +4,7 @@ import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.AnswerC
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerCreateResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindResponse
+import com.woomulwoomul.woomulwoomulbackend.api.service.s3.S3Service
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.constant.NotificationConstants.ANSWER
 import com.woomulwoomul.woomulwoomulbackend.common.constant.NotificationConstants.FOLLOW
@@ -24,18 +25,21 @@ import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.multipart.MultipartFile
+import java.util.*
 
 @Service
 @Validated
 @Transactional(readOnly = true)
 class AnswerService(
+    private val s3Service: S3Service,
     private val questionAnswerRepository: QuestionAnswerRepository,
     private val questionCategoryRepository: QuestionCategoryRepository,
     private val userVisitRepository: UserVisitRepository,
     private val userRepository: UserRepository,
-    private val questionRepository: QuestionRepository,
     private val answerRepository: AnswerRepository,
-    private val followRepository: FollowRepository, private val notificationRepository: NotificationRepository,
+    private val followRepository: FollowRepository,
+    private val notificationRepository: NotificationRepository,
 ) {
 
     private val ANSWERED_USER_CONST = 3L
@@ -161,5 +165,24 @@ class AnswerService(
         )
 
         return AnswerCreateResponse(receiver, question, categories)
+    }
+
+    /**
+     * 답변 이미지 업로드
+     * @param userId 회원 ID
+     * @param questionId 질문 ID
+     * @param file 파일
+     * @throws FILE_FIELD_REQUIRED 400
+     * @throws IMAGE_TYPE_UNSUPPORTED 415
+     * @throws SERVER_ERROR 500
+     * @return 답변 이미지 업로드 응답
+     *
+     */
+    fun uploadImage(userId: Long, questionId: Long, file: MultipartFile?): String {
+        return s3Service.uploadFile(
+            file,
+            "questions/$questionId",
+            userId.toString().plus(UUID.randomUUID().toString())
+        )
     }
 }

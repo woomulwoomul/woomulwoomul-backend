@@ -10,9 +10,11 @@ import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
 import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
 import jakarta.validation.Valid
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 import java.security.Principal
 
 @Validated
@@ -54,5 +56,15 @@ class AnswerController(
         )
 
         return DefaultSingleResponse.toResponseEntity(ANSWER_CREATED, response)
+    }
+
+    @PostMapping("/api/questions/{question-id}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun uploadImage(principal: Principal,
+                    @PathVariable(name = "question-id") questionId: Long,
+                    @RequestPart(required = false) file: MultipartFile?):
+            ResponseEntity<DefaultSingleResponse> {
+        val response = answerService.uploadImage(UserUtils.getUserId(principal), questionId, file)
+
+        return DefaultSingleResponse.toResponseEntity(ANSWER_IMAGE_UPLOADED, response)
     }
 }

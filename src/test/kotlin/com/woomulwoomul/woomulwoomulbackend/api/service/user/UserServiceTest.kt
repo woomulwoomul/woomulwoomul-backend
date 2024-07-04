@@ -182,7 +182,7 @@ class UserServiceTest(
         val response = userService.uploadImage(userRole.user.id!!, file)
 
         // then
-        assertThat(response).isNotNull
+        assertThat(response).isNotNull()
     }
 
     @DisplayName("파일 없이 회원 이미지 업로드를 하면 예외가 발생한다")
@@ -199,7 +199,7 @@ class UserServiceTest(
             .isEqualTo(FILE_FIELD_REQUIRED)
     }
 
-    @DisplayName("존재하지 않는 회원 ID로 회원 이미지 업로드를 하면 예외가 발생한다")
+    @DisplayName("지원하지 않는 파일 타입으로 회원 이미지 업로드를 하면 예외가 발생한다")
     @Test
     fun givenUnsupportedImageType_whenUploadImage_thenThrow() {
         // given
