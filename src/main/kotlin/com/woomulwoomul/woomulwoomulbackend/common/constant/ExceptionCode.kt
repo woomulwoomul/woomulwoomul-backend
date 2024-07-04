@@ -25,7 +25,7 @@ enum class ExceptionCode(
     QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1~60자만 가능합니다."),
     QUESTION_BACKGROUND_COLOR_SIZE_INVALID(BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
     ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0~280자만 가능합니다."),
-    ANSWER_IMAGE_URL_INVALID(BAD_REQUEST, "답변 이미지 URL은 0~500자만 가능합니다."),
+    ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0~500자만 가능합니다."),
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),

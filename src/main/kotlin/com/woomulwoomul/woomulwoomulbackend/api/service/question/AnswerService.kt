@@ -1,9 +1,11 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.AnswerCreateServiceRequest
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.AnswerUpdateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerCreateResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindResponse
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerUpdateResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.s3.S3Service
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.constant.NotificationConstants.ANSWER
@@ -109,6 +111,7 @@ class AnswerService(
      * @throws QUESTION_NOT_FOUND 404
      * @return 답변 작성 응답
      */
+    @Transactional
     fun createAnswer(receiverUserId: Long,
                      senderUserId: Long,
                      questionId: Long,
@@ -165,6 +168,36 @@ class AnswerService(
         )
 
         return AnswerCreateResponse(receiver, question, categories)
+    }
+
+    /**
+     * 답변 업데이트
+     * @param userId 회원 ID
+     * @param answerId 답변 ID
+     * @param request 답변 업데이트 요청
+     * @throws ANSWER_NOT_FOUND 404
+     * @return 답변 업데이트 응답
+     */
+    @Transactional
+    fun updateAnswer(userId: Long, answerId: Long, @Valid request: AnswerUpdateServiceRequest): AnswerUpdateResponse {
+        val questionAnswer = questionAnswerRepository.findAnswered(userId, answerId)
+            ?: throw CustomException(ANSWER_NOT_FOUND)
+        questionAnswer.answer!!.update(request.answerText, request.answerImageUrl)
+
+        val questionCategories = questionCategoryRepository.findByQuestionIds(listOf(questionAnswer.question.id!!))
+
+        val randomAnsweredImageUrls = questionAnswerRepository.findRandomAnsweredUserImageUrls(
+            questionAnswer.question.id,
+            ANSWERED_USER_CONST
+        )
+        val answeredUserCnt = questionAnswerRepository.countAnsweredUser(questionAnswer.question.id)
+
+        return AnswerUpdateResponse(
+            questionAnswer,
+            answeredUserCnt,
+            randomAnsweredImageUrls,
+            questionCategories.map { it.category }
+        )
     }
 
     /**

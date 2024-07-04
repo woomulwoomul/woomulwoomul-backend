@@ -2,6 +2,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.controller.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.controller.RestDocsSupport
 import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerCreateRequest
+import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerUpdateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.AnswerService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
@@ -21,8 +22,7 @@ import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
@@ -197,7 +197,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/{user-id}/answers/{answer-id}", 1, 1)
+            post("/api/users/{user-id}/questions/{question-id}", 1, 1)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -244,13 +244,94 @@ class AnswerControllerTest : RestDocsSupport() {
             )
     }
 
+    @DisplayName("답변 업데이트를 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenUpdateAnswer_thenReturn200() {
+        // given
+        `when`(answerService.updateAnswer(anyLong(), anyLong(), any()))
+            .thenReturn(
+                AnswerUpdateResponse(1L,
+                    "답변",
+                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                    LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+                    3L,
+                    listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                    1L,
+                    "질문",
+                    "0F0F0F",
+                    listOf(AnswerUpdateCategoryResponse(1L, "카테고리1"),
+                        AnswerUpdateCategoryResponse(2L, "카테고리2"),
+                        AnswerUpdateCategoryResponse(3L, "카테고리3")))
+            )
+
+        val request = createValidAnswerUpdateRequest()
+
+        // when & then
+        mockMvc.perform(
+            patch("/api/answers/{answer-id}", 1)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request))
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "answer/update-answer",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                    requestFields(
+                        fieldWithPath("answerText").type(JsonFieldType.STRING).optional()
+                            .description("답변 내용"),
+                        fieldWithPath("answerImageUrl").type(JsonFieldType.STRING).optional()
+                            .description("답변 이미지"),
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                            .description("데이터"),
+                        fieldWithPath("data.answerId").type(JsonFieldType.NUMBER)
+                            .description("답변 ID"),
+                        fieldWithPath("data.answerText").type(JsonFieldType.STRING).optional()
+                            .description("답변 내용"),
+                        fieldWithPath("data.answerImageUrl").type(JsonFieldType.STRING).optional()
+                            .description("답변 이미지"),
+                        fieldWithPath("data.answerUpdateDateTime").type(JsonFieldType.STRING)
+                            .description("답변 수정일"),
+                        fieldWithPath("data.answeredUserCnt").type(JsonFieldType.NUMBER)
+                            .description("답변한 회원수"),
+                        fieldWithPath("data.answeredUserImageUrls").type(JsonFieldType.ARRAY)
+                            .description("답변한 회원 프로필 이미지"),
+                        fieldWithPath("data.questionId").type(JsonFieldType.NUMBER)
+                            .description("질문 ID"),
+                        fieldWithPath("data.questionText").type(JsonFieldType.STRING)
+                            .description("질문 내용"),
+                        fieldWithPath("data.questionBackgroundColor").type(JsonFieldType.STRING)
+                            .description("질문 배경 색상"),
+                        fieldWithPath("data.categories").type(JsonFieldType.ARRAY)
+                            .description("카테고리들"),
+                        fieldWithPath("data.categories[].categoryId").type(JsonFieldType.NUMBER)
+                            .description("카테고리 ID"),
+                        fieldWithPath("data.categories[].name").type(JsonFieldType.STRING)
+                            .description("카테고리명"),
+                    )
+                )
+            )
+    }
+
     @DisplayName("답변 이미지 업로드를 하면 200을 반환한다")
     @Test
     fun givenValid_whenUploadImage_thenReturn200() {
         // given
         val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
 
-        `when`(answerService.uploadImage(anyLong(), anyLong(), Mockito.any()))
+        `when`(answerService.uploadImage(anyLong(), anyLong(), any()))
             .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640")
 
         // when & then
@@ -279,6 +360,10 @@ class AnswerControllerTest : RestDocsSupport() {
                     )
                 )
             )
+    }
+
+    private fun createValidAnswerUpdateRequest(): AnswerUpdateRequest {
+        return AnswerUpdateRequest("수정 답변", "")
     }
 
     private fun createValidAnswerCreateRequest(): AnswerCreateRequest {

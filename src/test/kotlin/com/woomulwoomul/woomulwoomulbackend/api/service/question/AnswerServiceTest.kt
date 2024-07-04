@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.AnswerCreateServiceRequest
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.AnswerUpdateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllCategoryResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
@@ -337,14 +338,14 @@ class AnswerServiceTest(
         val senderUserId = 2L
         val questionId = 1L
         val request = createValidAnswerCreateServiceRequest()
-        request.answerImageUrl = "a".repeat(5001)
+        request.answerImageUrl = "a".repeat(501)
 
         // when & then
         assertThatThrownBy { answerService.createAnswer(receiverUserId, senderUserId, questionId, request) }
             .isInstanceOf(ConstraintViolationException::class.java)
             .message()
             .asString()
-            .contains(ANSWER_IMAGE_URL_INVALID.message)
+            .contains(ANSWER_IMAGE_URL_SIZE_INVALID.message)
     }
 
     @DisplayName("존재하지 않는 수신자 회원의 질문에 답변 작성을 하면 예외가 발생한다")
@@ -413,6 +414,118 @@ class AnswerServiceTest(
             .isEqualTo(QUESTION_NOT_FOUND)
     }
 
+    @DisplayName("답변 업데이트가 정상 작동한다")
+    @Test
+    fun givenValid_whenUpdateAnswer_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변", "")
+
+        val request = createValidAnswerUpdateResponse()
+
+        // when
+        val response = answerService.updateAnswer(user.id!!, answer.id!!, request)
+
+        // then
+        assertAll(
+            {
+                assertThat(response)
+                    .extracting("answerId", "answerText", "answerImageUrl", "answerUpdateDateTime", "answeredUserCnt",
+                        "answeredUserImageUrls", "questionId", "questionText", "questionBackgroundColor")
+                    .containsExactly(answer.id, answer.text, answer.imageUrl, answer.updateDateTime, 1L,
+                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor)
+            },
+            {
+                assertThat(response.categories)
+                    .extracting("categoryId", "name")
+                    .containsExactly(
+                        tuple(categories[0].id, categories[0].name),
+                        tuple(categories[1].id, categories[1].name),
+                        tuple(categories[2].id, categories[2].name)
+                    )
+            }
+        )
+    }
+
+    @DisplayName("답변 내용이 280자 초과일시 답변 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan280SizeAnswerText_whenUpdateAnswer_thenThrow() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변", "")
+
+        val request = createValidAnswerUpdateResponse()
+        request.answerText = "a".repeat(281)
+
+        // when & then
+        assertThatThrownBy { answerService.updateAnswer(user.id!!, answer.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(ANSWER_TEXT_SIZE_INVALID.message)
+    }
+
+    @DisplayName("답변 이미지 URL이 501자 초과일시 답변 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan500SizeAnswerImageUrl_whenUpdateAnswer_thenThrow() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변", "")
+
+        val request = createValidAnswerUpdateResponse()
+        request.answerImageUrl = "a".repeat(501)
+
+        // when & then
+        assertThatThrownBy { answerService.updateAnswer(user.id!!, answer.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(ANSWER_IMAGE_URL_SIZE_INVALID.message)
+    }
+
+    @DisplayName("존재하지 않는 답변 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingAnswer_whenUpdateAnswer_thenThrow() {
+        // given
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+        val answerId = 1L
+
+        val request = createValidAnswerUpdateResponse()
+
+        // when & then
+        assertThatThrownBy { answerService.updateAnswer(user.id!!, answerId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ANSWER_NOT_FOUND)
+    }
+
     @DisplayName("답변 이미지 업로드가 정상 작동한다")
     @Test
     fun givenValid_whenUploadImage_thenReturn() {
@@ -459,6 +572,10 @@ class AnswerServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(IMAGE_TYPE_UNSUPPORTED)
+    }
+
+    private fun createValidAnswerUpdateResponse(): AnswerUpdateServiceRequest {
+        return AnswerUpdateServiceRequest("수정 답변", "")
     }
 
     private fun createValidAnswerCreateServiceRequest(): AnswerCreateServiceRequest {

@@ -13,7 +13,13 @@ class AnswerEntity(
     val id: Long? = null,
 
     @Column(length = 280)
-    val text: String,
+    var text: String,
     @Column(length = 500)
-    val imageUrl: String,
-) : BasePermanentEntity()
+    var imageUrl: String,
+) : BasePermanentEntity() {
+
+    fun update(text: String, imageUrl: String) {
+        this.text = text
+        this.imageUrl = imageUrl
+    }
+}

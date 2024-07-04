@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.api.controller.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerCreateRequest
+import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerUpdateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.AnswerService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
@@ -43,19 +44,30 @@ class AnswerController(
         return DefaultSingleResponse.toResponseEntity(FOUND_USER_ANSWER, response)
     }
 
-    @PostMapping("/api/users/{user-id}/answers/{answer-id}")
+    @PostMapping("/api/users/{user-id}/questions/{question-id}")
     fun createAnswer(principal: Principal,
                      @PathVariable(name = "user-id") userId: Long,
-                     @PathVariable(name = "answer-id") answerId: Long,
+                     @PathVariable(name = "question-id") questionId: Long,
                      @RequestBody @Valid request: AnswerCreateRequest): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.createAnswer(
             UserUtils.getUserId(principal),
             userId,
-            answerId,
+            questionId,
             request.toServiceRequest()
         )
 
         return DefaultSingleResponse.toResponseEntity(ANSWER_CREATED, response)
+    }
+
+    @PatchMapping("/api/answers/{answer-id}")
+    fun updateAnswer(
+        principal: Principal,
+        @PathVariable(name = "answer-id") answerId: Long,
+        @RequestBody @Valid request: AnswerUpdateRequest,
+    ): ResponseEntity<DefaultSingleResponse> {
+        val response = answerService.updateAnswer(UserUtils.getUserId(principal), answerId, request.toServiceRequest())
+
+        return DefaultSingleResponse.toResponseEntity(ANSWER_UPDATED, response)
     }
 
     @PostMapping("/api/questions/{question-id}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
