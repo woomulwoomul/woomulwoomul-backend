@@ -2,25 +2,30 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.question.response
 
 import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 
-data class QuestionFindResponse(
+data class AnswerCreateResponse(
+    val userId: Long,
+    val userNickname: String,
     val questionId: Long,
     val questionText: String,
-    val backgroundColor: String,
-    val categories: List<QuestionFindCategoryResponse>
+    val questionBackgroundColor: String,
+    val categories: List<AnswerCreateCategoryResponse>
 ) {
-    constructor(question: QuestionEntity, categories: Set<CategoryEntity>): this(
+    constructor(user: UserEntity, question: QuestionEntity, categories: Set<CategoryEntity>): this(
+        user.id ?: 0,
+        user.nickname,
         question.id ?: 0,
         question.text,
         question.backgroundColor,
         categories.ifEmpty { listOf() }
-            .map { QuestionFindCategoryResponse(it) }
+            .map { AnswerCreateCategoryResponse(it) }
     )
 }
 
-data class QuestionFindCategoryResponse(
+data class AnswerCreateCategoryResponse(
     val categoryId: Long,
-    val categoryName: String,
+    val name: String,
 ) {
     constructor(category: CategoryEntity): this(category.id ?: 0, category.name)
 }

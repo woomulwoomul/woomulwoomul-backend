@@ -39,7 +39,7 @@ class QuestionService(
         else questionCategoryRepository.findByQuestionIds(questionIds)
 
         val questionCategoryMap = questionCategories.groupBy { it.question }
-            .mapValues { (it, categories) -> categories.map { it.category }.toSet() }
+            .mapValues { (_, category) -> category.map { it.category }.toSet() }
 
         return questionCategoryMap.entries.map { (question, categories) ->
             QuestionFindResponse(question, categories)

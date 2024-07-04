@@ -157,7 +157,7 @@ class QuestionControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/questions")
+            post("/api/questions")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -213,7 +213,7 @@ class QuestionControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/questions")
+            post("/api/questions")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -249,7 +249,7 @@ class QuestionControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/questions")
+            post("/api/questions")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -285,7 +285,7 @@ class QuestionControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/questions")
+            post("/api/questions")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)

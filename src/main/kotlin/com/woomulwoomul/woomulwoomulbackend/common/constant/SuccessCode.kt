@@ -13,6 +13,7 @@ enum class SuccessCode(
      * Answer Controller
      */
     // 201 Created
+    ANSWER_CREATED(CREATED, "답변 작성을 완료했습니다."),
 
     // 200 Ok
     FOUND_USER_ANSWERS(OK, "회원 답변 전체 조회를 완료했습니다."),

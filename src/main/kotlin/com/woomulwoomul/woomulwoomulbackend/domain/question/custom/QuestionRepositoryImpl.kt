@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository
 @Repository
 class QuestionRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
-) {
+) : QuestionCustomRepository {
 }

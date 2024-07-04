@@ -1,19 +1,18 @@
 package com.woomulwoomul.woomulwoomulbackend.api.controller.question
 
+import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerCreateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.AnswerService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllResponse
-import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.FOUND_USER_ANSWER
-import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.FOUND_USER_ANSWERS
+import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
+import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
 import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 
 @Validated
@@ -40,5 +39,20 @@ class AnswerController(
         val response = answerService.getAnswer(userId, answerId)
 
         return DefaultSingleResponse.toResponseEntity(FOUND_USER_ANSWER, response)
+    }
+
+    @PostMapping("/api/users/{user-id}/answers/{answer-id}")
+    fun createAnswer(principal: Principal,
+                     @PathVariable(name = "user-id") userId: Long,
+                     @PathVariable(name = "answer-id") answerId: Long,
+                     @RequestBody @Valid request: AnswerCreateRequest): ResponseEntity<DefaultSingleResponse> {
+        val response = answerService.createAnswer(
+            UserUtils.getUserId(principal),
+            userId,
+            answerId,
+            request.toServiceRequest()
+        )
+
+        return DefaultSingleResponse.toResponseEntity(ANSWER_CREATED, response)
     }
 }

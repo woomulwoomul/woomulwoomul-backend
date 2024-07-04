@@ -8,6 +8,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultListResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
+import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
 import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
 import jakarta.validation.Valid
@@ -40,7 +41,7 @@ class QuestionController(
         return DefaultPageResponse.toResponseEntity(ALL_CATEGORIES_FOUND, response)
     }
 
-    @PostMapping("/api/users/questions")
+    @PostMapping("/api/questions")
     fun createUserQuestion(principal: Principal, @RequestBody @Valid request: QuestionUserCreateRequest)
     : ResponseEntity<DefaultSingleResponse> {
         val response = questionService.createUserQuestion(UserUtils.getUserId(principal), request.toServiceRequest())

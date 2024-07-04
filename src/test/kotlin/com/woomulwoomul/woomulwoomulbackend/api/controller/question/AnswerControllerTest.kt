@@ -1,11 +1,9 @@
 package com.woomulwoomul.woomulwoomulbackend.api.controller.question
 
 import com.woomulwoomul.woomulwoomulbackend.api.controller.RestDocsSupport
+import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerCreateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.AnswerService
-import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllCategoryResponse
-import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindAllResponse
-import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindCategoryResponse
-import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.AnswerFindResponse
+import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -15,14 +13,13 @@ import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
 import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
 import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
-import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
-import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
+import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
+import org.springframework.restdocs.payload.PayloadDocumentation.*
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
@@ -172,5 +169,79 @@ class AnswerControllerTest : RestDocsSupport() {
                     )
                 )
             )
+    }
+
+    @DisplayName("답변 작성를 하면 201을 반환한다")
+    @Test
+    fun givenValid_whenCreateAnswer_thenReturn201() {
+        // given
+        `when`(answerService.createAnswer(anyLong(), anyLong(), anyLong(), any()))
+            .thenReturn(
+                AnswerCreateResponse(
+                    1L,
+                    "tester",
+                    1L,
+                    "질문",
+                    "0F0F0F",
+                    listOf(
+                        AnswerCreateCategoryResponse(1L, "카테고리1"),
+                        AnswerCreateCategoryResponse(2L, "카테고리2"),
+                        AnswerCreateCategoryResponse(3L, "카테고리3")
+                    )
+            ))
+
+        val request = createValidAnswerCreateRequest()
+
+        // when & then
+        mockMvc.perform(
+            post("/api/users/{user-id}/answers/{answer-id}", 1, 1)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+                .content(objectMapper.writeValueAsString(request))
+        ).andDo(print())
+            .andExpect(status().isCreated)
+            .andDo(
+                document(
+                    "answer/create-answer",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                    requestFields(
+                        fieldWithPath("answerText").type(JsonFieldType.STRING).optional()
+                            .description("답변 내용"),
+                        fieldWithPath("answerImageUrl").type(JsonFieldType.STRING).optional()
+                            .description("답변 이미지"),
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                            .description("데이터"),
+                        fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
+                            .description("회원 ID"),
+                        fieldWithPath("data.userNickname").type(JsonFieldType.STRING)
+                            .description("회원 닉네임"),
+                        fieldWithPath("data.questionId").type(JsonFieldType.NUMBER)
+                            .description("질문 ID"),
+                        fieldWithPath("data.questionText").type(JsonFieldType.STRING)
+                            .description("질문 내용"),
+                        fieldWithPath("data.questionBackgroundColor").type(JsonFieldType.STRING)
+                            .description("질문 배경 색상"),
+                        fieldWithPath("data.categories").type(JsonFieldType.ARRAY)
+                            .description("카테고리들"),
+                        fieldWithPath("data.categories[].categoryId").type(JsonFieldType.NUMBER)
+                            .description("카테고리 ID"),
+                        fieldWithPath("data.categories[].name").type(JsonFieldType.STRING)
+                            .description("카테고리명")
+                    )
+                )
+            )
+    }
+
+    private fun createValidAnswerCreateRequest(): AnswerCreateRequest {
+        return AnswerCreateRequest("답변", "")
     }
 }

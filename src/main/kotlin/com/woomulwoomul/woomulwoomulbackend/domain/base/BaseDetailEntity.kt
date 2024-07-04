@@ -7,7 +7,7 @@ import jakarta.persistence.MappedSuperclass
 import java.time.LocalDateTime
 
 @MappedSuperclass
-abstract class BaseDetailPermanentEntity(
+abstract class BaseDetailEntity(
 
     @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)

@@ -9,6 +9,7 @@ import com.woomulwoomul.woomulwoomulbackend.domain.question.QCategoryEntity.cate
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QQuestionCategoryEntity.questionCategoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QQuestionEntity.questionEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity.userEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserRoleEntity.userRoleEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.ADMIN
@@ -34,6 +35,24 @@ class QuestionCategoryRepositoryImpl(
             .where(
                 questionCategoryEntity.status.eq(ACTIVE),
                 inQuestionId(questionIds)
+            ).fetch()
+    }
+
+    override fun findByQuestionId(questionId: Long): List<QuestionCategoryEntity> {
+        return queryFactory
+            .select(questionCategoryEntity)
+            .from(questionCategoryEntity)
+            .innerJoin(questionEntity)
+            .on(questionEntity.id.eq(questionCategoryEntity.question.id)
+                .and(questionEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .innerJoin(categoryEntity)
+            .on(categoryEntity.id.eq(questionCategoryEntity.category.id)
+                .and(categoryEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .where(
+                questionCategoryEntity.question.id.eq(questionId),
+                questionCategoryEntity.status.eq(ACTIVE)
             ).fetch()
     }
 

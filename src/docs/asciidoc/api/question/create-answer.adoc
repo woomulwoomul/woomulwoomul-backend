@@ -1,0 +1,70 @@
+[[create-answer]]
+=== 답변 작성
+
+==== HTTP Request
+include::{snippets}/answer/create-answer/http-request.adoc[]
+include::{snippets}/answer/create-answer/request-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/answer/create-answer/http-response.adoc[]
+include::{snippets}/answer/create-answer/response-fields.adoc[]
+
+==== Exception
+
+===== 400
+----
+{
+  "code" : "ANSWER_FIELD_REQUIRED",
+  "message" : "답변 내용 또는 답변 이미지 중 하나는 필수 입력입니다."
+}
+----
+----
+{
+  "code" : "ANSWER_TEXT_SIZE_INVALID",
+  "message" : "답변 내용은 0~280자만 가능합니다."
+}
+----
+----
+{
+  "code" : "ANSWER_IMAGE_URL_SIZE_INVALID",
+  "message" : "답변 이미지 URL은 0~500자만 가능합니다."
+}
+----
+
+===== 401
+----
+{
+  "code" : "TOKEN_UNAUTHENTICATED",
+  "message" : "승인되지 않은 요청입니다. 다시 로그인 해주세요."
+}
+----
+
+===== 403
+----
+{
+  "code" : "TOKEN_UNAUTHORIZED",
+  "message" : "권한이 없는 요청입니다. 로그인 후에 다시 시도 해주세요."
+}
+----
+
+===== 404
+----
+{
+  "code" : "USER_NOT_FOUND",
+  "message" : "존재하지 않는 회원입니다."
+}
+----
+----
+{
+  "code" : "QUESTION_NOT_FOUND",
+  "message" : "존재하지 않는 질문입니다."
+}
+----
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----

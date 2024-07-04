@@ -141,3 +141,21 @@ CREATE TABLE question_answer
     CONSTRAINT fk_question_answer_question FOREIGN KEY (question_id) REFERENCES question(question_id),
     CONSTRAINT fk_question_answer_answer FOREIGN KEY (answer_id) REFERENCES answer(answer_id)
 );
+
+CREATE TABLE notification
+(
+    notification_id              BIGINT AUTO_INCREMENT PRIMARY KEY,
+    type                        VARCHAR(10)                 NOT NULL,
+    title                       VARCHAR(50)                 NOT NULL,
+    context                     VARCHAR(100)                NOT NULL,
+    link                        VARCHAR(500)                NOT NULL,
+    status                      VARCHAR(10)                 NOT NULL,
+    create_date_time            DATETIME(6)                 NOT NULL,
+    update_date_time            DATETIME(6)                 NOT NULL,
+    receiver_id                 BIGINT                      NOT NULL,
+    sender_user_id              BIGINT,
+    sender_admin_id             BIGINT,
+    CONSTRAINT fk_notification_receiver FOREIGN KEY (receiver_id) REFERENCES users(user_id),
+    CONSTRAINT fk_notification_sender_user_id FOREIGN KEY (sender_user_id) REFERENCES users(user_id),
+    CONSTRAINT fk_notification_sender_admin_id FOREIGN KEY (sender_admin_id) REFERENCES users(user_id)
+)

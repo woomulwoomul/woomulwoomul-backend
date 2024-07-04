@@ -24,6 +24,8 @@ enum class ExceptionCode(
     USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0~60자만 가능합니다."),
     QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1~60자만 가능합니다."),
     QUESTION_BACKGROUND_COLOR_SIZE_INVALID(BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
+    ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0~280자만 가능합니다."),
+    ANSWER_IMAGE_URL_INVALID(BAD_REQUEST, "답변 이미지 URL은 0~500자만 가능합니다."),
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),
@@ -36,6 +38,7 @@ enum class ExceptionCode(
     // Custom
     FILE_FIELD_REQUIRED(BAD_REQUEST, "파일은 필수 입력입니다."),
     PROVIDER_TYPE_INVALID(BAD_REQUEST, "SNS는 'kakao' 중 하나여야 됩니다."),
+    ANSWER_FIELD_REQUIRED(BAD_REQUEST, "답변 내용 또는 답변 이미지 중 하나는 필수 입력입니다."),
 
     /**
      * 401 Unauthorized
@@ -55,6 +58,7 @@ enum class ExceptionCode(
     USER_NOT_FOUND(NOT_FOUND, "존재하지 않는 회원입니다."),
     CATEGORY_NOT_FOUND(NOT_FOUND, "존재하지 않는 카테고리입니다."),
     ANSWER_NOT_FOUND(NOT_FOUND, "존재하지 않는 답변입니다."),
+    QUESTION_NOT_FOUND(NOT_FOUND, "존재하지 않는 질문입니다."),
 
     /**
      * 405 Method Not Allowed

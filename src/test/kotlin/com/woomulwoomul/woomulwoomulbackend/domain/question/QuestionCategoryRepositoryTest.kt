@@ -82,6 +82,44 @@ class QuestionCategoryRepositoryTest(
         )
     }
 
+    @DisplayName("질문 ID로 질문 카테고리 조회를 하면 정상 작동한다")
+    @Test
+    fun givenValid_whenFindByQuestionId_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문", backgroundColor = "000001")
+
+        // when
+        val foundQuestionCategories = questionCategoryRepository.findByQuestionId(questionCategory.question.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionCategories)
+                    .extracting("status", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(questionCategory.status, questionCategory.createDateTime, questionCategory.updateDateTime)
+                    )
+            }, {
+                assertThat(foundQuestionCategories)
+                    .extracting("question")
+                    .extracting("text", "backgroundColor", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(questionCategory.question.text, questionCategory.question.backgroundColor,
+                            questionCategory.question.status, questionCategory.question.createDateTime,
+                            questionCategory.question.updateDateTime))
+            }, {
+                assertThat(foundQuestionCategories)
+                    .extracting("category")
+                    .extracting("name", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(questionCategory.category.name, questionCategory.category.status,
+                            questionCategory.category.createDateTime, questionCategory.category.updateDateTime)
+                    )
+            }
+        )
+    }
+
     @DisplayName("랜덤 질문 카테고리 조회를 하면 정상 작동한다")
     @Test
     fun givenValid_whenFindRandom_thenReturn() {
