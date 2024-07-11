@@ -53,4 +53,5 @@ enum class SuccessCode(
      */
     // 200 Ok
     SERVER_OK(OK, "헬스 체크를 했습니다."),
+    DB_RESET(OK, "데이터베이스를 초기화하고 테스트 데이터를 주입했습니다."),
 }

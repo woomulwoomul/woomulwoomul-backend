@@ -12,6 +12,7 @@ endif::[]
 [[Develop-API]]
 === Develop API
 include::api/develop/health-check.adoc[]
+include::api/develop/reset.adoc[]
 
 [[Auth-API]]
 === Auth API

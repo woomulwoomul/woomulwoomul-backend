@@ -12,6 +12,7 @@ import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
@@ -34,6 +35,28 @@ class DevelopControllerTest : RestDocsSupport() {
             .andDo(
                 document(
                     "develop/health",
+                    preprocessResponse(Preprocessors.prettyPrint()),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지")
+                    )
+                )
+            )
+    }
+
+    @DisplayName("데이터 리셋을 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenReset_thenReturn200() {
+        // when & then
+        mockMvc.perform(
+            post("/api/reset")
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "develop/reset",
                     preprocessResponse(Preprocessors.prettyPrint()),
                     responseFields(
                         fieldWithPath("code").type(JsonFieldType.STRING)
