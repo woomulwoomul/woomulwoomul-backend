@@ -30,6 +30,7 @@ class DevelopService(
     /**
      * 데이터 초기화 및 테스트 데이터 주입
      */
+    @Transactional
     fun resetAndInject() {
         resetDatabase()
 
@@ -42,7 +43,7 @@ class DevelopService(
     /**
      * 관리자 주입
      */
-    fun injectAdmin(): UserEntity {
+    private fun injectAdmin(): UserEntity {
         val admin = userRepository.save(UserEntity(nickname = "관리자", email = "admin@woomulwoomul.com",
             imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"))
 
@@ -57,7 +58,7 @@ class DevelopService(
     /**
      * 회원 주입
      */
-    fun injectUsers(): List<UserEntity> {
+    private fun injectUsers(): List<UserEntity> {
         val users = (1..100).map {
             UserEntity(
                 nickname = "사용자${it}",
@@ -77,7 +78,7 @@ class DevelopService(
     /**
      * 카테고리 주입
      */
-    fun injectCategories(admin: UserEntity): List<CategoryEntity> {
+    private fun injectCategories(admin: UserEntity): List<CategoryEntity> {
         return (1..10).map {
             CategoryEntity(admin = admin, name = "카테고리${it}")
         }.let { it ->
@@ -88,8 +89,7 @@ class DevelopService(
     /**
      * DB 초기화
      */
-    @Transactional
-    fun resetDatabase() {
+    private fun resetDatabase() {
         entityManager.createNativeQuery("DELETE FROM notification").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM question_answer").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM answer").executeUpdate()
