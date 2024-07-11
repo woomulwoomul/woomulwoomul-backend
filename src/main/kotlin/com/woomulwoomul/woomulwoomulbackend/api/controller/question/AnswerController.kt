@@ -26,8 +26,8 @@ class AnswerController(
 
     @GetMapping("/api/users/{user-id}/answers")
     fun getAllAnswers(@PathVariable(name = "user-id") userId: Long,
-                      @RequestParam(required = false, name = "page-from", defaultValue = "0") pageFrom: Long,
-                      @RequestParam(required = false, name = "page-size", defaultValue = "10") pageSize: Long,
+                      @RequestParam(name = "page-from", required = false) pageFrom: Long?,
+                      @RequestParam(name = "page-size", required = false) pageSize: Long?,
                       principal: Principal):
             ResponseEntity<DefaultPageResponse<AnswerFindAllResponse>> {
         val response = answerService.getAllAnswers(UserUtils.getUserId(principal), userId, PageRequest.of(pageFrom, pageSize))

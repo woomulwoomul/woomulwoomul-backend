@@ -33,7 +33,7 @@ class CategoryRepositoryTest(
             createAndSaveCategory(adminRole.user, "카테고리4"),
             createAndSaveCategory(adminRole.user, "카테고리5")
         )
-        val pageRequest = PageRequest(1L, 2L)
+        val pageRequest = PageRequest.of(categories[2].id, 2)
 
         // when
         val foundCategories = categoryRepository.findAll(pageRequest)
@@ -48,12 +48,12 @@ class CategoryRepositoryTest(
                     .extracting("id", "name", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
                         tuple(
-                            categories[1].id, categories[1].name, categories[1].status, categories[1].createDateTime,
-                            categories[1].updateDateTime
-                        ),
-                        tuple(
                             categories[2].id, categories[2].name, categories[2].status, categories[2].createDateTime,
                             categories[2].updateDateTime
+                        ),
+                        tuple(
+                            categories[1].id, categories[1].name, categories[1].status, categories[1].createDateTime,
+                            categories[1].updateDateTime
                         )
                     )
             }
@@ -64,7 +64,7 @@ class CategoryRepositoryTest(
     @Test
     fun givenEmpty_whenFindAll_thenReturn() {
         // given
-        val pageRequest = PageRequest(0L, 1L)
+        val pageRequest = PageRequest.of(null, null)
 
         // when
         val categories = categoryRepository.findAll(pageRequest)

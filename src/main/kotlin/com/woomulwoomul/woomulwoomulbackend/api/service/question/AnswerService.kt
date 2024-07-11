@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
+import kotlin.collections.HashMap
 
 @Service
 @Validated
@@ -56,8 +57,8 @@ class AnswerService(
      */
     fun getAllAnswers(visitorUserId: Long, userId: Long, pageRequest: PageRequest): PageData<AnswerFindAllResponse> {
         val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
-        if (visitorUserId != userId) {
-            val visitorUser = userRepository.find(visitorUserId) ?: throw CustomException(USER_NOT_FOUND)
+                if (visitorUserId != userId) {
+                    val visitorUser = userRepository.find(visitorUserId) ?: throw CustomException(USER_NOT_FOUND)
             userVisitRepository.save(UserVisitEntity(user = user, visitorUser = visitorUser))
         }
 
@@ -67,9 +68,17 @@ class AnswerService(
             questionAnswers.data.mapNotNull { it.question.id }
         ).groupBy { it.question.id!! }
             .mapValues { it.value.map { questionCategory -> questionCategory.category } }
+        val answeredUserCntMap = questionAnswerRepository.countAnsweredUsers(questionCategoryMap.keys.toList())
+            .associate { it.questionId to it.userCnt }
+
+        val answeredUserImageUrlMap = questionCategoryMap.keys
+            .associateWith { questionAnswerRepository.findRandomAnsweredUserImageUrls(it, ANSWERED_USER_CONST) }
 
         val responses = questionAnswers.data.map {
-            AnswerFindAllResponse(it, questionCategoryMap[it.question.id] ?: emptyList())
+            AnswerFindAllResponse(it,
+                answeredUserCntMap[it.question.id] ?: 0,
+                answeredUserImageUrlMap[it.question.id] ?: emptyList(),
+                questionCategoryMap[it.question.id] ?: emptyList())
         }
 
         return PageData(responses, questionAnswers.total)

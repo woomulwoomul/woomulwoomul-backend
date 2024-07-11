@@ -5,6 +5,7 @@ import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.Answ
 import com.woomulwoomul.woomulwoomulbackend.api.controller.question.request.AnswerUpdateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.AnswerService
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.*
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -39,21 +40,38 @@ class AnswerControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllAnswers_thenReturn200() {
         // given
+        val pageRequest = PageRequest.of(null, 3)
+
         `when`(answerService.getAllAnswers(anyLong(), anyLong(), any()))
             .thenReturn(PageData(
                 listOf(
-                    AnswerFindAllResponse(1L, 1L, "0F0F0F", listOf(
-                        AnswerFindAllCategoryResponse(1L, "카테고리1"),
-                        AnswerFindAllCategoryResponse(2L, "카테고리2"),
-                        AnswerFindAllCategoryResponse(3L, "카테고리3"))),
-                    AnswerFindAllResponse(2L, 2L, "0F0F0F", listOf(
-                        AnswerFindAllCategoryResponse(1L, "카테고리1"),
-                        AnswerFindAllCategoryResponse(2L, "카테고리2"),
-                        AnswerFindAllCategoryResponse(3L, "카테고리3"))),
-                    AnswerFindAllResponse(3L, 3L, "0F0F0F", listOf(
-                        AnswerFindAllCategoryResponse(1L, "카테고리1"),
-                        AnswerFindAllCategoryResponse(2L, "카테고리2"),
-                        AnswerFindAllCategoryResponse(3L, "카테고리3")))
+                    AnswerFindAllResponse(1L, "답변", "", LocalDateTime.now(),
+                        10L,
+                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                        1L, "질문", "0F0F0F",
+                        listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
+                            AnswerFindAllCategoryResponse(2L, "카테고리2"),
+                            AnswerFindAllCategoryResponse(3L, "카테고리3"))),
+                    AnswerFindAllResponse(2L, "답변", "", LocalDateTime.now(),
+                        10L,
+                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                        2L, "질문", "0F0F0F",
+                        listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
+                            AnswerFindAllCategoryResponse(2L, "카테고리2"),
+                            AnswerFindAllCategoryResponse(3L, "카테고리3"))),
+                    AnswerFindAllResponse(3L, "답변", "", LocalDateTime.now(),
+                        10L,
+                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                        3L, "질문", "0F0F0F",
+                        listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
+                            AnswerFindAllCategoryResponse(2L, "카테고리2"),
+                            AnswerFindAllCategoryResponse(3L, "카테고리3")))
                 ),
                 10L
             ))
@@ -63,8 +81,8 @@ class AnswerControllerTest : RestDocsSupport() {
             get("/api/users/{user-id}/answers", 1)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
-                .queryParam("page-from", "0")
-                .queryParam("page-size", "3")
+                .queryParam("page-from", pageRequest.from.toString())
+                .queryParam("page-size", pageRequest.size.toString())
                 .contentType(APPLICATION_JSON_VALUE)
         ).andDo(print())
             .andExpect(status().isOk)
@@ -84,16 +102,28 @@ class AnswerControllerTest : RestDocsSupport() {
                             .description("데이터들"),
                         fieldWithPath("data[].answerId").type(JsonFieldType.NUMBER)
                             .description("답변 ID"),
+                        fieldWithPath("data[].answerText").type(JsonFieldType.STRING).optional()
+                            .description("답변 내용"),
+                        fieldWithPath("data[].answerImageUrl").type(JsonFieldType.STRING).optional()
+                            .description("답변 이미지"),
+                        fieldWithPath("data[].answerUpdateDateTime").type(JsonFieldType.STRING)
+                            .description("답변 수정일"),
+                        fieldWithPath("data[].answeredUserCnt").type(JsonFieldType.NUMBER)
+                            .description("답변한 회원수"),
+                        fieldWithPath("data[].answeredUserImageUrls").type(JsonFieldType.ARRAY)
+                            .description("답변한 회원 프로필 이미지"),
                         fieldWithPath("data[].questionId").type(JsonFieldType.NUMBER)
                             .description("질문 ID"),
-                        fieldWithPath("data[].backgroundColor").type(JsonFieldType.STRING)
+                        fieldWithPath("data[].questionText").type(JsonFieldType.STRING)
+                            .description("질문 내용"),
+                        fieldWithPath("data[].questionBackgroundColor").type(JsonFieldType.STRING)
                             .description("질문 배경 색상"),
                         fieldWithPath("data[].categories").type(JsonFieldType.ARRAY)
-                            .description("카테고리"),
+                            .description("카테고리들"),
                         fieldWithPath("data[].categories[].categoryId").type(JsonFieldType.NUMBER)
                             .description("카테고리 ID"),
                         fieldWithPath("data[].categories[].name").type(JsonFieldType.STRING)
-                            .description("카테고리명"),
+                            .description("카테고리명")
                     ),
                     queryParameters(
                         parameterWithName("page-from").description("페이지 시작점").optional(),

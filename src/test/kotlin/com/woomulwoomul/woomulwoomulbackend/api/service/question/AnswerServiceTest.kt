@@ -62,7 +62,7 @@ class AnswerServiceTest(
             createAndSaveAnswer(questionAnswers[1], "", "답변2")
         )
 
-        val pageRequest = PageRequest.of(0, 1)
+        val pageRequest = PageRequest.of(null, 1)
 
         // when
         val response = answerService.getAllAnswers(admin.id!!, user.id!!, pageRequest)
@@ -74,9 +74,12 @@ class AnswerServiceTest(
             },
             {
                 assertThat(response.data)
-                    .extracting("answerId", "questionId", "backgroundColor", "categories")
+                    .extracting("answerId", "answerText", "answerImageUrl", "answerUpdateDateTime", "answeredUserCnt",
+                        "answeredUserImageUrls", "questionId", "questionText", "questionBackgroundColor", "categories")
                     .containsExactly(
-                        tuple(answers[1].id!!, questions[1].id!!, questions[1].backgroundColor,
+                        tuple(answers[1].id!!, answers[1].text, answers[1].imageUrl, answers[1].updateDateTime, 1L,
+                            listOf(questionAnswers[1].receiver.imageUrl), questions[1].id!!, questions[1].text,
+                            questions[1].backgroundColor,
                             listOf(AnswerFindAllCategoryResponse(categories[0].id!!, categories[0].name),
                                 AnswerFindAllCategoryResponse(categories[1].id!!, categories[1].name),
                                 AnswerFindAllCategoryResponse(categories[2].id!!, categories[2].name))

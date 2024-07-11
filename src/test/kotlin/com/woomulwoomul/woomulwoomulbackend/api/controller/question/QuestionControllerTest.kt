@@ -93,7 +93,7 @@ class QuestionControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllCategories_thenReturn200() {
         // given
-        val pageRequest = PageRequest(0, 20)
+        val pageRequest = PageRequest.of(null, 10)
         val total = 100L
 
         `when`(questionService.getAllCategories(any()))

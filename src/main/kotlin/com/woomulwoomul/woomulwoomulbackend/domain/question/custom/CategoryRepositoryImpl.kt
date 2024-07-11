@@ -24,9 +24,11 @@ class CategoryRepositoryImpl(
 
         val data = queryFactory
             .selectFrom(categoryEntity)
-            .where(categoryEntity.status.eq(ACTIVE))
-            .orderBy(categoryEntity.id.asc())
-            .offset(pageRequest.from)
+            .where(
+                categoryEntity.status.eq(ACTIVE),
+                categoryEntity.id.loe(pageRequest.from)
+            )
+            .orderBy(categoryEntity.id.desc())
             .limit(pageRequest.size)
             .fetch()
 

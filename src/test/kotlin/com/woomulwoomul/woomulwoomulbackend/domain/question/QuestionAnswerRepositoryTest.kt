@@ -54,7 +54,7 @@ class QuestionAnswerRepositoryTest(
             createAndSaveAnswer(questionAnswers[1], "", "답변2")
         )
 
-        val pageRequest = PageRequest.of(0, 1)
+        val pageRequest = PageRequest.of(null, 1)
 
         // when
         val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageRequest)
@@ -176,7 +176,7 @@ class QuestionAnswerRepositoryTest(
 
     @DisplayName("질문 ID로 답변한 회원들의 프로필 이미지들 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindRandomAnsweredUserImageUrls_thenReturn() {
+    fun givenQuestionId_whenCountAnsweredUsers_thenReturn() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
@@ -194,7 +194,7 @@ class QuestionAnswerRepositoryTest(
             createAndSaveQuestionAnswer(user2, admin, question),
             createAndSaveQuestionAnswer(user3, admin, question),
         )
-        val answers = listOf(
+        listOf(
             createAndSaveAnswer(questionAnswers[0], "답변1", ""),
             createAndSaveAnswer(questionAnswers[1], "답변2", ""),
             createAndSaveAnswer(questionAnswers[2], "답변3", "")
@@ -238,6 +238,55 @@ class QuestionAnswerRepositoryTest(
 
         // then
         assertThat(answeredUserCnt).isEqualTo(answers.size.toLong())
+    }
+
+    @DisplayName("질문 ID들로 답변한 회원들수 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindRandomAnsweredUserImageUrls_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
+        val user2 = createAndSaveUser("user2", "user2@woomulwoomul.com")
+        val user3 = createAndSaveUser("user3", "user3@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val questions = listOf(
+            createAndSaveQuestion(categories, admin, "질문1"),
+            createAndSaveQuestion(categories, admin, "질문2"),
+            createAndSaveQuestion(categories, admin, "질문3")
+        )
+        val questionAnswers = listOf(
+            createAndSaveQuestionAnswer(user1, admin, questions[0]),
+            createAndSaveQuestionAnswer(user2, admin, questions[0]),
+            createAndSaveQuestionAnswer(user3, admin, questions[0]),
+            createAndSaveQuestionAnswer(user1, admin, questions[1]),
+            createAndSaveQuestionAnswer(user2, admin, questions[1]),
+            createAndSaveQuestionAnswer(user1, admin, questions[2])
+        )
+        val answers = listOf(
+            createAndSaveAnswer(questionAnswers[0], "답변1", ""),
+            createAndSaveAnswer(questionAnswers[1], "답변2", ""),
+            createAndSaveAnswer(questionAnswers[2], "답변3", ""),
+            createAndSaveAnswer(questionAnswers[3], "답변4", ""),
+            createAndSaveAnswer(questionAnswers[4], "답변5", ""),
+            createAndSaveAnswer(questionAnswers[5], "답변6", "")
+        )
+
+        // when
+        val answeredUserCnts = questionAnswerRepository.countAnsweredUsers(questions.map { it.id!! })
+
+        // then
+        assertThat(answeredUserCnts)
+            .extracting("questionId", "userCnt")
+            .containsExactlyInAnyOrder(
+                tuple(questions[0].id, 3L),
+                tuple(questions[1].id, 2L),
+                tuple(questions[2].id, 1L),
+            )
     }
 
     private fun createAndSaveAnswer(questionAnswer: QuestionAnswerEntity, text: String, imageUrl: String): AnswerEntity {

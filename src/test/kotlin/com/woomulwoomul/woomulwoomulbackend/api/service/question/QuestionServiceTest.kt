@@ -125,7 +125,7 @@ class QuestionServiceTest(
             createAndSaveCategory(adminRole.user, "카테고리4"),
             createAndSaveCategory(adminRole.user, "카테고리5")
         )
-        val pageRequest = PageRequest(1L, 2L)
+        val pageRequest = PageRequest.of(categories[2].id, 2)
 
         // when
         val result = questionService.getAllCategories(pageRequest)
@@ -139,8 +139,8 @@ class QuestionServiceTest(
                 assertThat(result.data)
                     .extracting("categoryId", "name")
                     .containsExactly(
-                        tuple(categories[1].id, categories[1].name),
                         tuple(categories[2].id, categories[2].name),
+                        tuple(categories[1].id, categories[1].name),
                     )
             }
         )

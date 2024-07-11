@@ -33,8 +33,8 @@ class QuestionController(
 
     @GetMapping("/api/categories")
     fun getAllCategories(
-        @RequestParam(name = "page-from", defaultValue = "0") pageFrom: Long,
-        @RequestParam(name = "page-size", defaultValue = "20") pageSize: Long,
+        @RequestParam(name = "page-from", required = false) pageFrom: Long?,
+        @RequestParam(name = "page-size", required = false) pageSize: Long?,
     ): ResponseEntity<DefaultPageResponse<QuestionFindAllCategoryResponse>> {
         val response = questionService.getAllCategories(PageRequest.of(pageFrom, pageSize))
 

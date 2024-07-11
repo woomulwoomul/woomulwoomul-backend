@@ -1,9 +1,11 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question.custom
 
+import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.common.vo.AnsweredUserCntVo
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QAnswerEntity.answerEntity
@@ -40,11 +42,14 @@ class QuestionAnswerRepositoryImpl(
             .on(questionEntity.id.eq(questionAnswerEntity.question.id)
                 .and(questionEntity.status.eq(ACTIVE)))
             .fetchJoin()
+            .innerJoin(answerEntity)
+            .on(answerEntity.id.eq(questionAnswerEntity.answer.id)
+                .and(answerEntity.status.eq(ACTIVE)))
             .where(
+                questionAnswerEntity.id.loe(pageRequest.from),
                 questionAnswerEntity.status.eq(COMPLETE),
                 questionAnswerEntity.receiver.id.eq(userId)
             ).orderBy(questionAnswerEntity.updateDateTime.desc())
-            .offset(pageRequest.from)
             .limit(pageRequest.size)
             .fetch()
 
@@ -105,5 +110,26 @@ class QuestionAnswerRepositoryImpl(
                 .and(userEntity.status.eq(ACTIVE)))
             .where(questionAnswerEntity.status.eq(COMPLETE))
             .fetchFirst() ?: 0L
+    }
+
+    override fun countAnsweredUsers(questionIds: List<Long>): List<AnsweredUserCntVo> {
+        return queryFactory
+            .select(Projections.constructor(AnsweredUserCntVo::class.java,
+                questionEntity.id.`as`("questionId"),
+                questionAnswerEntity.id.count().`as`("userCnt")
+            )).from(questionAnswerEntity)
+            .innerJoin(questionEntity)
+            .on(questionEntity.id.eq(questionAnswerEntity.question.id)
+                .and(questionEntity.id.`in`(questionIds))
+                .and(questionEntity.status.eq(ACTIVE)))
+            .innerJoin(answerEntity)
+            .on(answerEntity.id.eq(questionAnswerEntity.answer.id)
+                .and(answerEntity.status.eq(ACTIVE)))
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(questionAnswerEntity.receiver.id)
+                .and(userEntity.status.eq(ACTIVE)))
+            .where(questionAnswerEntity.status.eq(COMPLETE))
+            .groupBy(questionEntity.id)
+            .fetch()
     }
 }
