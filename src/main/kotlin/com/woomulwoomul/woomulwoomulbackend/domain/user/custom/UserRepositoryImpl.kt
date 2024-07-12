@@ -15,7 +15,7 @@ class UserRepositoryImpl(
 
     override fun exists(nickname: String?): Boolean {
         return queryFactory
-            .select(userEntity.id)
+            .selectOne()
             .from(userEntity)
             .where(eqNickname(nickname))
             .fetchFirst() != null

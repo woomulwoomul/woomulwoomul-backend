@@ -21,7 +21,7 @@ include::{snippets}/question/create-user-question/response-fields.adoc[]
 ----
 {
   "code" : "QUESTION_TEXT_SIZE_INVALID",
-  "message" : "질문 내용은 1~60자만 가능합니다."
+  "message" : "질문 내용은 1자 ~ 60자 이내로 입력해 주세요."
 }
 ----
 ----

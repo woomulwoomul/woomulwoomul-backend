@@ -13,23 +13,26 @@ enum class ExceptionCode(
      */
     // @NotBlank, @NotNull
     USER_NICKNAME_FIELD_REQUIRED(BAD_REQUEST, "회원 닉네임은 필수 입력입니다."),
+    NICKNAME_FIELD_REQUIRED(BAD_REQUEST, "회원 닉네임은 필수 입력입니다."),
     USER_IMAGE_URL_FIELD_REQUIRED(BAD_REQUEST, "회원 이미지 URL은 필수 입력입니다."),
     QUESTION_TEXT_FIELD_REQUIRED(BAD_REQUEST, "질문은 필수 입력입니다."),
     QUESTION_BACKGROUND_COLOR_FIELD_REQUIRED(BAD_REQUEST, "질문 배경 색상은 필수 입력입니다."),
     CATEGORY_IDS_FIELD_REQUIRED(BAD_REQUEST, "카테고리 ID는 필수 입력입니다."),
 
     // @Size, @ByteSize
-    USER_NICKNAME_SIZE_INVALID(BAD_REQUEST, "회원 닉네임는 2~30자만 가능합니다."),
-    USER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "회원 이미지 URL은 1~500자만 가능합니다."),
-    USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0~60자만 가능합니다."),
-    QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1~60자만 가능합니다."),
+    USER_NICKNAME_SIZE_INVALID(BAD_REQUEST, "닉네임은 2자 ~ 10자 이내로 입력해 주세요."),
+    NICKNAME_SIZE_INVALID(BAD_REQUEST, "닉네임은 2자 ~ 10자 이내로 입력해 주세요."),
+    USER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "회원 이미지 URL은 1자 ~500자 이내로 입력해 주세요."),
+    USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0자 ~ 60자 이내로 입력해 주세요."),
+    QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1자 ~ 60자 이내로 입력해 주세요."),
     QUESTION_BACKGROUND_COLOR_SIZE_INVALID(BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
-    ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0~280자만 가능합니다."),
-    ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0~500자만 가능합니다."),
+    ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0자 ~ 280자 이내로 입력해 주세요."),
+    ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요."),
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),
-    REPORT_TYPE_INVALID(BAD_REQUEST, "신고 타입은 'MISSION', 'MISSION_MEMBER', 'FEED' 중 하나여야 됩니다."),
+    REPORT_TYPE_INVALID(BAD_REQUEST, "신고 타입은 'MISSION'/'MISSION_MEMBER'/'FEED' 중 하나만 사용할 수 있어요."),
+    NICKNAME_PATTERN_INVALID(BAD_REQUEST, "닉네임은 한글/영어/숫자/언더바(_)만 사용할 수 있어요."),
 
     // @Positive, @PositiveOrZero
 
@@ -37,7 +40,7 @@ enum class ExceptionCode(
 
     // Custom
     FILE_FIELD_REQUIRED(BAD_REQUEST, "파일은 필수 입력입니다."),
-    PROVIDER_TYPE_INVALID(BAD_REQUEST, "SNS는 'kakao' 중 하나여야 됩니다."),
+    PROVIDER_TYPE_INVALID(BAD_REQUEST, "SNS는 'kakao' 중 하나만 사용할 수 있어요"),
     ANSWER_FIELD_REQUIRED(BAD_REQUEST, "답변 내용 또는 답변 이미지 중 하나는 필수 입력입니다."),
 
     /**
@@ -70,6 +73,8 @@ enum class ExceptionCode(
      */
     EXISTING_USER(CONFLICT, "해당 이메일로 이미 가입된 회원이 있습니다."),
     NICKNAME_GENERATE_FAIL(CONFLICT, "닉네임 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."),
+    UNAVAILABLE_NICKNAME(CONFLICT, "사용 불가능한 닉네임입니다."),
+    EXISTING_NICKNAME(CONFLICT, "이미 사용중인 닉네임입니다."),
 
     /**
      * 413 Payload too large

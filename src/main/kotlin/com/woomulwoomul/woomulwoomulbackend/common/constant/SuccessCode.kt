@@ -41,6 +41,7 @@ enum class SuccessCode(
     USER_PROFILE_FOUND(OK, "회원 프로필 조회를 완료했습니다."),
     USER_PROFILE_UPDATED(OK, "회원 프로필 업데이트를 완료했습니다."),
     USER_IMAGE_UPLOADED(OK, "회원 이미지를 업로드했습니다."),
+    NICKNAME_AVAILABLE(OK, "사용 가능한 닉네임입니다."),
 
     /**
      * Auth Controller

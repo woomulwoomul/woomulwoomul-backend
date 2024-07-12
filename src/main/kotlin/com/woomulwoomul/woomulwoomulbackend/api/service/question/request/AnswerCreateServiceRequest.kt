@@ -10,9 +10,9 @@ import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.validation.constraints.Size
 
 data class AnswerCreateServiceRequest(
-    @field:Size(max = 280, message = "답변 내용은 0~280자만 가능합니다.")
+    @field:Size(max = 280, message = "답변 내용은 0자 ~ 280자 이내로 입력해 주세요.")
     var answerText: String,
-    @field:Size(max = 500, message = "답변 이미지 URL은 0~500자만 가능합니다.")
+    @field:Size(max = 500, message = "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요.")
     var answerImageUrl: String,
 ) {
     fun toAnswerEntity(): AnswerEntity {

@@ -1,7 +1,9 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
+import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserValidateNicknameRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.request.UserProfileUpdateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.UNAVAILABLE_NICKNAMES
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
@@ -10,12 +12,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.mock.web.MockMultipartFile
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.multipart.MultipartFile
+import java.util.stream.Stream
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -213,6 +219,90 @@ class UserServiceTest(
             .isEqualTo(IMAGE_TYPE_UNSUPPORTED)
     }
 
+    @DisplayName("닉네임 검증이 정상 작동한다")
+    @Test
+    fun givenValid_whenValidateNickname_thenReturn() {
+        // given
+        val request = UserValidateNicknameRequest("tester")
+
+        // when
+        userService.validateNickname(request)
+
+        // then
+        assertThat(userRepository.exists(request.nickname)).isFalse()
+    }
+
+    @DisplayName("2자 미만인 닉네임으로 닉네임 검증을 하면 예외가 발생한다")
+    @Test
+    fun givenLesserThan2Nickname_whenValidateNickname_thenThrow() {
+        // given
+        val request = UserValidateNicknameRequest("a")
+
+        // when & then
+        assertThatThrownBy { userService.validateNickname(request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(NICKNAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("10자 초과인 닉네임으로 닉네임 검증을 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan10Nickname_whenValidateNickname_thenThrow() {
+        // given
+        val request = UserValidateNicknameRequest("a".repeat(11))
+
+        // when & then
+        assertThatThrownBy { userService.validateNickname(request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(NICKNAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("잘못된 포맷인 닉네임으로 닉네임 검증을 하면 예외가 발생한다")
+    @Test
+    fun givenPatternNickname_whenValidateNickname_thenThrow() {
+        // given
+        val request = UserValidateNicknameRequest("AAA")
+
+        // when & then
+        assertThatThrownBy { userService.validateNickname(request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(NICKNAME_PATTERN_INVALID.message)
+    }
+
+
+    @ParameterizedTest(name = "[{index}] {0}으로 닉네임 검증을 하면 예외가 발생한다")
+    @MethodSource("providerValidateNickname")
+    @DisplayName("사용 불가능한 닉네임으로 닉네임 검증을 하면 예외가 발생한다")
+    fun givenPatternNickname_whenValidateNickname_thenThrow(nickname: String) {
+        // given
+        val request = UserValidateNicknameRequest(nickname)
+
+        // when & then
+        assertThatThrownBy { userService.validateNickname(request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(UNAVAILABLE_NICKNAME)
+    }
+
+    @DisplayName("존재하는 닉네임으로 닉네임 검증을 하면 예외가 발생한다")
+    @Test
+    fun givenExistingNickname_whenValidateNickname_thenThrow() {
+        // given
+        val userRole = createAndSaveUserRole(USER)
+        val request = UserValidateNicknameRequest(userRole.user.nickname)
+
+        // when & then
+        assertThatThrownBy { userService.validateNickname(request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(EXISTING_NICKNAME)
+    }
+
     private fun createValidUserProfileUpdateServiceRequest(): UserProfileUpdateServiceRequest {
         return UserProfileUpdateServiceRequest("woomul", "https://www.google.com", "")
     }
@@ -232,5 +322,14 @@ class UserServiceTest(
         )
 
         return userRoleRepository.save(UserRoleEntity(user = user, role = role))
+    }
+
+    companion object {
+        @JvmStatic
+        fun providerValidateNickname(): Stream<Arguments> {
+            return UNAVAILABLE_NICKNAMES.fields
+                .map { Arguments.of(it) }
+                .stream()
+        }
     }
 }

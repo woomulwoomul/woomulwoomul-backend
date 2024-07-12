@@ -19,6 +19,8 @@ import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.operation.preprocess.Preprocessors.*
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.*
+import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
+import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
@@ -31,6 +33,62 @@ class UserControllerTest : RestDocsSupport() {
 
     override fun initController(): Any {
         return UserController(userService)
+    }
+
+    @DisplayName("회원 닉네임 검증을 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenValidateNickname_thenReturn200() {
+        // given
+        val nickname = "tester"
+
+        // when & then
+        mockMvc.perform(
+            get("/api/users/nickname")
+                .queryParam("nickname", nickname)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "user/validate-nickname",
+                    preprocessResponse(prettyPrint()),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지")
+                    ),
+                    queryParameters(
+                        parameterWithName("nickname")
+                            .description("닉네임")
+                    )
+                )
+            )
+    }
+
+    @DisplayName("닉네임 미입력시 회원 닉네임 검증을 하면 400을 반환한다")
+    @Test
+    fun givenBlankNickname_whenValidateNickname_thenReturn400() {
+        // given
+        val nickname = null
+
+        // when & then
+        mockMvc.perform(
+            get("/api/users/nickname")
+                .queryParam("nickname", nickname)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    "user/validate-nickname/nickname-field-required",
+                    preprocessResponse(prettyPrint()),
+                    queryParameters(
+                        parameterWithName("nickname")
+                            .description("닉네임")
+                    )
+                )
+            )
     }
 
     @DisplayName("회원 프로필 조회를 하면 200을 반환한다")

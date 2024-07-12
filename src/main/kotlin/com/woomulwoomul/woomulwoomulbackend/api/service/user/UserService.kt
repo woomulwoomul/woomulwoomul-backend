@@ -1,11 +1,12 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.user
 
+import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserValidateNicknameRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.s3.S3Service
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.request.UserProfileUpdateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetProfileResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserProfileUpdateResponse
-import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserUploadImageResponse
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.UNAVAILABLE_NICKNAMES
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import jakarta.validation.Valid
@@ -38,6 +39,9 @@ class UserService(
     /**
      * 회원 프로필 업데이트
      * @param userId 회원 ID
+     * @throws USER_NICKNAME_SIZE_INVALID 400
+     * @throws USER_IMAGE_URL_SIZE_INVALID 400
+     * @throws USER_INTRODUCTION_SIZE_INVALID 400
      * @throws USER_NOT_FOUND 404
      * @return 회원 프로필 업데이트 응답
      */
@@ -62,5 +66,19 @@ class UserService(
     @Transactional
     fun uploadImage(userId: Long, file: MultipartFile?): String {
         return s3Service.uploadFile(file, "users/$userId", UUID.randomUUID().toString())
+    }
+
+    /**
+     * 닉네임 검증
+     * @param request 닉네임 검증 요청
+     * @throws NICKNAME_SIZE_INVALID 400
+     * @throws NICKNAME_FORMAT_INVALID 400
+     * @throws UNAVAILABLE_NICKNAME 409
+     * @throws EXISTING_NICKNAME 409
+     */
+    fun validateNickname(@Valid request: UserValidateNicknameRequest) {
+        if (request.nickname in UNAVAILABLE_NICKNAMES.fields) throw CustomException(UNAVAILABLE_NICKNAME)
+
+        if (userRepository.exists(request.nickname)) throw CustomException(EXISTING_NICKNAME)
     }
 }

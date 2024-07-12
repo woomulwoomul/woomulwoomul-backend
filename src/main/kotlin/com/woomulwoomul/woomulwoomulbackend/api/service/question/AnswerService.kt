@@ -116,6 +116,8 @@ class AnswerService(
      * @param senderUserId 발신자 회원 ID
      * @param questionId 질문 ID
      * @param request 답변 작성 요청
+     * @throws ANSWER_TEXT_SIZE_INVALID 400
+     * @throws ANSWER_IMAGE_URL_SIZE_INVALID 400
      * @throws USER_NOT_FOUND 404
      * @throws QUESTION_NOT_FOUND 404
      * @return 답변 작성 응답
@@ -184,6 +186,8 @@ class AnswerService(
      * @param userId 회원 ID
      * @param answerId 답변 ID
      * @param request 답변 업데이트 요청
+     * @throws ANSWER_TEXT_SIZE_INVALID 400
+     * @throws ANSWER_IMAGE_URL_SIZE_INVALID 400
      * @throws ANSWER_NOT_FOUND 404
      * @return 답변 업데이트 응답
      */

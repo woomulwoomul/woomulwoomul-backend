@@ -21,13 +21,13 @@ include::{snippets}/answer/update-answer/response-fields.adoc[]
 ----
 {
   "code" : "ANSWER_TEXT_SIZE_INVALID",
-  "message" : "답변 내용은 0~280자만 가능합니다."
+  "message" : "답변 내용은 0자 ~ 280자 이내로 입력해 주세요."
 }
 ----
 ----
 {
   "code" : "ANSWER_IMAGE_URL_SIZE_INVALID",
-  "message" : "답변 이미지 URL은 0~500자만 가능합니다."
+  "message" : "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요."
 }
 ----
 

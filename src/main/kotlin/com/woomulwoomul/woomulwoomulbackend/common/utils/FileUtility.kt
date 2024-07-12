@@ -2,7 +2,7 @@ package com.woomulwoomul.woomulwoomulbackend.common.utils
 
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.FILE_FIELD_REQUIRED
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.IMAGE_TYPE_UNSUPPORTED
-import com.woomulwoomul.woomulwoomulbackend.common.constant.FileConstants.IMAGE_FILE_TYPE
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.IMAGE_FILE_TYPES
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import org.springframework.web.multipart.MultipartFile
 
@@ -22,7 +22,7 @@ class FileUtility {
             val contentType = file.contentType ?: ""
             val fileType = contentType.split("/").getOrNull(1) ?: ""
 
-            if (fileType !in IMAGE_FILE_TYPE.fields) {
+            if (fileType !in IMAGE_FILE_TYPES.fields) {
                 throw CustomException(IMAGE_TYPE_UNSUPPORTED)
             }
         }
