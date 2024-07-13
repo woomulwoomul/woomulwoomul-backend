@@ -56,9 +56,9 @@ class AnswerService(
      * @return 답변 전체 응답
      */
     fun getAllAnswers(visitorUserId: Long, userId: Long, pageRequest: PageRequest): PageData<AnswerFindAllResponse> {
-        val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
                 if (visitorUserId != userId) {
-                    val visitorUser = userRepository.find(visitorUserId) ?: throw CustomException(USER_NOT_FOUND)
+                    val visitorUser = userRepository.findByUserId(visitorUserId) ?: throw CustomException(USER_NOT_FOUND)
             userVisitRepository.save(UserVisitEntity(user = user, visitorUser = visitorUser))
         }
 
@@ -128,8 +128,8 @@ class AnswerService(
                      questionId: Long,
                      @Valid request: AnswerCreateServiceRequest
                      ): AnswerCreateResponse {
-        val receiver = userRepository.find(receiverUserId) ?: throw CustomException(USER_NOT_FOUND)
-        val sender = userRepository.find(senderUserId) ?: throw CustomException(USER_NOT_FOUND)
+        val receiver = userRepository.findByUserId(receiverUserId) ?: throw CustomException(USER_NOT_FOUND)
+        val sender = userRepository.findByUserId(senderUserId) ?: throw CustomException(USER_NOT_FOUND)
 
         val questionCategories = questionCategoryRepository.findByQuestionId(questionId)
             .takeIf { it.isNotEmpty() } ?: throw CustomException(QUESTION_NOT_FOUND)

@@ -2,6 +2,7 @@ package com.woomulwoomul.woomulwoomulbackend.domain.user
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -21,24 +22,41 @@ class UserRepositoryTest(
     @ParameterizedTest(name = "[{index}] 회원 닉네임 {0}로 회원 존재 여부를 조회하면 {1}를 반환한다")
     @MethodSource("providerExists")
     @DisplayName("회원 이름으로 회원 존재 여부 조회를 하면 정상 작동한다")
-    fun givenProvider_whenExists_thenReturn(nickname: String, expected: Boolean) {
+    fun givenProvider_whenExistsByNickname_thenReturn(nickname: String, expected: Boolean) {
         // given
         if (expected) createAndSaveUser()
 
         // when
-        val result = userRepository.exists(nickname)
+        val result = userRepository.existsByNickname(nickname)
 
         // then
         assertThat(result).isEqualTo(expected)
     }
 
     @DisplayName("회원 ID로 회원 조회를 하면 정상 작동한다")
-    fun givenValid_whenFind_thenReturn() {
+    @Test
+    fun givenValid_whenFindByUserId_thenReturn() {
         // given
         val user = createAndSaveUser()
 
         // when
-        val result = userRepository.find(user.id)
+        val result = userRepository.findByUserId(user.id!!)
+
+        // then
+        assertThat(result)
+            .extracting("nickname", "email", "imageUrl", "status", "createDateTime", "updateDateTime")
+            .containsExactly(user.nickname, user.email, user.imageUrl, user.status, user.createDateTime,
+                user.updateDateTime)
+    }
+
+    @DisplayName("회원 닉네임으로 회원 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindByNickname_thenReturn() {
+        // given
+        val user = createAndSaveUser()
+
+        // when
+        val result = userRepository.findByNickname(user.nickname)
 
         // then
         assertThat(result)

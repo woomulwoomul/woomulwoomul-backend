@@ -1,11 +1,15 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.develop
 
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.TESTER_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
+import com.woomulwoomul.woomulwoomulbackend.config.auth.JwtProvider
 import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -17,7 +21,10 @@ class DevelopService(
     private val userRepository: UserRepository,
     private val userRoleRepository: UserRoleRepository,
     private val categoryRepository: CategoryRepository,
+    private val jwtProvider: JwtProvider,
 ) {
+
+    private val TESTER_CONST = "tester"
 
     /**
      * 서버명 조회
@@ -25,6 +32,19 @@ class DevelopService(
      */
     fun getServerName(): String {
         return serverName
+    }
+
+    /**
+     * 테스터 토큰 조회
+     * @param testerId 테스터 ID
+     * @throws TESTER_NOT_FOUND 404
+     * @return 헤더
+     */
+    fun getTesterToken(testerId: Long): HttpHeaders {
+        val tester = userRepository.findByNickname(TESTER_CONST.plus(testerId))
+            ?: throw CustomException(TESTER_NOT_FOUND)
+
+        return jwtProvider.createToken(tester.id!!)
     }
 
     /**
@@ -61,8 +81,8 @@ class DevelopService(
     private fun injectUsers(): List<UserEntity> {
         val users = (1..100).map {
             UserEntity(
-                nickname = "사용자${it}",
-                email = "user${it}@woomulwoomul.com",
+                nickname = "${TESTER_CONST}${it}",
+                email = "${TESTER_CONST}${it}@woomulwoomul.com",
                 imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
                 introduction = "소개${it}"
             )

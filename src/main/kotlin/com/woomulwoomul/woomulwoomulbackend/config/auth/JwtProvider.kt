@@ -51,7 +51,7 @@ class JwtProvider(
             .map { it.authority }
             .toList()
 
-        val headers: HttpHeaders = HttpHeaders()
+        val headers = HttpHeaders()
 
         val accessToken = JWT.hs256 {
             subject(userDetails.username)

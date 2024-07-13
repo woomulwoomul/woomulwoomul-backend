@@ -67,7 +67,7 @@ class QuestionService(
      * @return 회원 질문 생성 응답
      */
     fun createUserQuestion(userId: Long, @Valid request: QuestionUserCreateServiceRequest): QuestionUserCreateResponse {
-        val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
         val categories = categoryRepository.findByIds(request.categoryIds)
             .takeIf { it.isNotEmpty() } ?: throw CustomException(CATEGORY_NOT_FOUND)
 

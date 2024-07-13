@@ -13,30 +13,32 @@ class UserRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : UserCustomRepository {
 
-    override fun exists(nickname: String?): Boolean {
+    override fun existsByNickname(nickname: String): Boolean {
         return queryFactory
             .selectOne()
             .from(userEntity)
-            .where(eqNickname(nickname))
+            .where(
+                userEntity.status.eq(ACTIVE),
+                userEntity.nickname.eq(nickname),
+            )
             .fetchFirst() != null
     }
 
-    override fun find(id: Long?): UserEntity? {
+    override fun findByUserId(userId: Long): UserEntity? {
+        return queryFactory
+            .selectFrom(userEntity)
+            .where(
+                userEntity.id.eq(userId),
+                userEntity.status.eq(ACTIVE),
+            ).fetchFirst()
+    }
+
+    override fun findByNickname(nickname: String): UserEntity? {
         return queryFactory
             .selectFrom(userEntity)
             .where(
                 userEntity.status.eq(ACTIVE),
-                eqId(id)
+                userEntity.nickname.eq(nickname)
             ).fetchFirst()
-    }
-
-    private fun eqNickname(nickname: String?): BooleanExpression? {
-        return if (StringUtils.isNotBlank(nickname)) userEntity.nickname.eq(nickname)
-        else null
-    }
-
-    private fun eqId(userId: Long?): BooleanExpression? {
-        return if (userId != null) userEntity.id.eq(userId)
-        else null
     }
 }

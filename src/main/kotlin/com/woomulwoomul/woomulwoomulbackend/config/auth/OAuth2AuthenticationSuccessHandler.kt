@@ -30,7 +30,7 @@ class OAuth2AuthenticationSuccessHandler(
         authentication: Authentication?
     ) {
         val userId = authentication!!.name.toLong()
-        val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
 
         val headers = jwtProvider.createToken(userId)
         val accessToken = trimJwtToken(headers.getValue(AUTHORIZATION).toString())

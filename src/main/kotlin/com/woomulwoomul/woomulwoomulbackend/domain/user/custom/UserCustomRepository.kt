@@ -4,7 +4,9 @@ import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 
 interface UserCustomRepository {
 
-    fun exists(nickname: String?): Boolean
+    fun existsByNickname(nickname: String): Boolean
 
-    fun find(id: Long?): UserEntity?
+    fun findByUserId(userId: Long): UserEntity?
+
+    fun findByNickname(nickname: String): UserEntity?
 }

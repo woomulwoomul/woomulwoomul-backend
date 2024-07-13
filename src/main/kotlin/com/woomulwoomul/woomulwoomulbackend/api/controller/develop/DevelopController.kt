@@ -1,12 +1,12 @@
 package com.woomulwoomul.woomulwoomulbackend.api.controller.develop
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.develop.DevelopService
-import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.DB_RESET
-import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.SERVER_OK
+import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
 
@@ -24,11 +24,17 @@ class DevelopController(
             .body(DefaultResponse(SERVER_OK.name, serverName + SERVER_OK.message))
     }
 
+    @GetMapping("/api/tester/{testerId}")
+    fun getTesterToken(@PathVariable testerId: Long): ResponseEntity<DefaultResponse> {
+        val headers = developService.getTesterToken(testerId)
+
+        return DefaultResponse.toResponseEntity(headers, TESTER_TOKEN_GENERATED)
+    }
+
     @PostMapping("/api/reset")
     fun reset(): ResponseEntity<DefaultResponse> {
         developService.resetAndInject()
 
-        return ResponseEntity.status(DB_RESET.httpStatus)
-            .body(DefaultResponse(DB_RESET.name, DB_RESET.message))
+        return DefaultResponse.toResponseEntity(DB_RESET)
     }
 }

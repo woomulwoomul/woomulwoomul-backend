@@ -59,6 +59,7 @@ enum class ExceptionCode(
      * 404 Not Found
      */
     USER_NOT_FOUND(NOT_FOUND, "존재하지 않는 회원입니다."),
+    TESTER_NOT_FOUND(NOT_FOUND, "존재하지 않는 테스터입니다."),
     CATEGORY_NOT_FOUND(NOT_FOUND, "존재하지 않는 카테고리입니다."),
     ANSWER_NOT_FOUND(NOT_FOUND, "존재하지 않는 답변입니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "존재하지 않는 질문입니다."),

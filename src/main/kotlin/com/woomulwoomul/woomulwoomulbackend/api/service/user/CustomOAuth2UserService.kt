@@ -66,7 +66,7 @@ class CustomOAuth2UserService(
     private fun createRandomNickname(email: String): String {
         repeat(100) {
             val nickname = UserUtils.generateRandomNickname(email)
-            if (!userRepository.exists(nickname)) return nickname
+            if (!userRepository.existsByNickname(nickname)) return nickname
         }
         throw CustomException(NICKNAME_GENERATE_FAIL)
     }

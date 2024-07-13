@@ -1,0 +1,29 @@
+[[get-tester-token]]
+=== 테스터 토큰 조회
+
+==== HTTP Request
+include::{snippets}/develop/get-tester-token/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/develop/get-tester-token/http-response.adoc[]
+==== Response Headers
+include::{snippets}/develop/get-tester-token/response-headers.adoc[]
+include::{snippets}/develop/get-tester-token/response-fields.adoc[]
+
+==== Exception
+
+===== 404
+----
+{
+  "code" : "TESTER_NOT_FOUND",
+  "message" : "존재하지 않는 테스터입니다."
+}
+----
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----

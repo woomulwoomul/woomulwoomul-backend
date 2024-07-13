@@ -29,6 +29,18 @@ Refresh-Token: refresh-token
 }
 ----
 
+==== Response Headers
+|===
+|Name|Description
+
+|`+Authorization+`
+|액세스 토큰
+
+|`+Refresh-Token+`
+|리프레시 토큰
+
+|===
+
 ==== Response Fields
 |===
 |Path|Type|Optional|Description

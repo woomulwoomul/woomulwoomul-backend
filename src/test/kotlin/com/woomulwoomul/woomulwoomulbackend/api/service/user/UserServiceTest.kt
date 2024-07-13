@@ -229,7 +229,7 @@ class UserServiceTest(
         userService.validateNickname(request)
 
         // then
-        assertThat(userRepository.exists(request.nickname)).isFalse()
+        assertThat(userRepository.existsByNickname(request.nickname)).isFalse()
     }
 
     @DisplayName("2자 미만인 닉네임으로 닉네임 검증을 하면 예외가 발생한다")

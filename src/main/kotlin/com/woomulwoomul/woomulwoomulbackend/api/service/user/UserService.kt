@@ -31,7 +31,7 @@ class UserService(
      * @return 회원 프로필 조회 응답
      */
     fun getUserProfile(userId: Long) : UserGetProfileResponse {
-        val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
 
         return UserGetProfileResponse(user)
     }
@@ -47,7 +47,7 @@ class UserService(
      */
     @Transactional
     fun updateUserProfile(userId: Long, @Valid request: UserProfileUpdateServiceRequest): UserProfileUpdateResponse {
-        val user = userRepository.find(userId) ?: throw CustomException(USER_NOT_FOUND)
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
 
         user.updateProfile(request.userNickname, request.userImageUrl, request.userIntroduction)
 
@@ -79,6 +79,6 @@ class UserService(
     fun validateNickname(@Valid request: UserValidateNicknameRequest) {
         if (request.nickname in UNAVAILABLE_NICKNAMES.fields) throw CustomException(UNAVAILABLE_NICKNAME)
 
-        if (userRepository.exists(request.nickname)) throw CustomException(EXISTING_NICKNAME)
+        if (userRepository.existsByNickname(request.nickname)) throw CustomException(EXISTING_NICKNAME)
     }
 }
