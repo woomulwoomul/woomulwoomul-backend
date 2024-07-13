@@ -78,7 +78,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            get("/api/users/{user-id}/answers", 1)
+            get("/api/users/{userId}/answers", 1)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .queryParam("page-from", pageRequest.from.toString())
@@ -157,7 +157,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            get("/api/users/{user-id}/answers/{answer-id}", 1, 1)
+            get("/api/users/{userId}/answers/{answerId}", 1, 1)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -227,7 +227,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/{user-id}/questions/{question-id}", 1, 1)
+            post("/api/users/{userId}/questions/{questionId}", 1, 1)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -301,7 +301,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            patch("/api/answers/{answer-id}", answerId)
+            patch("/api/answers/{answerId}", answerId)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -364,7 +364,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            delete("/api/answers/{answer-id}", answerId)
+            delete("/api/answers/{answerId}", answerId)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -398,7 +398,7 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/questions/{question-id}/answers/image", questionId)
+            post("/api/questions/{questionId}/answers/image", questionId)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)

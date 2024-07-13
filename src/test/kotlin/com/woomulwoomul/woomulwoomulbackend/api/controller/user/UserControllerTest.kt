@@ -105,7 +105,7 @@ class UserControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            get("/api/users/{user-id}", 1)
+            get("/api/users/{userId}", 1)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)

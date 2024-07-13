@@ -33,8 +33,8 @@ class UserController(
         return DefaultResponse.toResponseEntity(NICKNAME_AVAILABLE)
     }
 
-    @GetMapping("/api/users/{user-id}")
-    fun getUserProfile(@PathVariable(name = "user-id") userId: Long): ResponseEntity<DefaultSingleResponse> {
+    @GetMapping("/api/users/{userId}")
+    fun getUserProfile(@PathVariable userId: Long): ResponseEntity<DefaultSingleResponse> {
         val response = userService.getUserProfile(userId)
 
         return DefaultSingleResponse.toResponseEntity(USER_PROFILE_FOUND, response)

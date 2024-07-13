@@ -24,8 +24,8 @@ class AnswerController(
     private val answerService: AnswerService,
 ) {
 
-    @GetMapping("/api/users/{user-id}/answers")
-    fun getAllAnswers(@PathVariable(name = "user-id") userId: Long,
+    @GetMapping("/api/users/{userId}/answers")
+    fun getAllAnswers(@PathVariable userId: Long,
                       @RequestParam(name = "page-from", required = false) pageFrom: Long?,
                       @RequestParam(name = "page-size", required = false) pageSize: Long?,
                       principal: Principal):
@@ -35,19 +35,19 @@ class AnswerController(
         return DefaultPageResponse.toResponseEntity(FOUND_USER_ANSWERS, response)
     }
 
-    @GetMapping("/api/users/{user-id}/answers/{answer-id}")
-    fun getAnswer(@PathVariable(name = "user-id") userId: Long,
-                  @PathVariable(name = "answer-id") answerId: Long):
+    @GetMapping("/api/users/{userId}/answers/{answerId}")
+    fun getAnswer(@PathVariable userId: Long,
+                  @PathVariable answerId: Long):
             ResponseEntity<DefaultSingleResponse> {
         val response = answerService.getAnswer(userId, answerId)
 
         return DefaultSingleResponse.toResponseEntity(FOUND_USER_ANSWER, response)
     }
 
-    @PostMapping("/api/users/{user-id}/questions/{question-id}")
+    @PostMapping("/api/users/{userId}/questions/{questionId}")
     fun createAnswer(principal: Principal,
-                     @PathVariable(name = "user-id") userId: Long,
-                     @PathVariable(name = "question-id") questionId: Long,
+                     @PathVariable userId: Long,
+                     @PathVariable questionId: Long,
                      @RequestBody @Valid request: AnswerCreateRequest): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.createAnswer(
             UserUtils.getUserId(principal),
@@ -59,10 +59,10 @@ class AnswerController(
         return DefaultSingleResponse.toResponseEntity(ANSWER_CREATED, response)
     }
 
-    @PatchMapping("/api/answers/{answer-id}")
+    @PatchMapping("/api/answers/{answerId}")
     fun updateAnswer(
         principal: Principal,
-        @PathVariable(name = "answer-id") answerId: Long,
+        @PathVariable answerId: Long,
         @RequestBody @Valid request: AnswerUpdateRequest,
     ): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.updateAnswer(UserUtils.getUserId(principal), answerId, request.toServiceRequest())
@@ -70,17 +70,16 @@ class AnswerController(
         return DefaultSingleResponse.toResponseEntity(ANSWER_UPDATED, response)
     }
 
-    @DeleteMapping("/api/answers/{answer-id}")
-    fun deleteAnswer(principal: Principal, @PathVariable(name = "answer-id") answerId: Long):
-            ResponseEntity<DefaultResponse> {
+    @DeleteMapping("/api/answers/{answerId}")
+    fun deleteAnswer(principal: Principal, @PathVariable answerId: Long): ResponseEntity<DefaultResponse> {
         answerService.deleteAnswer(UserUtils.getUserId(principal), answerId)
 
         return DefaultResponse.toResponseEntity(ANSWER_DELETED)
     }
 
-    @PostMapping("/api/questions/{question-id}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/api/questions/{questionId}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun uploadImage(principal: Principal,
-                    @PathVariable(name = "question-id") questionId: Long,
+                    @PathVariable questionId: Long,
                     @RequestPart(required = false) file: MultipartFile?):
             ResponseEntity<DefaultSingleResponse> {
         val response = answerService.uploadImage(UserUtils.getUserId(principal), questionId, file)
