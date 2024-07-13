@@ -7,6 +7,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus
+import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
@@ -524,6 +525,55 @@ class AnswerServiceTest(
 
         // when & then
         assertThatThrownBy { answerService.updateAnswer(user.id!!, answerId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ANSWER_NOT_FOUND)
+    }
+
+    @DisplayName("답변 삭제가 정상 작동한다")
+    @Test
+    fun givenValid_whenDeleteAnswer_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변", "")
+
+        // when
+        answerService.deleteAnswer(user.id!!, answer.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(questionAnswerRepository.findById(questionAnswer.id!!).get())
+                    .extracting("status")
+                    .isEqualTo(DetailServiceStatus.USER_DEL)
+            },
+            {
+                assertThat(answerRepository.findById(answer.id!!).get())
+                    .extracting("status")
+                    .isEqualTo(ServiceStatus.USER_DEL)
+            }
+        )
+    }
+
+    @DisplayName("존재하지 않는 답변을 삭제하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingAnswer_whenDeleteAnswer_thenThrow() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+        val answerId = Long.MAX_VALUE
+
+        // when & then
+        assertThatThrownBy { answerService.deleteAnswer(user.id!!, answerId) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(ANSWER_NOT_FOUND)

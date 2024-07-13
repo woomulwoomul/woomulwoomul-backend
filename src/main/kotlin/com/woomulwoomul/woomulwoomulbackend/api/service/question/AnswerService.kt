@@ -214,6 +214,19 @@ class AnswerService(
     }
 
     /**
+     * 답변 삭제
+     * @param userId 회원 ID
+     * @param answerId 답변 ID
+     * @throws ANSWER_NOT_FOUND 404
+     */
+    @Transactional
+    fun deleteAnswer(userId: Long, answerId: Long) {
+        questionAnswerRepository.findAnswered(userId, answerId)?.apply {
+            deleteByUser()
+        } ?: throw CustomException(ANSWER_NOT_FOUND)
+    }
+
+    /**
      * 답변 이미지 업로드
      * @param userId 회원 ID
      * @param questionId 질문 ID

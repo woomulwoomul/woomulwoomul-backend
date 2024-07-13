@@ -2,6 +2,8 @@ package com.woomulwoomul.woomulwoomulbackend.domain.question
 
 import com.woomulwoomul.woomulwoomulbackend.domain.base.BaseDetailEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.INCOMPLETE
+import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.USER_DEL
+import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
 
@@ -29,4 +31,10 @@ class QuestionAnswerEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
     var answer: AnswerEntity? = null,
-) : BaseDetailEntity(INCOMPLETE)
+) : BaseDetailEntity(INCOMPLETE) {
+
+    fun deleteByUser() {
+        status = USER_DEL
+        answer?.status = ServiceStatus.USER_DEL
+    }
+}

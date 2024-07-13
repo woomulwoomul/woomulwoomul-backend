@@ -56,8 +56,8 @@ include::{snippets}/answer/update-answer/response-fields.adoc[]
 ----
 ----
 {
-  "code" : "QUESTION_NOT_FOUND",
-  "message" : "존재하지 않는 질문입니다."
+  "code" : "ANSWER_NOT_FOUND",
+  "message" : "존재하지 않는 답변입니다."
 }
 ----
 

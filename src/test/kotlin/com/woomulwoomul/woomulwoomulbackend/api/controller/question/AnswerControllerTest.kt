@@ -296,11 +296,12 @@ class AnswerControllerTest : RestDocsSupport() {
                         AnswerUpdateCategoryResponse(3L, "카테고리3")))
             )
 
+        val answerId = 1L
         val request = createValidAnswerUpdateRequest()
 
         // when & then
         mockMvc.perform(
-            patch("/api/answers/{answer-id}", 1)
+            patch("/api/answers/{answer-id}", answerId)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -355,18 +356,49 @@ class AnswerControllerTest : RestDocsSupport() {
             )
     }
 
+    @DisplayName("답변 삭제를 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenDeleteAnswer_thenReturn200() {
+        // given
+        val answerId = 1L
+
+        // when & then
+        mockMvc.perform(
+            delete("/api/answers/{answer-id}", answerId)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "answer/delete-answer",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지")
+                    )
+                )
+            )
+    }
+
     @DisplayName("답변 이미지 업로드를 하면 200을 반환한다")
     @Test
     fun givenValid_whenUploadImage_thenReturn200() {
         // given
-        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
-
         `when`(answerService.uploadImage(anyLong(), anyLong(), any()))
             .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640")
 
+        val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
+        val questionId = 1L
+
         // when & then
         mockMvc.perform(
-            post("/api/questions/{question-id}/answers/image", 1)
+            post("/api/questions/{question-id}/answers/image", questionId)
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)

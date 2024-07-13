@@ -20,6 +20,7 @@ enum class SuccessCode(
     FOUND_USER_ANSWER(OK, "회원 답변 조회를 완료했습니다."),
     ANSWER_IMAGE_UPLOADED(OK, "답변 이미지를 업로드했습니다."),
     ANSWER_UPDATED(OK, "답변 업데이트를 완료했습니다."),
+    ANSWER_DELETED(OK, "답변 삭제를 완료했습니다."),
 
     /**
      * Question Controller

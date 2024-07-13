@@ -70,6 +70,14 @@ class AnswerController(
         return DefaultSingleResponse.toResponseEntity(ANSWER_UPDATED, response)
     }
 
+    @DeleteMapping("/api/answers/{answer-id}")
+    fun deleteAnswer(principal: Principal, @PathVariable(name = "answer-id") answerId: Long):
+            ResponseEntity<DefaultResponse> {
+        answerService.deleteAnswer(UserUtils.getUserId(principal), answerId)
+
+        return DefaultResponse.toResponseEntity(ANSWER_DELETED)
+    }
+
     @PostMapping("/api/questions/{question-id}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun uploadImage(principal: Principal,
                     @PathVariable(name = "question-id") questionId: Long,
