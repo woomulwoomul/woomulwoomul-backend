@@ -55,6 +55,7 @@ class AnswerService(
      * @throws USER_NOT_FOUND 404
      * @return 답변 전체 응답
      */
+    @Transactional
     fun getAllAnswers(visitorUserId: Long, userId: Long, pageRequest: PageRequest): PageData<AnswerFindAllResponse> {
         val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
                 if (visitorUserId != userId) {
