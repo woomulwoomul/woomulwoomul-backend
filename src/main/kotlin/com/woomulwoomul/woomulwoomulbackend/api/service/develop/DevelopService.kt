@@ -3,8 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.develop
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.TESTER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.config.auth.JwtProvider
-import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryEntity
-import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryRepository
+import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import jakarta.persistence.EntityManager
 import jakarta.persistence.PersistenceContext
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.util.concurrent.ThreadLocalRandom
 
 @Service
 @Transactional(readOnly = true)
@@ -21,6 +21,11 @@ class DevelopService(
     private val userRepository: UserRepository,
     private val userRoleRepository: UserRoleRepository,
     private val categoryRepository: CategoryRepository,
+    private val questionRepository: QuestionRepository,
+    private val questionCategoryRepository: QuestionCategoryRepository,
+    private val answerRepository: AnswerRepository,
+    private val questionAnswerRepository: QuestionAnswerRepository,
+    private val followRepository: FollowRepository,
     private val jwtProvider: JwtProvider,
 ) {
 
@@ -55,9 +60,13 @@ class DevelopService(
         resetDatabase()
 
         val admin = injectAdmin()
-        val users = injectUsers()
-
         val categories = injectCategories(admin)
+        val questions = injectQuestions(admin)
+        injectQuestionCategories(categories, questions)
+
+        val users = injectUsers()
+        val answers = injectAnswers()
+        injectQuestionAnswers(users.subList(0, 9), questions, answers)
     }
 
     /**
@@ -76,6 +85,44 @@ class DevelopService(
     }
 
     /**
+     * 카테고리 주입
+     */
+    private fun injectCategories(admin: UserEntity): List<CategoryEntity> {
+        return (1..10).map {
+            CategoryEntity(admin = admin, name = "카테고리${it}")
+        }.let { it ->
+            categoryRepository.saveAll(it)
+        }
+    }
+
+    /**
+     * 질문 주입
+     */
+    private fun injectQuestions(admin: UserEntity): List<QuestionEntity> {
+        val colorCodes = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6",
+            "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
+        return (1 .. 10).map {
+            QuestionEntity(user = admin, text = "질문${it}번 입니다.", backgroundColor = colorCodes[it - 1])
+        }.let {
+            questionRepository.saveAll(it)
+        }
+    }
+
+    /**
+     * 질문 카테고리 주입
+     */
+    private fun injectQuestionCategories(
+        categories: List<CategoryEntity>,
+        questions: List<QuestionEntity>,
+    ) {
+        questions.forEach { question ->
+            categories.shuffled().take((1..categories.size).random()).forEach { category ->
+                questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))
+            }
+        }
+    }
+
+    /**
      * 회원 주입
      */
     private fun injectUsers(): List<UserEntity> {
@@ -86,24 +133,28 @@ class DevelopService(
                 imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
                 introduction = "소개${it}"
             )
-        }
-        userRepository.saveAll(users)
+        }.also { userRepository.saveAll(it) }
 
-        val userRoles = users.map { UserRoleEntity(user = it, role = Role.USER) }
-        userRoleRepository.saveAll(userRoles)
+        userRoleRepository.saveAll(users.map { UserRoleEntity(user = it, role = Role.USER) })
 
         return users
     }
 
     /**
-     * 카테고리 주입
+     * 답변 주입
      */
-    private fun injectCategories(admin: UserEntity): List<CategoryEntity> {
-        return (1..10).map {
-            CategoryEntity(admin = admin, name = "카테고리${it}")
-        }.let { it ->
-            categoryRepository.saveAll(it)
-        }
+    private fun injectAnswers(): List<AnswerEntity> {
+        return (1 .. 50).map {
+            AnswerEntity(text = "답변${it}번 입니다.", imageUrl = "")
+        }.also { answerRepository.saveAll(it) }
+    }
+
+    private fun injectQuestionAnswers(
+        users: List<UserEntity>,
+        questions: List<QuestionEntity>,
+        answers: List<AnswerEntity>,
+    ) {
+        // TODO
     }
 
     /**
