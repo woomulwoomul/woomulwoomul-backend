@@ -86,15 +86,4 @@ class UserService(
 
         if (userRepository.existsByNickname(request.nickname)) throw CustomException(EXISTING_NICKNAME)
     }
-
-    /**
-     * 팔로잉 전체 조회
-     * @param userId 회원 ID
-     * @param pageRequest 페이징 요청
-     * @return 팔로잉 전체 조회 응답
-     */
-    fun getAllFollowing(userId: Long, pageRequest: PageRequest): PageData<UserGetAllFollowingResponse> {
-        val follows = followRepository.findAllByFollower(userId, pageRequest)
-        return PageData(follows.data.map { UserGetAllFollowingResponse(it) }, follows.total)
-    }
 }

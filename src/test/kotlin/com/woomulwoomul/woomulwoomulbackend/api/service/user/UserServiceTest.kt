@@ -4,18 +4,14 @@ import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserVali
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.request.UserProfileUpdateServiceRequest
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.UNAVAILABLE_NICKNAMES
-import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
 import jakarta.validation.ConstraintViolationException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.assertj.core.groups.Tuple
-import org.assertj.core.groups.Tuple.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
@@ -34,7 +30,6 @@ class UserServiceTest(
     @Autowired private val userService: UserService,
     @Autowired private val userRepository: UserRepository,
     @Autowired private val userRoleRepository: UserRoleRepository,
-    @Autowired private val followRepository: FollowRepository,
 ) {
 
     @DisplayName("회원 프로필 조회가 정상 작동한다")
@@ -308,59 +303,8 @@ class UserServiceTest(
             .isEqualTo(EXISTING_NICKNAME)
     }
 
-    @DisplayName("팔로잉 전체 조회가 정상 작동한다")
-    @Test
-    fun givenValid_whenGetAllFollowing_thenReturn() {
-        // given
-        val userRoles = listOf(
-            createAndSaveUserRole(role = USER, nickname = "tester1", email = "tester1@woomulwoomul.com"),
-            createAndSaveUserRole(role = USER, nickname = "tester2", email = "tester2@woomulwoomul.com"),
-            createAndSaveUserRole(role = USER, nickname = "tester3", email = "tester3@woomulwoomul.com"),
-            createAndSaveUserRole(role = USER, nickname = "tester4", email = "tester4@woomulwoomul.com"),
-            createAndSaveUserRole(role = USER, nickname = "tester5", email = "tester5@woomulwoomul.com")
-        )
-        val follows = listOf(
-            createAndSaveFollow(userRoles[1].user, userRoles[0].user),
-            createAndSaveFollow(userRoles[2].user, userRoles[0].user),
-            createAndSaveFollow(userRoles[3].user, userRoles[0].user),
-            createAndSaveFollow(userRoles[4].user, userRoles[0].user),
-        )
-
-        val pageRequest = PageRequest.of(null, null)
-
-        // when
-        val foundFollows = userService.getAllFollowing(userRoles[0].user.id!!, pageRequest)
-
-        // then
-        assertAll(
-            {
-                assertThat(foundFollows.total).isEqualTo(follows.size.toLong())
-            },
-            {
-                assertThat(foundFollows.data)
-                    .extracting("followId", "userId", "userNickname", "userImageUrl")
-                    .containsExactly(
-                        tuple(follows[3].id, userRoles[4].user.id, userRoles[4].user.nickname,
-                            userRoles[4].user.imageUrl),
-                        tuple(follows[2].id, userRoles[3].user.id, userRoles[3].user.nickname,
-                            userRoles[3].user.imageUrl),
-                        tuple(follows[1].id, userRoles[2].user.id, userRoles[2].user.nickname,
-                            userRoles[2].user.imageUrl),
-                        tuple(follows[0].id, userRoles[1].user.id, userRoles[1].user.nickname,
-                            userRoles[1].user.imageUrl)
-                    )
-            }
-        )
-    }
-
     private fun createValidUserProfileUpdateServiceRequest(): UserProfileUpdateServiceRequest {
         return UserProfileUpdateServiceRequest("woomul", "https://www.google.com", "")
-    }
-
-    private fun createAndSaveFollow(user: UserEntity, followerUser: UserEntity): FollowEntity {
-        return followRepository.save(
-            FollowEntity(user = user, followerUser = followerUser)
-        )
     }
 
     private fun createAndSaveUserRole(

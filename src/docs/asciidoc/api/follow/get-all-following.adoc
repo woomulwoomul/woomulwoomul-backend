@@ -2,12 +2,12 @@
 === 팔로잉 전체 조회
 
 ==== HTTP Request
-include::{snippets}/user/get-all-following/http-request.adoc[]
-include::{snippets}/user/get-all-following/query-parameters.adoc[]
+include::{snippets}/follow/get-all-following/http-request.adoc[]
+include::{snippets}/follow/get-all-following/query-parameters.adoc[]
 
 ==== HTTP Response
-include::{snippets}/user/get-all-following/http-response.adoc[]
-include::{snippets}/user/get-all-following/response-fields.adoc[]
+include::{snippets}/follow/get-all-following/http-response.adoc[]
+include::{snippets}/follow/get-all-following/response-fields.adoc[]
 
 ==== Exception
 

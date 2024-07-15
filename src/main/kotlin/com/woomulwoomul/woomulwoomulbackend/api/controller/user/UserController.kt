@@ -58,14 +58,4 @@ class UserController(
 
         return DefaultSingleResponse.toResponseEntity(USER_IMAGE_UPLOADED, response)
     }
-
-    @GetMapping("/api/users/following")
-    fun getAllFollowing(principal: Principal,
-                        @RequestParam(name = "page-from", required = false) pageFrom: Long?,
-                        @RequestParam(name = "page-size", required = false) pageSize: Long?):
-            ResponseEntity<DefaultPageResponse<UserGetAllFollowingResponse>> {
-        val response = userService.getAllFollowing(UserUtils.getUserId(principal), PageRequest.of(pageFrom, pageSize))
-
-        return DefaultPageResponse.toResponseEntity(FOLLOWING_FOUND, response)
-    }
 }
