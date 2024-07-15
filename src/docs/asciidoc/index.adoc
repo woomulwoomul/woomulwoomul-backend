@@ -25,6 +25,7 @@ include::api/user/validate-nickname.adoc[]
 include::api/user/get-user-profile.adoc[]
 include::api/user/update-user-profile.adoc[]
 include::api/user/upload-image.adoc[]
+include::api/user/get-all-following.adoc[]
 
 [[Question-API]]
 === Question API

@@ -3,7 +3,10 @@ package com.woomulwoomul.woomulwoomulbackend.api.controller.user
 import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserProfileUpdateRequest
 import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserValidateNicknameRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.UserService
+import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetAllFollowingResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.*
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
+import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultSingleResponse
 import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
@@ -54,5 +57,15 @@ class UserController(
         val response = userService.uploadImage(UserUtils.getUserId(principal), file)
 
         return DefaultSingleResponse.toResponseEntity(USER_IMAGE_UPLOADED, response)
+    }
+
+    @GetMapping("/api/users/following")
+    fun getAllFollowing(principal: Principal,
+                        @RequestParam(name = "page-from", required = false) pageFrom: Long?,
+                        @RequestParam(name = "page-size", required = false) pageSize: Long?):
+            ResponseEntity<DefaultPageResponse<UserGetAllFollowingResponse>> {
+        val response = userService.getAllFollowing(UserUtils.getUserId(principal), PageRequest.of(pageFrom, pageSize))
+
+        return DefaultPageResponse.toResponseEntity(FOLLOWING_FOUND, response)
     }
 }

@@ -93,13 +93,13 @@ class QuestionControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllCategories_thenReturn200() {
         // given
-        val pageRequest = PageRequest.of(null, 10)
-        val total = 100L
+        val pageRequest = PageRequest.of(null, 2)
 
         `when`(questionService.getAllCategories(any()))
             .thenReturn(PageData(listOf(
                 QuestionFindAllCategoryResponse(1L, "카테고리1"),
-                QuestionFindAllCategoryResponse(2L, "카테고리2")), total))
+                QuestionFindAllCategoryResponse(2L, "카테고리2")
+            ), pageRequest.size))
 
         // when & then
         mockMvc.perform(

@@ -60,7 +60,7 @@ class CategoryRepositoryTest(
         )
     }
 
-    @DisplayName("카테고리가 없는데 전체 카테고리 조회가 정상 작동한다")
+    @DisplayName("카테고리가 없는데 전체 카테고리 조회를 하면 정상 작동한다")
     @Test
     fun givenEmpty_whenFindAll_thenReturn() {
         // given

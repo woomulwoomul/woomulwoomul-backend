@@ -3,11 +3,15 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.user
 import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserValidateNicknameRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.s3.S3Service
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.request.UserProfileUpdateServiceRequest
+import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetAllFollowingResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetProfileResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserProfileUpdateResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.UNAVAILABLE_NICKNAMES
+import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
+import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
@@ -22,6 +26,7 @@ import java.util.*
 class UserService(
     private val s3Service: S3Service,
     private val userRepository: UserRepository,
+    private val followRepository: FollowRepository,
 ) {
 
     /**
@@ -80,5 +85,16 @@ class UserService(
         if (request.nickname in UNAVAILABLE_NICKNAMES.fields) throw CustomException(UNAVAILABLE_NICKNAME)
 
         if (userRepository.existsByNickname(request.nickname)) throw CustomException(EXISTING_NICKNAME)
+    }
+
+    /**
+     * 팔로잉 전체 조회
+     * @param userId 회원 ID
+     * @param pageRequest 페이징 요청
+     * @return 팔로잉 전체 조회 응답
+     */
+    fun getAllFollowing(userId: Long, pageRequest: PageRequest): PageData<UserGetAllFollowingResponse> {
+        val follows = followRepository.findAllByFollower(userId, pageRequest)
+        return PageData(follows.data.map { UserGetAllFollowingResponse(it) }, follows.total)
     }
 }

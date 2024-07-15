@@ -73,7 +73,7 @@ class AnswerControllerTest : RestDocsSupport() {
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3")))
                 ),
-                10L
+                pageRequest.size
             ))
 
         // when & then
