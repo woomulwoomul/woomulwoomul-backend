@@ -5,7 +5,7 @@ import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationType
 import com.woomulwoomul.woomulwoomulbackend.domain.question.AnswerEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionAnswerEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionEntity
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.validation.constraints.Size
 

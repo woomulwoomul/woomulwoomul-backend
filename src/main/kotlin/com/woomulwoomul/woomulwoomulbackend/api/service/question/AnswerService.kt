@@ -18,8 +18,7 @@ import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationType
 import com.woomulwoomul.woomulwoomulbackend.domain.question.AnswerRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionAnswerRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryRepository
-import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionRepository
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowRepository
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserVisitEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserVisitRepository
@@ -29,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
-import kotlin.collections.HashMap
 
 @Service
 @Validated

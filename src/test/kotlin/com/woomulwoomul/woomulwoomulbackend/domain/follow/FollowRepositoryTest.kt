@@ -1,12 +1,9 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.follow
 
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowEntity
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.groups.Tuple
 import org.assertj.core.groups.Tuple.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

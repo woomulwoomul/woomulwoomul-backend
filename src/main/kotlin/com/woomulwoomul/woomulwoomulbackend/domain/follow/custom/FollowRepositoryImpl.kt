@@ -1,11 +1,11 @@
-package com.woomulwoomul.woomulwoomulbackend.domain.user.custom
+package com.woomulwoomul.woomulwoomulbackend.domain.follow.custom
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowEntity
-import com.woomulwoomul.woomulwoomulbackend.domain.user.QFollowEntity.followEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.QFollowEntity.followEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity.userEntity
 import org.springframework.stereotype.Repository

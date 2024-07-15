@@ -1,8 +1,8 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.follow
 
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowEntity
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowRepository
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import org.assertj.core.api.Assertions.assertThat

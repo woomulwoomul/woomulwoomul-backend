@@ -1,6 +1,7 @@
-package com.woomulwoomul.woomulwoomulbackend.domain.user
+package com.woomulwoomul.woomulwoomulbackend.domain.follow
 
 import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
 
 @Table(name = "follow")

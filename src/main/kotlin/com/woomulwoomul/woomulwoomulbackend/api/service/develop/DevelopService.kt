@@ -3,6 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.develop
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.TESTER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.config.auth.JwtProvider
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import jakarta.persistence.EntityManager
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.concurrent.ThreadLocalRandom
 
 @Service
 @Transactional(readOnly = true)

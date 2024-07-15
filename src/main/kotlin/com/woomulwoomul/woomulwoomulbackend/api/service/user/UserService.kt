@@ -3,15 +3,12 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.user
 import com.woomulwoomul.woomulwoomulbackend.api.controller.user.request.UserValidateNicknameRequest
 import com.woomulwoomul.woomulwoomulbackend.api.service.s3.S3Service
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.request.UserProfileUpdateServiceRequest
-import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetAllFollowingResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetProfileResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserProfileUpdateResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.UNAVAILABLE_NICKNAMES
-import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
-import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowRepository
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service

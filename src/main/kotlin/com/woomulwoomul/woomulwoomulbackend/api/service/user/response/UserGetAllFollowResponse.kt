@@ -1,6 +1,6 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.user.response
 
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
 
 data class UserGetAllFollowingResponse(
     val followId: Long,

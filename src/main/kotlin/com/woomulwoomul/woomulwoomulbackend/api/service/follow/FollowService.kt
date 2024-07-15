@@ -3,7 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.follow
 import com.woomulwoomul.woomulwoomulbackend.api.service.user.response.UserGetAllFollowingResponse
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
-import com.woomulwoomul.woomulwoomulbackend.domain.user.FollowRepository
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
