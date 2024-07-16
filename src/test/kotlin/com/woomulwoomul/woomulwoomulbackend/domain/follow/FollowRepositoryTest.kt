@@ -49,7 +49,7 @@ class FollowRepositoryTest(
         assertThat(result).isEqualTo(expected)
     }
 
-    @DisplayName("팔로워 회원 ID로 전체 팔로우 조회가 정상 작동한다")
+    @DisplayName("팔로워 회원 ID로 전체 팔로우 조회를 하면 정상 작동한다")
     @Test
     fun givenValid_whenFindAllByFollower_thenReturn() {
         // given
@@ -127,6 +127,70 @@ class FollowRepositoryTest(
                 assertThat(foundFollows.data).isEqualTo(emptyList<FollowEntity>())
             }
         )
+    }
+
+    @DisplayName("팔로워 회원 ID와 회원 ID로 팔로우 전체 조회를 하면 정상 작동한다")
+    @Test
+    fun givenValid_whenFindAll_thenReturn() {
+        // given
+        val users = listOf(createAndSaveUser("tester1", "tester1@woomulwoomul.com"),
+            createAndSaveUser("tester2", "tester2@woomulwoomul.com"))
+        val follows = listOf(createAndSaveFollow(users[0], users[1]), createAndSaveFollow(users[1], users[0]))
+
+        // when
+        val foundFollows = followRepository.findAll(users[0].id!!, users[1].id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundFollows.size).isEqualTo(follows.size)
+            },
+            {
+                assertThat(foundFollows)
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
+                    .containsExactlyInAnyOrder(
+                        tuple(follows[0].id, follows[0].status, follows[0].createDateTime, follows[0].updateDateTime),
+                        tuple(follows[1].id, follows[1].status, follows[1].createDateTime, follows[1].updateDateTime)
+                    )
+            },
+            {
+                assertThat(foundFollows)
+                    .extracting("user")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactlyInAnyOrder(
+                        tuple(users[0].id, users[0].nickname, users[0].email, users[0].imageUrl, users[0].introduction,
+                            users[0].status, users[0].createDateTime, users[0].updateDateTime),
+                        tuple(users[1].id, users[1].nickname, users[1].email, users[1].imageUrl, users[1].introduction,
+                            users[1].status, users[1].createDateTime, users[1].updateDateTime)
+                    )
+            },
+            {
+                assertThat(foundFollows)
+                    .extracting("followerUser")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactlyInAnyOrder(
+                        tuple(users[0].id, users[0].nickname, users[0].email, users[0].imageUrl, users[0].introduction,
+                            users[0].status, users[0].createDateTime, users[0].updateDateTime),
+                        tuple(users[1].id, users[1].nickname, users[1].email, users[1].imageUrl, users[1].introduction,
+                            users[1].status, users[1].createDateTime, users[1].updateDateTime)
+                    )
+            }
+        )
+    }
+
+    @DisplayName("팔로워 회원 ID와 회원 ID로 팔로우가 없는데 팔로우 전체 조회를 하면 정상 작동한다")
+    @Test
+    fun givenEmpty_whenFindAll_thenReturn() {
+        // given
+        val userIds = listOf(1L, 2L)
+
+        // when
+        val foundFollows = followRepository.findAll(userIds[0], userIds[1])
+
+        // then
+        assertThat(foundFollows.size).isEqualTo(0)
     }
 
     private fun createAndSaveFollow(user: UserEntity, followerUser: UserEntity): FollowEntity {

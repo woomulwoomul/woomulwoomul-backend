@@ -85,10 +85,7 @@ class UserControllerTest : RestDocsSupport() {
                 document(
                     "user/validate-nickname/nickname-field-required",
                     preprocessResponse(prettyPrint()),
-                    queryParameters(
-                        parameterWithName("nickname")
-                            .description("닉네임")
-                    )
+                    queryParameters(parameterWithName("nickname").description("닉네임"))
                 )
             )
     }

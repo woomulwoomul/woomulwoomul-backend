@@ -19,6 +19,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -98,5 +99,67 @@ class FollowControllerTest : RestDocsSupport() {
                     ),
                 )
             )
+    }
+
+    @DisplayName("팔로우 삭제를 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenDeleteFollow_thenReturn200() {
+        // given
+        val userId = 1L
+
+        // when & then
+        mockMvc.perform(
+            delete("/api/follow")
+                .header(AUTHORIZATION, "Bearer access-token")
+                .queryParam("user-id", userId.toString())
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "follow/delete-follow",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지")
+                    ),
+                    queryParameters(parameterWithName("user-id").description("회원 ID"))
+                )
+            )
+    }
+
+    @DisplayName("회원 ID 미입력시 팔로우 삭제를 하면 400을 반환한다")
+    @Test
+    fun givenBlankUserId_whenDeleteFollow_thenReturn400() {
+        // given
+        val userId = null
+
+        // when & then
+        mockMvc.perform(
+            delete("/api/follow")
+                .header(AUTHORIZATION, "Bearer access-token")
+                .queryParam("user-id", userId)
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isBadRequest)
+            .andDo(
+                document(
+                    "follow/delete-follow/user-id-field-required",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                )
+            )
+        queryParameters(parameterWithName("user-id").description("회원 ID"))
     }
 }

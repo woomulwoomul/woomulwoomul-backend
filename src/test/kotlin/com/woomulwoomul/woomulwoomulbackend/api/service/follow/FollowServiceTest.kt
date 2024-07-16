@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.follow
 
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
+import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.USER_DEL
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
@@ -63,6 +64,23 @@ class FollowServiceTest(
                     )
             }
         )
+    }
+
+    @DisplayName("팔로우 삭제가 정상 작동한다")
+    @Test
+    fun givenValid_whenDeleteFollow_thenReturn() {
+        // given
+        val users = listOf(createAndSaveUser("tester1", "tester1@woomulwoomul.com"),
+            createAndSaveUser("tester2", "tester2@woomulwoomul.com"))
+        val follows = listOf(createAndSaveFollow(users[0], users[1]), createAndSaveFollow(users[1], users[0]))
+
+        // when
+        followService.deleteFollow(users[0].id!!, users[1].id!!)
+
+        // then
+        assertThat(follows)
+            .extracting("status")
+            .containsExactly(USER_DEL, USER_DEL)
     }
 
     private fun createAndSaveFollow(user: UserEntity, followerUser: UserEntity): FollowEntity {

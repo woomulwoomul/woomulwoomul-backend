@@ -9,4 +9,6 @@ interface FollowCustomRepository {
     fun exists(userId: Long, followerUserId: Long): Boolean
 
     fun findAllByFollower(userId: Long, pageRequest: PageRequest): PageData<FollowEntity>
+
+    fun findAll(userId: Long, followerUserId: Long): List<FollowEntity>
 }

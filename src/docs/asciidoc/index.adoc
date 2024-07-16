@@ -29,6 +29,7 @@ include::api/user/upload-image.adoc[]
 [[Follow-API]]
 === Follow API
 include::api/follow/get-all-following.adoc[]
+include::api/follow/delete-follow.adoc[]
 
 [[Question-API]]
 === Question API

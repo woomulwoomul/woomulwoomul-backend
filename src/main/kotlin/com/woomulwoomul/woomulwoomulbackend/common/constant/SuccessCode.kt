@@ -44,6 +44,7 @@ enum class SuccessCode(
     USER_IMAGE_UPLOADED(OK, "회원 이미지를 업로드했습니다."),
     NICKNAME_AVAILABLE(OK, "사용 가능한 닉네임입니다."),
     FOLLOWING_FOUND(OK, "팔로잉 전체 조회를 완료했습니다."),
+    FOLLOW_DELETED(OK, "팔로우가 삭제 됐습니다."),
 
     /**
      * Auth Controller

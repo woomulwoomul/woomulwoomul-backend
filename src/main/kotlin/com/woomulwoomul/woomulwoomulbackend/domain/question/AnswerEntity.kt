@@ -18,6 +18,9 @@ class AnswerEntity(
     var imageUrl: String,
 ) : BasePermanentEntity() {
 
+    /**
+     * 답변 수정
+     */
     fun update(text: String, imageUrl: String) {
         this.text = text
         this.imageUrl = imageUrl

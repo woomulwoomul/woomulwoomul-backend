@@ -6,8 +6,10 @@ import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.validation.annotation.Validated
 
 @Service
+@Validated
 @Transactional(readOnly = true)
 class FollowService(
     private val followRepository: FollowRepository,
@@ -22,5 +24,15 @@ class FollowService(
     fun getAllFollowing(userId: Long, pageRequest: PageRequest): PageData<UserGetAllFollowingResponse> {
         val follows = followRepository.findAllByFollower(userId, pageRequest)
         return PageData(follows.data.map { UserGetAllFollowingResponse(it) }, follows.total)
+    }
+
+    /**
+     * 팔로우 삭제
+     * @param userId 회원 ID
+     * @param followUserId 팔로우 회원 ID
+     */
+    @Transactional
+    fun deleteFollow(userId: Long, followUserId: Long) {
+        followRepository.findAll(userId, followUserId).map { it.unfollow() }
     }
 }

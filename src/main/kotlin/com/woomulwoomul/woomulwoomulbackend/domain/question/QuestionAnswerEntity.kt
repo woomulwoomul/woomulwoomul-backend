@@ -33,6 +33,9 @@ class QuestionAnswerEntity(
     var answer: AnswerEntity? = null,
 ) : BaseDetailEntity(INCOMPLETE) {
 
+    /**
+     * 회원이 삭제
+     */
     fun deleteByUser() {
         status = USER_DEL
         answer?.status = ServiceStatus.USER_DEL

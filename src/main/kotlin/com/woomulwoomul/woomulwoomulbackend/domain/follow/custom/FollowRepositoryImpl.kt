@@ -72,4 +72,24 @@ class FollowRepositoryImpl(
 
         return PageData(data, total)
     }
+
+    override fun findAll(userId: Long, followerUserId: Long): List<FollowEntity> {
+        val followerUserEntity = QUserEntity("followerUserEntity")
+        val userEntity = QUserEntity("userEntity")
+
+        return queryFactory
+            .selectFrom(followEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(followEntity.user.id)
+                .and(userEntity.id.eq(userId)
+                    .or(userEntity.id.eq(followerUserId)))
+                .and(userEntity.status.eq(ACTIVE)))
+            .innerJoin(followerUserEntity)
+            .on(followerUserEntity.id.eq(followEntity.followerUser.id)
+                .and(followerUserEntity.id.eq(userId)
+                    .or(followerUserEntity.id.eq(followerUserId)))
+                .and(followerUserEntity.status.eq(ACTIVE)))
+            .where(followEntity.status.eq(ACTIVE))
+            .fetch()
+    }
 }

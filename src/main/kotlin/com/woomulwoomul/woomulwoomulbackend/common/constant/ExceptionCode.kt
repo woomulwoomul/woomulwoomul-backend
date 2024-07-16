@@ -12,6 +12,7 @@ enum class ExceptionCode(
      * 400 Bad Request
      */
     // @NotBlank, @NotNull
+    USER_ID_FIELD_REQUIRED(BAD_REQUEST, "회원 ID는 필수 입력입니다."),
     USER_NICKNAME_FIELD_REQUIRED(BAD_REQUEST, "회원 닉네임은 필수 입력입니다."),
     NICKNAME_FIELD_REQUIRED(BAD_REQUEST, "회원 닉네임은 필수 입력입니다."),
     USER_IMAGE_URL_FIELD_REQUIRED(BAD_REQUEST, "회원 이미지 URL은 필수 입력입니다."),
