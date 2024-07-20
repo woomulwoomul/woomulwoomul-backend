@@ -26,7 +26,7 @@ class SecurityConfig(
 ) {
 
     private val WHITE_LIST = hashMapOf(
-        HttpMethod.GET to arrayOf("/api/health", "/api/tester/**", "/oauth2/authorization/**", "/api/users/nickname",
+        HttpMethod.GET to arrayOf("/docs/index.html", "/api/health", "/api/tester/**", "/oauth2/authorization/**", "/api/users/nickname",
             "/api/questions"),
         HttpMethod.POST to arrayOf("/api/reset")
     )
