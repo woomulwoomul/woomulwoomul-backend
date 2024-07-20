@@ -24,17 +24,13 @@ class CustomAuthenticationEntryPoint(
         response?.apply {
             status = HttpStatus.UNAUTHORIZED.value()
             contentType = APPLICATION_JSON_VALUE
-        }
-
-        try {
-            val responseBody = objectMapper.writeValueAsString(ExceptionResponse(TOKEN_UNAUTHENTICATED))
-            response?.outputStream?.use {outputStream -> {
+            try {
+                val responseBody = objectMapper.writeValueAsString(ExceptionResponse(TOKEN_UNAUTHENTICATED))
                 outputStream.write(responseBody.toByteArray())
-                outputStream.flush()
-            } }
-
-        } catch (e: IOException) {
-            throw CustomException(SERVER_ERROR, e.cause)
+            } catch (e: IOException) {
+                throw CustomException(SERVER_ERROR, e.cause)
+            }
+            outputStream.flush()
         }
     }
 }

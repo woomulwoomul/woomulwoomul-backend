@@ -145,7 +145,7 @@ CREATE TABLE question_answer
 CREATE TABLE notification
 (
     notification_id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-    type                        VARCHAR(10)                 NOT NULL,
+    type                        VARCHAR(30)                 NOT NULL,
     title                       VARCHAR(50)                 NOT NULL,
     context                     VARCHAR(100)                NOT NULL,
     link                        VARCHAR(500)                NOT NULL,

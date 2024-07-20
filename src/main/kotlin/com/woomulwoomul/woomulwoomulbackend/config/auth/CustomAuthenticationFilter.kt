@@ -21,12 +21,10 @@ class CustomAuthenticationFilter(
 
         if (accessToken != null && !request.requestURI.contains("token")) {
             jwtProvider.verifyToken(accessToken, JwtType.ACCESS)
-        } else if (refreshToken != null) {
+        } else if (refreshToken != null && request.requestURI.contains("token")) {
             jwtProvider.verifyToken(refreshToken, JwtType.REFRESH)
         }
 
         filterChain.doFilter(request, response)
     }
-
-
 }

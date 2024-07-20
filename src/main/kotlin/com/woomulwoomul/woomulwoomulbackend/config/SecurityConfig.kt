@@ -7,6 +7,7 @@ import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2AuthenticationFail
 import com.woomulwoomul.woomulwoomulbackend.config.auth.OAuth2AuthenticationSuccessHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -24,6 +25,12 @@ class SecurityConfig(
     private val oAuth2AuthenticationFailureHandler: OAuth2AuthenticationFailureHandler,
 ) {
 
+    private val WHITE_LIST = hashMapOf(
+        HttpMethod.GET to arrayOf("/api/health", "/api/tester/**", "/oauth2/authorization/**", "/api/users/nickname",
+            "/api/questions"),
+        HttpMethod.POST to arrayOf("/api/reset")
+    )
+
     @Bean
     fun passwordEncoder() = BCryptPasswordEncoder()
 
@@ -37,7 +44,12 @@ class SecurityConfig(
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler)
             }.authorizeHttpRequests {
-                it.anyRequest().permitAll()
+                WHITE_LIST.forEach { (method, paths) ->
+                    paths.forEach { path ->
+                        it.requestMatchers(method, path).permitAll()
+                    }
+                }
+                it.anyRequest().authenticated()
             }.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling{ it.authenticationEntryPoint(customAuthenticationEntryPoint) }
             .build()
