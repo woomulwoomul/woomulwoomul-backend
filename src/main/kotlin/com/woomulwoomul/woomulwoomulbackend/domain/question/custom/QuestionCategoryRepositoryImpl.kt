@@ -26,15 +26,15 @@ class QuestionCategoryRepositoryImpl(
             .from(questionCategoryEntity)
             .innerJoin(questionEntity)
             .on(questionEntity.id.eq(questionCategoryEntity.question.id)
-                .and(questionEntity.status.eq(ACTIVE)))
+                .and(questionEntity.status.eq(ACTIVE))
+                .and(questionEntity.id.`in`(questionIds)))
             .fetchJoin()
             .innerJoin(categoryEntity)
             .on(categoryEntity.id.eq(questionCategoryEntity.category.id)
                 .and(categoryEntity.status.eq(ACTIVE)))
             .fetchJoin()
             .where(
-                questionCategoryEntity.status.eq(ACTIVE),
-                inQuestionId(questionIds)
+                questionCategoryEntity.status.eq(ACTIVE)
             ).fetch()
     }
 
@@ -44,14 +44,14 @@ class QuestionCategoryRepositoryImpl(
             .from(questionCategoryEntity)
             .innerJoin(questionEntity)
             .on(questionEntity.id.eq(questionCategoryEntity.question.id)
-                .and(questionEntity.status.eq(ACTIVE)))
+                .and(questionEntity.status.eq(ACTIVE))
+                .and(questionEntity.id.eq(questionId)))
             .fetchJoin()
             .innerJoin(categoryEntity)
             .on(categoryEntity.id.eq(questionCategoryEntity.category.id)
                 .and(categoryEntity.status.eq(ACTIVE)))
             .fetchJoin()
             .where(
-                questionCategoryEntity.question.id.eq(questionId),
                 questionCategoryEntity.status.eq(ACTIVE)
             ).fetch()
     }
@@ -80,10 +80,5 @@ class QuestionCategoryRepositoryImpl(
             ).orderBy(Expressions.numberTemplate(Double::class.java, "RAND()").asc())
             .limit(limit)
             .fetch()
-    }
-
-    private fun inQuestionId(questionIds: List<Long>): BooleanExpression? {
-        if (CollectionUtils.isNullOrEmpty(questionIds)) return questionEntity.id.`in`(questionIds)
-        return null
     }
 }
