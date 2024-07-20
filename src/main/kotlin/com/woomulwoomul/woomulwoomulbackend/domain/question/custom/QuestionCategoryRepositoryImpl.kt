@@ -35,7 +35,9 @@ class QuestionCategoryRepositoryImpl(
             .fetchJoin()
             .where(
                 questionCategoryEntity.status.eq(ACTIVE)
-            ).fetch()
+            ).orderBy(questionEntity.id.desc())
+            .orderBy(categoryEntity.id.asc())
+            .fetch()
     }
 
     override fun findByQuestionId(questionId: Long): List<QuestionCategoryEntity> {
@@ -51,9 +53,9 @@ class QuestionCategoryRepositoryImpl(
             .on(categoryEntity.id.eq(questionCategoryEntity.category.id)
                 .and(categoryEntity.status.eq(ACTIVE)))
             .fetchJoin()
-            .where(
-                questionCategoryEntity.status.eq(ACTIVE)
-            ).fetch()
+            .where(questionCategoryEntity.status.eq(ACTIVE))
+            .orderBy(categoryEntity.id.asc())
+            .fetch()
     }
 
     override fun findRandom(limit: Long): List<QuestionCategoryEntity> {
@@ -75,9 +77,10 @@ class QuestionCategoryRepositoryImpl(
             .on(userRoleEntity.user.id.eq(userEntity.id)
                 .and(userRoleEntity.status.eq(ACTIVE))
                 .and(userRoleEntity.role.eq(ADMIN)))
-            .where(
-                questionCategoryEntity.status.eq(ACTIVE)
-            ).orderBy(Expressions.numberTemplate(Double::class.java, "RAND()").asc())
+            .where(questionCategoryEntity.status.eq(ACTIVE))
+            .orderBy(Expressions.numberTemplate(Double::class.java, "RAND()").asc())
+            .orderBy(questionEntity.id.desc())
+            .orderBy(categoryEntity.id.asc())
             .limit(limit)
             .fetch()
     }
