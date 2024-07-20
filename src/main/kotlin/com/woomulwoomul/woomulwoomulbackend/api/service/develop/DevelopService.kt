@@ -3,6 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.api.service.develop
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.TESTER_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.config.auth.JwtProvider
+import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import kotlin.random.Random
 
 @Service
 @Transactional(readOnly = true)
@@ -30,6 +32,9 @@ class DevelopService(
 ) {
 
     private val TESTER_CONST = "tester"
+    private val IMAGE_URL_CONST = "https://img.freepik.com/free-photo/copy-space-coffee-beans_23-2148937252.jpg?w=900&t=st=1721451022~exp=1721451622~hmac=bee6c7b6b1a6a02fb5e296f5ff380f7dc0e9c36e2b20ded8272e8cde418e1e40"
+    private val COLOR_CODES_CONST = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6",
+        "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
 
     /**
      * 서버명 조회
@@ -65,8 +70,9 @@ class DevelopService(
         injectQuestionCategories(categories, questions)
 
         val users = injectUsers()
-        val answers = injectAnswers()
-        injectQuestionAnswers(users.subList(0, 9), questions, answers)
+        val subUsers = users.subList(0, 31)
+        val answers = injectAnswers(subUsers.size * (subUsers.size - 1))
+        injectQuestionAnswers(subUsers, questions, answers)
     }
 
     /**
@@ -82,44 +88,6 @@ class DevelopService(
         ))
 
         return admin
-    }
-
-    /**
-     * 카테고리 주입
-     */
-    private fun injectCategories(admin: UserEntity): List<CategoryEntity> {
-        return (1..10).map {
-            CategoryEntity(admin = admin, name = "카테고리${it}")
-        }.let { it ->
-            categoryRepository.saveAll(it)
-        }
-    }
-
-    /**
-     * 질문 주입
-     */
-    private fun injectQuestions(admin: UserEntity): List<QuestionEntity> {
-        val colorCodes = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6",
-            "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
-        return (1 .. 10).map {
-            QuestionEntity(user = admin, text = "질문${it}번 입니다.", backgroundColor = colorCodes[it - 1])
-        }.let {
-            questionRepository.saveAll(it)
-        }
-    }
-
-    /**
-     * 질문 카테고리 주입
-     */
-    private fun injectQuestionCategories(
-        categories: List<CategoryEntity>,
-        questions: List<QuestionEntity>,
-    ) {
-        questions.forEach { question ->
-            categories.shuffled().take((1..categories.size).random()).forEach { category ->
-                questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))
-            }
-        }
     }
 
     /**
@@ -141,20 +109,77 @@ class DevelopService(
     }
 
     /**
+     * 카테고리 주입
+     */
+    private fun injectCategories(admin: UserEntity): List<CategoryEntity> {
+        return (1..10).map {
+            CategoryEntity(admin = admin, name = "카테고리${it}")
+        }.let { it ->
+            categoryRepository.saveAll(it)
+        }
+    }
+
+    /**
+     * 질문 카테고리 주입
+     */
+    private fun injectQuestionCategories(
+        categories: List<CategoryEntity>,
+        questions: List<QuestionEntity>,
+    ) {
+        questions.forEach { question ->
+            categories.shuffled().take((1..categories.size).random())
+                .forEach { category ->
+                    questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))
+            }
+        }
+    }
+
+    /**
+     * 질문 주입
+     */
+    private fun injectQuestions(admin: UserEntity): List<QuestionEntity> {
+        return (1 .. 50).map {
+            QuestionEntity(
+                user = admin,
+                text = "질문${it}번 입니다.",
+                backgroundColor = COLOR_CODES_CONST[Random.nextInt(COLOR_CODES_CONST.size)]
+            )
+        }.let {
+            questionRepository.saveAll(it)
+        }
+    }
+
+    /**
      * 답변 주입
      */
-    private fun injectAnswers(): List<AnswerEntity> {
-        return (1 .. 50).map {
-            AnswerEntity(text = "답변${it}번 입니다.", imageUrl = "")
+    private fun injectAnswers(cnt: Int): List<AnswerEntity> {
+        return (1..cnt).map { index ->
+            if (index % 5 == 0) AnswerEntity(text = "", imageUrl = IMAGE_URL_CONST)
+            else AnswerEntity(text = "답변${index}번 입니다.", imageUrl = "")
         }.also { answerRepository.saveAll(it) }
     }
 
+    /**
+     * 질문 답변 주입
+     */
     private fun injectQuestionAnswers(
         users: List<UserEntity>,
         questions: List<QuestionEntity>,
         answers: List<AnswerEntity>,
     ) {
-        // TODO
+        users.flatMap { receiver ->
+            users.filter { sender -> sender.id != receiver.id }
+                .mapIndexed { index, sender ->
+                    val question = questions[index % questions.size]
+                    val answer = answers[((receiver.id!! * users.size + sender.id!!) % answers.size).toInt()]
+                    QuestionAnswerEntity(
+                        receiver = receiver,
+                        sender = sender,
+                        question = question,
+                        answer = answer
+                    ).apply { status = COMPLETE }
+                }
+        }.also { questionAnswerRepository.saveAll(it) }
     }
 
     /**
