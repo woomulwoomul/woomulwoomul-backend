@@ -44,12 +44,12 @@ class QuestionAnswerRepositoryImpl(
             .fetchJoin()
             .innerJoin(answerEntity)
             .on(answerEntity.id.eq(questionAnswerEntity.answer.id)
-                .and(answerEntity.status.eq(ACTIVE)))
+                .and(answerEntity.status.eq(ACTIVE))
+                .and(answerEntity.id.loe(pageRequest.from)))
             .where(
-                questionAnswerEntity.id.loe(pageRequest.from),
                 questionAnswerEntity.status.eq(COMPLETE),
                 questionAnswerEntity.receiver.id.eq(userId)
-            ).orderBy(questionAnswerEntity.updateDateTime.desc())
+            ).orderBy(answerEntity.id.desc())
             .limit(pageRequest.size)
             .fetch()
 
