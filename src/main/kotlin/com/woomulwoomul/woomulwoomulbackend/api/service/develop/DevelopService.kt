@@ -4,6 +4,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.TESTER
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.config.auth.JwtProvider
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.COMPLETE
+import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.question.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.*
@@ -33,8 +34,7 @@ class DevelopService(
 
     private val TESTER_CONST = "tester"
     private val IMAGE_URL_CONST = "https://img.freepik.com/free-photo/copy-space-coffee-beans_23-2148937252.jpg?w=900&t=st=1721451022~exp=1721451622~hmac=bee6c7b6b1a6a02fb5e296f5ff380f7dc0e9c36e2b20ded8272e8cde418e1e40"
-    private val COLOR_CODES_CONST = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6",
-        "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
+    private val COLOR_CODES_CONST = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6", "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
 
     /**
      * 서버명 조회
@@ -70,9 +70,10 @@ class DevelopService(
         injectQuestionCategories(categories, questions)
 
         val users = injectUsers()
-        val subUsers = users.subList(0, 31)
+        val subUsers = users.subList(0, 30)
         val answers = injectAnswers(subUsers.size * (subUsers.size - 1))
         injectQuestionAnswers(subUsers, questions, answers)
+        injectFollows(subUsers)
     }
 
     /**
@@ -127,7 +128,7 @@ class DevelopService(
         questions: List<QuestionEntity>,
     ) {
         questions.forEach { question ->
-            categories.shuffled().take((1..categories.size).random())
+            categories.shuffled().take((1..categories.size.coerceAtMost(5)).random())
                 .forEach { category ->
                     questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))
             }
@@ -167,19 +168,33 @@ class DevelopService(
         questions: List<QuestionEntity>,
         answers: List<AnswerEntity>,
     ) {
-        users.flatMap { receiver ->
-            users.filter { sender -> sender.id != receiver.id }
-                .mapIndexed { index, sender ->
-                    val question = questions[index % questions.size]
-                    val answer = answers[((receiver.id!! * users.size + sender.id!!) % answers.size).toInt()]
+        var answerIdx = 0
+        users.forEach { receiver ->
+            users.asSequence()
+                .filter { it.id != receiver.id }
+                .forEachIndexed { idx, sender ->
                     QuestionAnswerEntity(
                         receiver = receiver,
                         sender = sender,
-                        question = question,
-                        answer = answer
-                    ).apply { status = COMPLETE }
+                        question = questions[idx % questions.size],
+                        answer = answers[answerIdx++ % answers.size]
+                    ).apply {
+                        status = COMPLETE
+                    }.also { questionAnswerRepository.save(it) }
                 }
-        }.also { questionAnswerRepository.saveAll(it) }
+        }
+    }
+
+    /**
+     * 팔로우 주입
+     */
+    private fun injectFollows(users: List<UserEntity>) {
+        users.forEach { user ->
+            users.filter { it.id != user.id }
+                .forEach { followUser ->
+                    followRepository.save(FollowEntity(user = user, followerUser = followUser))
+                }
+        }
     }
 
     /**
