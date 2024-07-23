@@ -36,7 +36,7 @@ class AnswerControllerTest : RestDocsSupport() {
         return AnswerController(answerService)
     }
 
-    @DisplayName("전체 답변 조회를 하면 200을 반환한다")
+    @DisplayName("답변 전체 조회를 하면 200을 반환한다")
     @Test
     fun givenValid_whenGetAllAnswers_thenReturn200() {
         // given

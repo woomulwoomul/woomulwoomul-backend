@@ -6,7 +6,7 @@ import com.woomulwoomul.woomulwoomulbackend.common.constant.ServiceConstants.IMA
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import org.springframework.web.multipart.MultipartFile
 
-class FileUtility {
+class FileUtils {
 
     companion object {
 

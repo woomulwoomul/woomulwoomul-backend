@@ -45,3 +45,7 @@ include::api/question/create-answer.adoc[]
 include::api/question/update-answer.adoc[]
 include::api/question/delete-answer.adoc[]
 include::api/question/upload-image.adoc[]
+
+[[Notification-API]]
+=== Notification API
+include::api/notification/get-all-notifications.adoc[]

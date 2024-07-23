@@ -6,7 +6,7 @@ import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.services.s3.model.PutObjectRequest
 import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.SERVER_ERROR
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
-import com.woomulwoomul.woomulwoomulbackend.common.utils.FileUtility
+import com.woomulwoomul.woomulwoomulbackend.common.utils.FileUtils
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
@@ -28,7 +28,7 @@ class S3Service(
      * @return 파일 URL
      */
     fun uploadFile(file: MultipartFile?, pathName: String, fileName: String): String {
-        FileUtility.validateImageFileType(file)
+        FileUtils.validateImageFileType(file)
 
         val inputStream = file!!.inputStream
         val objectMetadata = ObjectMetadata().apply {

@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 abstract class BaseNotificationEntity(
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 30)
     @Enumerated(EnumType.STRING)
     var status: NotificationServiceStatus = UNREAD,
 
