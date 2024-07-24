@@ -49,3 +49,4 @@ include::api/question/upload-image.adoc[]
 [[Notification-API]]
 === Notification API
 include::api/notification/get-all-notifications.adoc[]
+include::api/notification/read-notification.adoc[]

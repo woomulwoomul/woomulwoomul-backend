@@ -14,6 +14,7 @@ enum class SuccessCode(
      */
     // 200 Ok
     NOTIFICATIONS_FOUND(OK, "알림 전체 조회를 완료했습니다."),
+    NOTIFICATION_READ(OK, "알림 읽음 처리가 완료됐습니다."),
 
     /**
      * Follow Controller

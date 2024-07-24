@@ -3,12 +3,12 @@ package com.woomulwoomul.woomulwoomulbackend.domain.notification.custom
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
-import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus.READ
-import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus.UNREAD
+import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.QNotificationEntity.notificationEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity.userEntity
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -32,7 +32,7 @@ class NotificationRepositoryImpl(
             .on(senderUser.id.eq(notificationEntity.senderUser.id))
             .leftJoin(senderAdmin)
             .on(senderAdmin.id.eq(notificationEntity.senderAdmin.id))
-            .where(notificationEntity.status.`in`(READ, UNREAD))
+            .where(notificationEntity.status.notIn(NotificationServiceStatus.USER_DEL, NotificationServiceStatus.ADMIN_DEL))
             .fetchFirst() ?: 0L
 
         if (total == 0L) return PageData(emptyList(), total)
@@ -50,12 +50,25 @@ class NotificationRepositoryImpl(
             .on(senderAdmin.id.eq(notificationEntity.senderAdmin.id))
             .fetchJoin()
             .where(
-                notificationEntity.status.`in`(READ, UNREAD),
+                notificationEntity.status.notIn(NotificationServiceStatus.USER_DEL, NotificationServiceStatus.ADMIN_DEL),
                 notificationEntity.id.loe(pageRequest.from)
             ).limit(pageRequest.size)
             .orderBy(notificationEntity.id.desc())
             .fetch()
 
         return PageData(data, total)
+    }
+
+    override fun findByNotificationIdAndUserId(notificationId: Long, userId: Long): NotificationEntity? {
+        return queryFactory
+            .selectFrom(notificationEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(notificationEntity.receiver.id)
+                .and(userEntity.status.eq(ACTIVE))
+                .and(userEntity.id.eq(userId)))
+            .where(
+                notificationEntity.status.notIn(NotificationServiceStatus.USER_DEL, NotificationServiceStatus.ADMIN_DEL),
+                notificationEntity.id.eq(notificationId)
+            ).fetchFirst()
     }
 }

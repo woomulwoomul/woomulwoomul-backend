@@ -1,16 +1,21 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.notification
 
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.NOTIFICATION_NOT_FOUND
 import com.woomulwoomul.woomulwoomulbackend.common.constant.NotificationConstants
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
+import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.common.utils.DateTimeUtils
+import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus.READ
+import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus.USER_DEL
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationRepository
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationType
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple.tuple
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -32,7 +37,6 @@ class NotificationServiceTest(
     @Test
     fun givenValid_whenGetAllNotification_thenReturn() {
         // given
-        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val users = listOf(createAndSaveUser("tester1", "tester1@woomulwoomul.com"),
             createAndSaveUser("tester2", "tester2@woomulwoomul.com"))
         val notifications = listOf(createAndSaveNotification(users[0], users[1], null, NotificationType.FOLLOW,
@@ -83,7 +87,42 @@ class NotificationServiceTest(
                     )
             }
         )
+    }
 
+    @DisplayName("알림 읽기가 정상 작동한다")
+    @Test
+    fun givenValid_whenReadNotification_thenReturn() {
+        // given
+        val users = listOf(createAndSaveUser("tester1", "tester1@woomulwoomul.com"),
+            createAndSaveUser("tester2", "tester2@woomulwoomul.com"))
+        val notification = createAndSaveNotification(users[0], users[1], null, NotificationType.FOLLOW,
+            NotificationConstants.FOLLOW.toMessage(users[1].nickname), "",
+            NotificationConstants.FOLLOW.toLink(listOf(users[1].id!!)))
+
+        // when
+        notificationService.readNotification(users[0].id!!, notification.id!!)
+
+        // then
+        assertThat(notification.status).isEqualTo(READ)
+    }
+
+    @DisplayName("존재하지 않은 알림 읽기를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingNotification_whenReadNotification_thenThrow() {
+        // given
+        val users = listOf(createAndSaveUser("tester1", "tester1@woomulwoomul.com"),
+            createAndSaveUser("tester2", "tester2@woomulwoomul.com"))
+        val notification = createAndSaveNotification(users[0], users[1], null, NotificationType.FOLLOW,
+            NotificationConstants.FOLLOW.toMessage(users[1].nickname), "",
+            NotificationConstants.FOLLOW.toLink(listOf(users[1].id!!)))
+            .also { it.status = USER_DEL }
+        notificationRepository.save(notification)
+
+        // when & then
+        assertThatThrownBy { notificationService.readNotification(users[0].id!!, notification.id!!) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(NOTIFICATION_NOT_FOUND)
     }
 
     private fun createAndSaveNotification(

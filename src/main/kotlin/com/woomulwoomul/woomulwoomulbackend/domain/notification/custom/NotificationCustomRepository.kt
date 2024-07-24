@@ -7,4 +7,6 @@ import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationEnti
 interface NotificationCustomRepository {
 
     fun findAll(userId: Long, pageRequest: PageRequest): PageData<NotificationEntity>
+
+    fun findByNotificationIdAndUserId(notificationId: Long, userId: Long): NotificationEntity?
 }

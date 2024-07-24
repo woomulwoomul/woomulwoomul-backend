@@ -1,7 +1,10 @@
 package com.woomulwoomul.woomulwoomulbackend.api.service.notification
 
 import com.woomulwoomul.woomulwoomulbackend.api.service.notification.response.NotificationGetAllResponse
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
+import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationRepository
 import org.springframework.stereotype.Service
@@ -28,5 +31,17 @@ class NotificationService(
         val notifications = notificationRepository.findAll(userId, pageRequest)
 
         return PageData(notifications.data.map { NotificationGetAllResponse(it, now) }, notifications.total)
+    }
+
+    /**
+     * 알림 읽음 처리
+     * @param userId 회원 ID
+     * @param notificationId 알림 ID
+     * @throws NOTIFICATION_NOT_FOUND 404
+     */
+    @Transactional
+    fun readNotification(userId: Long, notificationId: Long) {
+        notificationRepository.findByNotificationIdAndUserId(notificationId, userId)?.read()
+            ?: throw CustomException(NOTIFICATION_NOT_FOUND)
     }
 }

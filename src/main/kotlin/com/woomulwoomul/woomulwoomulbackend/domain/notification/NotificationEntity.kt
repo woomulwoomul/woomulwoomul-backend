@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.notification
 
 import com.woomulwoomul.woomulwoomulbackend.domain.base.BaseNotificationEntity
+import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus.READ
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
 
@@ -33,4 +34,12 @@ class NotificationEntity(
     val context: String,
     @Column(length = 500)
     val link: String? = null,
-) : BaseNotificationEntity()
+) : BaseNotificationEntity() {
+
+    /**
+     * 알림 읽기
+     */
+    fun read() {
+        this.status = READ
+    }
+}

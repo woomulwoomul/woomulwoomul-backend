@@ -89,7 +89,6 @@ class NotificationRepositoryTest(
     @Test
     fun givenEmpty_whenFindAll_thenReturn() {
         // given
-
         val user = createAndSaveUser("tester1", "tester1@woomulwoomul.com")
         val pageRequest = PageRequest.of(null, null)
 
@@ -103,6 +102,49 @@ class NotificationRepositoryTest(
             },
             {
                 assertThat(foundNotifications.data).isEmpty()
+            }
+        )
+    }
+
+    @DisplayName("회원 ID와 알림 ID로 알림 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindByNotificationIdAndUserId_thenReturn() {
+        // given
+        val users = listOf(createAndSaveUser("tester1", "tester1@woomulwoomul.com"),
+            createAndSaveUser("tester2", "tester2@woomulwoomul.com"))
+        val notification = createAndSaveNotification(users[0], users[1], null, FOLLOW,
+            NotificationConstants.FOLLOW.toMessage(users[1].nickname), "",
+            NotificationConstants.FOLLOW.toLink(listOf(users[1].id!!)))
+
+        // when
+        val foundNotification = notificationRepository.findByNotificationIdAndUserId(notification.id!!, users[0].id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundNotification)
+                    .extracting("id", "type", "title", "context", "link", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(notification.id, notification.type, notification.title, notification.context,
+                        notification.link, notification.status, notification.createDateTime, notification.updateDateTime)
+            },
+            {
+                assertThat(foundNotification)
+                    .extracting("receiver")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(users[0].id, users[0].nickname, users[0].email, users[0].imageUrl,
+                        users[0].introduction, users[0].status, users[0].createDateTime, users[0].updateDateTime)
+            },
+            {
+                assertThat(foundNotification)
+                    .extracting("senderUser")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(users[1].id, users[1].nickname, users[1].email, users[1].imageUrl,
+                        users[1].introduction, users[1].status, users[1].createDateTime, users[1].updateDateTime)
+            },
+            {
+                assertThat(foundNotification?.senderAdmin).isNull()
             }
         )
     }

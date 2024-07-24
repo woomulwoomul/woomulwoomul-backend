@@ -25,6 +25,7 @@ import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.queryParameters
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.time.LocalDateTime
@@ -53,7 +54,7 @@ class NotificationControllerTest : RestDocsSupport() {
                         NotificationType.ANSWER,
                         NotificationConstants.ANSWER.toMessage("tester1"),
                         "",
-                        NotificationConstants.ANSWER.toLink(listOf(2L)),
+                        NotificationConstants.ANSWER.toLink(listOf(1L, 2L)),
                         DateTimeUtils.getDurationDifference(now.minusDays(1), now),
                         NotificationGetAllSenderResponse(
                             2L,
@@ -130,6 +131,37 @@ class NotificationControllerTest : RestDocsSupport() {
                         parameterWithName("page-from").description("페이지 시작점").optional(),
                         parameterWithName("page-size").description("페이지 크기").optional()
                     ),
+                )
+            )
+    }
+
+    @DisplayName("알림 읽음 처리를 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenReadNotification_thenReturn200() {
+        // given
+        val notificationId = 1L
+
+        // when & then
+        mockMvc.perform(
+            patch("/api/notification/{notificationId}", notificationId)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "notification/read-notification",
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                    )
                 )
             )
     }

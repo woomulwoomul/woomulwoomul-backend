@@ -64,6 +64,7 @@ enum class ExceptionCode(
     CATEGORY_NOT_FOUND(NOT_FOUND, "존재하지 않는 카테고리입니다."),
     ANSWER_NOT_FOUND(NOT_FOUND, "존재하지 않는 답변입니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "존재하지 않는 질문입니다."),
+    NOTIFICATION_NOT_FOUND(NOT_FOUND, "존재하지 않는 알림입니다."),
 
     /**
      * 405 Method Not Allowed

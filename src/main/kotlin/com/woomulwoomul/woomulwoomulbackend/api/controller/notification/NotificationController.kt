@@ -3,14 +3,14 @@ package com.woomulwoomul.woomulwoomulbackend.api.controller.notification
 import com.woomulwoomul.woomulwoomulbackend.api.service.notification.NotificationService
 import com.woomulwoomul.woomulwoomulbackend.api.service.notification.response.NotificationGetAllResponse
 import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.NOTIFICATIONS_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.constant.SuccessCode.NOTIFICATION_READ
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultPageResponse
+import com.woomulwoomul.woomulwoomulbackend.common.response.DefaultResponse
 import com.woomulwoomul.woomulwoomulbackend.common.utils.UserUtils
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import java.security.Principal
 import java.time.LocalDateTime
 
@@ -29,5 +29,12 @@ class NotificationController(
             LocalDateTime.now())
 
         return DefaultPageResponse.toResponseEntity(NOTIFICATIONS_FOUND, response)
+    }
+
+    @PatchMapping("/api/notification/{notificationId}")
+    fun readNotification(@PathVariable notificationId: Long, principal: Principal): ResponseEntity<DefaultResponse> {
+        notificationService.readNotification(UserUtils.getUserId(principal), notificationId)
+
+        return DefaultResponse.toResponseEntity(NOTIFICATION_READ)
     }
 }

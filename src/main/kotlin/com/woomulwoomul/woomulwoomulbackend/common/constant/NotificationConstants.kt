@@ -15,8 +15,21 @@ enum class NotificationConstants(
     }
 
     fun toLink(ids: List<Long> = emptyList()): String {
-        return ids.fold(link) { resultLink, id ->
-            resultLink.replace("{$id}", id.toString())
+        if (ids.isEmpty()) return link
+
+        val regex = "\\{\\d+}".toRegex()
+        val stringBuilder = StringBuilder(link)
+
+        regex.findAll(link).forEachIndexed { index, matchResult ->
+            if (index < ids.size) {
+                val placeholder = matchResult.value
+                val start = stringBuilder.indexOf(placeholder)
+                if (start != -1) {
+                    stringBuilder.replace(start, start + placeholder.length, ids[index].toString())
+                }
+            }
         }
+
+        return stringBuilder.toString()
     }
 }
