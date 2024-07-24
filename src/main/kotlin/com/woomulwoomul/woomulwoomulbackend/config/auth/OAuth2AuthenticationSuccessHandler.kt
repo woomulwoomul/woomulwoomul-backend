@@ -39,14 +39,12 @@ class OAuth2AuthenticationSuccessHandler(
         val body = DefaultSingleResponse(
             code = OAUTH2_LOGIN.name,
             message = OAUTH2_LOGIN.message,
-            data = UserLoginResponse(user)
+            data = UserLoginResponse(user, accessToken, refreshToken)
         )
 
         response!!.status = OAUTH2_LOGIN.httpStatus.value()
         response.contentType = APPLICATION_JSON_VALUE
         response.characterEncoding = UTF_8.name()
-        response.setHeader(AUTHORIZATION, accessToken)
-        response.setHeader(REFRESH_TOKEN, refreshToken)
         response.writer.write(objectMapper.writeValueAsString(body))
     }
 

@@ -24,22 +24,12 @@ Refresh-Token: refresh-token
     "userId": 1,
     "nickname": "tester",
     "imageUrl": "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-    "email": "tester@woomulwoomul.com"
+    "email": "tester@woomulwoomul.com",
+    "accessToken": "JWT.ACCESS.TOKEN",
+    "refreshToken": "JWT.REFRESH.TOKEN"
   }
 }
 ----
-
-==== Response Headers
-|===
-|Name|Description
-
-|`+Authorization+`
-|액세스 토큰
-
-|`+Refresh-Token+`
-|리프레시 토큰
-
-|===
 
 ==== Response Fields
 |===
@@ -92,6 +82,16 @@ Refresh-Token: refresh-token
 |`+String+`
 |
 |회원 소개
+
+|`+data.accessToken+`
+|`+String+`
+|
+|액세스 토큰
+
+|`+data.refreshToken+`
+|`+String+`
+|
+|리프레시 토큰
 
 |===
 
