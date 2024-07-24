@@ -60,6 +60,7 @@ enum class SuccessCode(
      */
     // 200 Ok
     OAUTH2_LOGIN(OK, "SNS 로그인을 했습니다."),
+    TOKEN_REFRESHED(OK, "토큰을 재발급 했습니다."),
 
     /**
      * Develop Controller

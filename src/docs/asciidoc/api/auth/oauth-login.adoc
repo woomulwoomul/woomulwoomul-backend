@@ -25,8 +25,8 @@ Refresh-Token: refresh-token
     "nickname": "tester",
     "imageUrl": "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
     "email": "tester@woomulwoomul.com",
-    "accessToken": "JWT.ACCESS.TOKEN",
-    "refreshToken": "JWT.REFRESH.TOKEN"
+    "accessToken": "access-token",
+    "refreshToken": "refresh-token"
   }
 }
 ----

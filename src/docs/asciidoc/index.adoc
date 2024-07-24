@@ -18,6 +18,7 @@ include::api/develop/reset.adoc[]
 [[Auth-API]]
 === Auth API
 include::api/auth/oauth-login.adoc[]
+include::api/auth/refresh-token.adoc[]
 
 [[User-API]]
 === User API
