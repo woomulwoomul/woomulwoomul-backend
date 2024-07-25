@@ -3,6 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.domain.notification.custom
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.common.utils.DatabaseUtils
 import com.woomulwoomul.woomulwoomulbackend.domain.base.NotificationServiceStatus
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.notification.NotificationEntity
@@ -21,7 +22,7 @@ class NotificationRepositoryImpl(
         val senderUser = QUserEntity("senderUser")
         val senderAdmin = QUserEntity("senderAdmin")
 
-        val total = queryFactory
+        val total = DatabaseUtils.count(queryFactory
             .select(notificationEntity.id.count())
             .from(notificationEntity)
             .innerJoin(receiver)
@@ -33,7 +34,7 @@ class NotificationRepositoryImpl(
             .leftJoin(senderAdmin)
             .on(senderAdmin.id.eq(notificationEntity.senderAdmin.id))
             .where(notificationEntity.status.notIn(NotificationServiceStatus.USER_DEL, NotificationServiceStatus.ADMIN_DEL))
-            .fetchFirst() ?: 0L
+            .fetchFirst())
 
         if (total == 0L) return PageData(emptyList(), total)
 

@@ -3,6 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.domain.question.custom
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.common.utils.DatabaseUtils
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.question.CategoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QCategoryEntity.categoryEntity
@@ -14,11 +15,11 @@ class CategoryRepositoryImpl(
 ) : CategoryCustomRepository {
 
     override fun findAll(pageRequest: PageRequest): PageData<CategoryEntity> {
-        val total = queryFactory
+        val total = DatabaseUtils.count(queryFactory
             .select(categoryEntity.id.count())
             .from(categoryEntity)
             .where(categoryEntity.status.eq(ACTIVE))
-            .fetchFirst() ?: 0L
+            .fetchFirst())
 
         if (total == 0L) return PageData(emptyList(), total)
 

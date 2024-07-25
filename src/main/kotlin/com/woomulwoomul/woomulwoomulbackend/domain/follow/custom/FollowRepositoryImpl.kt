@@ -3,6 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.domain.follow.custom
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.common.utils.DatabaseUtils
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.FollowEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.follow.QFollowEntity.followEntity
@@ -36,7 +37,7 @@ class FollowRepositoryImpl(
         val followerUserEntity = QUserEntity("followerUserEntity")
         val userEntity = QUserEntity("userEntity")
 
-        val total = queryFactory
+        val total = DatabaseUtils.count(queryFactory
             .select(followEntity.id.count())
             .from(followEntity)
             .innerJoin(userEntity)
@@ -49,7 +50,7 @@ class FollowRepositoryImpl(
                 .and(followerUserEntity.status.eq(ACTIVE)))
             .where(
                 followEntity.status.eq(ACTIVE)
-            ).fetchFirst() ?: 0L
+            ).fetchFirst())
 
         if (total == 0L) return PageData(emptyList(), total)
 

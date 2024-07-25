@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
+import com.woomulwoomul.woomulwoomulbackend.common.utils.DatabaseUtils
 import com.woomulwoomul.woomulwoomulbackend.common.vo.AnsweredUserCntVo
 import com.woomulwoomul.woomulwoomulbackend.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
@@ -21,7 +22,7 @@ class QuestionAnswerRepositoryImpl(
 ) : QuestionAnswerCustomRepository {
 
     override fun findAllAnswered(userId: Long, pageRequest: PageRequest): PageData<QuestionAnswerEntity> {
-        val total = queryFactory
+        val total = DatabaseUtils.count(queryFactory
             .select(questionAnswerEntity.id.count())
             .from(questionAnswerEntity)
             .innerJoin(questionEntity)
@@ -31,7 +32,7 @@ class QuestionAnswerRepositoryImpl(
             .where(
                 questionAnswerEntity.status.eq(COMPLETE),
                 questionAnswerEntity.receiver.id.eq(userId)
-            ).fetchFirst() ?: 0L
+            ).fetchFirst())
 
         if (total == 0L) return PageData(emptyList(), total)
 
@@ -95,7 +96,7 @@ class QuestionAnswerRepositoryImpl(
     }
 
     override fun countAnsweredUser(questionId: Long): Long {
-        return queryFactory
+        return DatabaseUtils.count(queryFactory
             .select(questionAnswerEntity.id.count())
             .from(questionAnswerEntity)
             .innerJoin(questionEntity)
@@ -109,7 +110,7 @@ class QuestionAnswerRepositoryImpl(
             .on(userEntity.id.eq(questionAnswerEntity.receiver.id)
                 .and(userEntity.status.eq(ACTIVE)))
             .where(questionAnswerEntity.status.eq(COMPLETE))
-            .fetchFirst() ?: 0L
+            .fetchFirst())
     }
 
     override fun countAnsweredUsers(questionIds: List<Long>): List<AnsweredUserCntVo> {

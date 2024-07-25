@@ -105,15 +105,18 @@ tasks.jacocoTestReport {
 		xml.required = true
 	}
 
-	def qDomains = []
-	for (qPattern in "**/QA".."**/QZ")
-		qDomains.add(qPattern + "*")
+	def excludePattern = []
+	("QA".."QZ").each { qPattern ->
+		excludePattern.add("**/*$qPattern*")
+	}
+//	excludePattern.add("**/*_\$*_set*.*")
+//	excludePattern.add("**/*_\$*_get*.*")
 
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
 			fileTree(
 					dir: it,
-					excludes: [] + qDomains
+					excludes: [] + excludePattern
 			)
 		}))
 	}
@@ -122,9 +125,12 @@ tasks.jacocoTestReport {
 }
 
 tasks.jacocoTestCoverageVerification {
-	def qDomains = []
-	for (qPattern in "*.QA".."*.QZ")
-		qDomains.add(qPattern + "*")
+	def excludePattern = []
+	("QA".."QZ").each { qPattern ->
+		excludePattern.add("**/*$qPattern*")
+	}
+//	excludePattern.add("**/*_\$*_set*.*")
+//	excludePattern.add("**/*_\$*_get*.*")
 
 	violationRules {
 
@@ -137,7 +143,7 @@ tasks.jacocoTestCoverageVerification {
 				value = 'COVEREDRATIO'
 				minimum = 0.6
 			}
-			excludes = [] + qDomains
+			excludes = [] + excludePattern
 		}
 	}
 }
