@@ -35,3 +35,6 @@ sentry:
 
 api:
   name: "Woomulwoomul Dev"
+
+web:
+  domain: "https://www-frontend-dev.nogamsung.com"

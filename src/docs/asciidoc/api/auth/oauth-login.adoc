@@ -19,17 +19,23 @@ Refresh-Token: refresh-token
 
 {
   "code" : "OAUTH2_LOGIN",
-  "message" : "SNS 로그인을 했습니다.",
-  "data": {
-    "userId": 1,
-    "nickname": "tester",
-    "imageUrl": "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-    "email": "tester@woomulwoomul.com",
-    "accessToken": "access-token",
-    "refreshToken": "refresh-token"
-  }
+  "message" : "SNS 로그인을 했습니다."
 }
 ----
+
+|===
+|Parameter|Description
+
+|`+user-id+`
+|회원 ID
+
+|`+access-token+`
+|액세스 토큰
+
+|`+refresh-token+`
+|리프레시 토큰
+
+|===
 
 ==== Response Fields
 |===
@@ -46,52 +52,6 @@ Refresh-Token: refresh-token
 |`+String+`
 |
 |메세지
-
-
-|`+data+`
-|`+Object+`
-|
-|데이터
-
-
-|`+data.userId+`
-|`+Number+`
-|
-|회원 식별자
-
-
-|`+data.nickname+`
-|`+String+`
-|
-|회원 닉네임
-
-
-|`+data.imageUrl+`
-|`+String+`
-|
-|회원 프로필 이미지
-
-
-|`+data.email+`
-|`+String+`
-|
-|회원 이메일
-
-
-|`+data.introduction+`
-|`+String+`
-|
-|회원 소개
-
-|`+data.accessToken+`
-|`+String+`
-|
-|액세스 토큰
-
-|`+data.refreshToken+`
-|`+String+`
-|
-|리프레시 토큰
 
 |===
 
