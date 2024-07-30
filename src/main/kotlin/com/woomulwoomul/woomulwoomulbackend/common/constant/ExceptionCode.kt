@@ -41,7 +41,8 @@ enum class ExceptionCode(
 
     // Custom
     FILE_FIELD_REQUIRED(BAD_REQUEST, "파일은 필수 입력입니다."),
-    PROVIDER_TYPE_INVALID(BAD_REQUEST, "SNS는 'kakao' 중 하나만 사용할 수 있어요"),
+    PROVIDER_TYPE_INVALID(BAD_REQUEST, "SNS는 'kakao' 중 하나만 사용할 수 있어요."),
+    ROLE_TYPE_INVALID(BAD_REQUEST, "역할은 'USER', 'ADMIN', 'MASTER'만 가능합니다."),
     ANSWER_FIELD_REQUIRED(BAD_REQUEST, "답변 내용 또는 답변 이미지 중 하나는 필수 입력입니다."),
 
     /**

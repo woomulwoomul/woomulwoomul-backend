@@ -109,8 +109,6 @@ tasks.jacocoTestReport {
 	("QA".."QZ").each { qPattern ->
 		excludePattern.add("**/*$qPattern*")
 	}
-//	excludePattern.add("**/*_\$*_set*.*")
-//	excludePattern.add("**/*_\$*_get*.*")
 
 	afterEvaluate {
 		classDirectories.setFrom(files(classDirectories.files.collect {
@@ -127,10 +125,8 @@ tasks.jacocoTestReport {
 tasks.jacocoTestCoverageVerification {
 	def excludePattern = []
 	("QA".."QZ").each { qPattern ->
-		excludePattern.add("**/*$qPattern*")
+		excludePattern.add("**/*\$qPattern*")
 	}
-//	excludePattern.add("**/*_\$*_set*.*")
-//	excludePattern.add("**/*_\$*_get*.*")
 
 	violationRules {
 

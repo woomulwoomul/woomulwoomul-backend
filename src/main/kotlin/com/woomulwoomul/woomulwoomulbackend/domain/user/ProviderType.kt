@@ -10,11 +10,10 @@ enum class ProviderType {
 
     companion object {
         fun of(providerType: String): ProviderType {
-            val type = providerType.uppercase()
-            if (StringUtil.equals(type, KAKAO.name))
-                return KAKAO
-            else
-                throw CustomException(PROVIDER_TYPE_INVALID)
+            return when(providerType.uppercase()) {
+                KAKAO.name -> KAKAO
+                else -> throw CustomException(PROVIDER_TYPE_INVALID)
+            }
         }
     }
 }
