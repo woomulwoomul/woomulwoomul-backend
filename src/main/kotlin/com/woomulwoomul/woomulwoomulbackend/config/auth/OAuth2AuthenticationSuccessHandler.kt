@@ -51,6 +51,7 @@ class OAuth2AuthenticationSuccessHandler(
         response.writer.write(objectMapper.writeValueAsString(body))
 
         redirectStrategy.sendRedirect(request, response, UriComponentsBuilder.fromUriString(frontendDomain)
+						.path("login")
             .queryParams(queryParams)
             .build()
             .toUriString())
