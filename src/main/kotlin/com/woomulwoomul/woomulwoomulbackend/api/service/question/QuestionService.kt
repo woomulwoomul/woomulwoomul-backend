@@ -4,8 +4,7 @@ import com.woomulwoomul.woomulwoomulbackend.api.service.question.request.Questio
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionFindResponse
 import com.woomulwoomul.woomulwoomulbackend.api.service.question.response.QuestionUserCreateResponse
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
-import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.USER_NOT_FOUND
+import com.woomulwoomul.woomulwoomulbackend.common.constant.ExceptionCode.*
 import com.woomulwoomul.woomulwoomulbackend.common.request.PageRequest
 import com.woomulwoomul.woomulwoomulbackend.common.response.CustomException
 import com.woomulwoomul.woomulwoomulbackend.common.response.PageData
@@ -16,7 +15,6 @@ import com.woomulwoomul.woomulwoomulbackend.domain.user.UserRepository
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.util.CollectionUtils
 import org.springframework.validation.annotation.Validated
 
 @Service
@@ -30,20 +28,25 @@ class QuestionService(
 ) {
 
     /**
-     * 기본 질문들 조회
-     * @param questionIds 질문 ID들
+     * 기본 질문 조회
+     * @param questionId 질문 ID
+     * @throws QUESTION_NOT_FOUND 404
      * @return 기본 질문 응답
      */
-    fun getDefaultQuestions(questionIds: List<Long>): List<QuestionFindResponse> {
-        val questionCategories = if (CollectionUtils.isEmpty(questionIds)) questionCategoryRepository.findRandom()
-        else questionCategoryRepository.findByQuestionIds(questionIds)
-
-        val questionCategoryMap = questionCategories.groupBy { it.question }
-            .mapValues { (_, category) -> category.map { it.category }.toSet() }
-
-        return questionCategoryMap.entries.map { (question, categories) ->
-            QuestionFindResponse(question, categories)
+    fun getDefaultQuestion(questionId: Long?): QuestionFindResponse {
+        val questionCategories = questionId?.let {
+            questionCategoryRepository.findByQuestionIds(listOf(it))
+        } ?: run {
+            val randomQuestionId = questionRepository.findRandomAdminQuestionId() ?: throw CustomException(QUESTION_NOT_FOUND)
+            questionCategoryRepository.findByQuestionId(randomQuestionId)
         }
+
+        val (question, categories) = questionCategories
+            .groupBy { it.question }
+            .mapValues { (_, category) -> category.map { it.category }.toSet() }
+            .entries.first()
+
+        return QuestionFindResponse(question, categories)
     }
 
     /**

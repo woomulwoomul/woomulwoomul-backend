@@ -34,56 +34,50 @@ class QuestionControllerTest : RestDocsSupport() {
 
     @DisplayName("기본 질문을 조회하면 200을 반환한다")
     @Test
-    fun givenValid_whenGetAdminQuestions_thenReturn200() {
+    fun givenValid_whenGetDefaultQuestion_thenReturn200() {
         // given
-        `when`(questionService.getDefaultQuestions(anyList()))
-            .thenReturn(listOf(QuestionFindResponse(
+        `when`(questionService.getDefaultQuestion(any()))
+            .thenReturn(QuestionFindResponse(
                 1L,
                 "질문1",
                 "0F0F0F",
                 listOf(QuestionFindCategoryResponse(1L, "카테고리1"),
                     QuestionFindCategoryResponse(2L, "카테고리2"))
-            ), QuestionFindResponse(
-                2L,
-                "질문2",
-                "0F0F0F",
-                listOf(QuestionFindCategoryResponse(1L, "카테고리1"),
-                    QuestionFindCategoryResponse(2L, "카테고리2"))
-            )))
+            ))
 
         // when & then
         mockMvc.perform(
             get("/api/questions")
                 .contentType(APPLICATION_JSON_VALUE)
-                .queryParam("question-ids", "")
+                .queryParam("question-id", "")
         ).andDo(print())
             .andExpect(status().isOk)
             .andDo(
                 document(
-                    "question/get-default-questions",
+                    "question/get-default-question",
                     preprocessResponse(prettyPrint()),
                     responseFields(
                         fieldWithPath("code").type(JsonFieldType.STRING)
                             .description("코드"),
                         fieldWithPath("message").type(JsonFieldType.STRING)
                             .description("메세지"),
-                        fieldWithPath("data").type(JsonFieldType.ARRAY)
-                            .description("데이터들"),
-                        fieldWithPath("data[].questionId").type(JsonFieldType.NUMBER)
+                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                            .description("데이터"),
+                        fieldWithPath("data.questionId").type(JsonFieldType.NUMBER)
                             .description("질문 ID"),
-                        fieldWithPath("data[].questionText").type(JsonFieldType.STRING)
+                        fieldWithPath("data.questionText").type(JsonFieldType.STRING)
                             .description("질문"),
-                        fieldWithPath("data[].backgroundColor").type(JsonFieldType.STRING)
+                        fieldWithPath("data.backgroundColor").type(JsonFieldType.STRING)
                             .description("질문 배경 색상"),
-                        fieldWithPath("data[].categories").type(JsonFieldType.ARRAY)
+                        fieldWithPath("data.categories").type(JsonFieldType.ARRAY)
                             .description("카테고리"),
-                        fieldWithPath("data[].categories[].categoryId").type(JsonFieldType.NUMBER)
+                        fieldWithPath("data.categories[].categoryId").type(JsonFieldType.NUMBER)
                             .description("카테고리 ID"),
-                        fieldWithPath("data[].categories[].categoryName").type(JsonFieldType.STRING)
+                        fieldWithPath("data.categories[].categoryName").type(JsonFieldType.STRING)
                             .description("카테고리명"),
                     ),
                     queryParameters(
-                        parameterWithName("question-ids").description("질문 ID들")
+                        parameterWithName("question-id").description("질문 ID")
                     ),
                 )
             )

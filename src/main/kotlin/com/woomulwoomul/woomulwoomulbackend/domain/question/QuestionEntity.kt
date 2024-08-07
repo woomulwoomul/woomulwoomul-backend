@@ -3,6 +3,7 @@ package com.woomulwoomul.woomulwoomulbackend.domain.question
 import com.woomulwoomul.woomulwoomulbackend.domain.base.BasePermanentEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.UserEntity
 import jakarta.persistence.*
+import java.time.LocalDateTime
 
 @Table(name = "question")
 @Entity
@@ -21,4 +22,7 @@ class QuestionEntity(
     val text: String,
     @Column(nullable = false, length = 6)
     val backgroundColor: String,
+
+    val startDateTime: LocalDateTime? = null,
+    val endDateTime: LocalDateTime? = null,
 ) : BasePermanentEntity()

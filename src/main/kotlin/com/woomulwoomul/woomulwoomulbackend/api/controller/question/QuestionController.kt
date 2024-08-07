@@ -24,11 +24,11 @@ class QuestionController(
 ) {
 
     @GetMapping("/api/questions")
-    fun getDefaultQuestions(@RequestParam(required = false, name = "question-ids") questionIds: List<Long> = listOf()):
-            ResponseEntity<DefaultListResponse<QuestionFindResponse>> {
-        val responses = questionService.getDefaultQuestions(questionIds)
+    fun getDefaultQuestion(@RequestParam(required = false, name = "question-id") questionId: Long?):
+            ResponseEntity<DefaultSingleResponse> {
+        val responses = questionService.getDefaultQuestion(questionId)
 
-        return DefaultListResponse.toResponseEntity(DEFAULT_QUESTIONS_FOUND, responses)
+        return DefaultSingleResponse.toResponseEntity(DEFAULT_QUESTION_FOUND, responses)
     }
 
     @GetMapping("/api/categories")

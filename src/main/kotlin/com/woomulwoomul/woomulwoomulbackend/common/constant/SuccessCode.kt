@@ -43,7 +43,7 @@ enum class SuccessCode(
     USER_QUESTION_CREATED(CREATED, "회원 질문 생성을 완료했습니다."),
 
     // 200 Ok
-    DEFAULT_QUESTIONS_FOUND(OK, "기본 질문 조회를 완료했습니다."),
+    DEFAULT_QUESTION_FOUND(OK, "기본 질문 조회를 완료했습니다."),
     ALL_CATEGORIES_FOUND(OK, "전체 카테고리 조회를 완료했습니다."),
 
     /**

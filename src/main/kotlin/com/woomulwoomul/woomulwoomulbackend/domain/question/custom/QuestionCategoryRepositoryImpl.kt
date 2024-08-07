@@ -1,19 +1,16 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question.custom
 
-import com.amazonaws.util.CollectionUtils
-import com.querydsl.core.types.dsl.BooleanExpression
-import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.woomulwoomulbackend.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QCategoryEntity.categoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QQuestionCategoryEntity.questionCategoryEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QQuestionEntity.questionEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryEntity
-import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserEntity.userEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.QUserRoleEntity.userRoleEntity
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.ADMIN
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class QuestionCategoryRepositoryImpl(
@@ -58,13 +55,15 @@ class QuestionCategoryRepositoryImpl(
             .fetch()
     }
 
-    override fun findRandom(limit: Long): List<QuestionCategoryEntity> {
+    override fun findAdmin(now: LocalDateTime): List<QuestionCategoryEntity> {
         return queryFactory
             .select(questionCategoryEntity)
             .from(questionCategoryEntity)
             .innerJoin(questionEntity)
             .on(questionEntity.id.eq(questionCategoryEntity.question.id)
-                .and(questionEntity.status.eq(ACTIVE)))
+                .and(questionEntity.status.eq(ACTIVE))
+                .and(questionEntity.startDateTime.loe(now))
+                .and(questionEntity.endDateTime.goe(now)))
             .fetchJoin()
             .innerJoin(categoryEntity)
             .on(categoryEntity.id.eq(questionCategoryEntity.category.id)
@@ -78,10 +77,7 @@ class QuestionCategoryRepositoryImpl(
                 .and(userRoleEntity.status.eq(ACTIVE))
                 .and(userRoleEntity.role.eq(ADMIN)))
             .where(questionCategoryEntity.status.eq(ACTIVE))
-            .orderBy(Expressions.numberTemplate(Double::class.java, "RAND()").asc())
-            .orderBy(questionEntity.id.desc())
             .orderBy(categoryEntity.id.asc())
-            .limit(limit)
             .fetch()
     }
 }

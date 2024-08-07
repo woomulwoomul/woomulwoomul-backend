@@ -9,8 +9,9 @@ import com.woomulwoomul.woomulwoomulbackend.domain.user.*
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.ADMIN
 import com.woomulwoomul.woomulwoomulbackend.domain.user.Role.USER
 import jakarta.validation.ConstraintViolationException
-import org.assertj.core.api.Assertions.*
-import org.assertj.core.groups.Tuple
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -31,86 +32,70 @@ class QuestionServiceTest(
     @Autowired private val userRepository: UserRepository,
 ) {
 
-    @DisplayName("빈 리스트로 기본 질문들 조회를 하면 정상 작동한다")
+    @DisplayName("기본 질문들 조회를 하면 정상 작동한다")
     @Test
-    fun givenEmpty_whenGetDefaultQuestions_thenReturn() {
+    fun givenValid_whenGetDefaultQuestion_thenReturn() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN)
-        val questionCategory1 = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
-        val questionCategory2 = createAndSaveQuestionCategory(adminRole.user, "질문2", backgroundColor = "000002")
-        val questionCategory3 = createAndSaveQuestionCategory(adminRole.user, "질문3", backgroundColor = "000003")
+        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문", backgroundColor = "000000")
+        val questionId: Long? = null
 
         // when
-        val result = questionService.getDefaultQuestions(emptyList())
+        val result = questionService.getDefaultQuestion(questionId)
 
         // then
         assertAll(
             {
                 assertThat(result)
                     .extracting("questionId", "questionText", "backgroundColor")
-                    .containsExactlyInAnyOrder(
-                        Tuple.tuple(questionCategory1.question.id, questionCategory1.question.text,
-                            questionCategory1.question.backgroundColor),
-                        Tuple.tuple(questionCategory2.question.id, questionCategory2.question.text,
-                            questionCategory2.question.backgroundColor),
-                        Tuple.tuple(questionCategory3.question.id, questionCategory3.question.text,
-                            questionCategory3.question.backgroundColor)
-                    )
+                    .containsExactly(questionCategory.question.id, questionCategory.question.text,
+                            questionCategory.question.backgroundColor)
             },
             {
-                assertThat(result)
-                    .flatExtracting("categories")
+                assertThat(result.categories)
                     .extracting("categoryId", "categoryName")
-                    .containsExactlyInAnyOrder(
-                        Tuple.tuple(questionCategory1.category.id, questionCategory1.category.name),
-                        Tuple.tuple(questionCategory2.category.id, questionCategory2.category.name),
-                        Tuple.tuple(questionCategory3.category.id, questionCategory3.category.name)
-                    )
+                    .containsExactly(tuple(questionCategory.category.id, questionCategory.category.name))
             }
         )
     }
 
-    @DisplayName("질문 ID들로 기본 질문들 조회를 하면 정상 작동한다")
+    @DisplayName("질문 ID로 기본 질문들 조회를 하면 정상 작동한다")
     @Test
-    fun givenQuestionIds_whenGetDefaultQuestions_thenReturn() {
+    fun givenQuestionIds_whenGetDefaultQuestion_thenReturn() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN)
-        val questionCategory1 = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
-        val questionCategory2 = createAndSaveQuestionCategory(adminRole.user, "질문2", backgroundColor = "000002")
-        val questionCategory3 = createAndSaveQuestionCategory(adminRole.user, "질문3", backgroundColor = "000003")
+        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
 
         // when
-        val result = questionService.getDefaultQuestions(listOf(
-            questionCategory1.question.id!!,
-            questionCategory2.question.id!!,
-            questionCategory3.question.id!!
-        ))
+        val result = questionService.getDefaultQuestion(questionCategory.question.id!!)
 
         // then
         assertAll(
             {
                 assertThat(result)
                     .extracting("questionId", "questionText", "backgroundColor")
-                    .containsExactlyInAnyOrder(
-                        Tuple.tuple(questionCategory1.question.id, questionCategory1.question.text,
-                            questionCategory1.question.backgroundColor),
-                        Tuple.tuple(questionCategory2.question.id, questionCategory2.question.text,
-                            questionCategory2.question.backgroundColor),
-                        Tuple.tuple(questionCategory3.question.id, questionCategory3.question.text,
-                            questionCategory3.question.backgroundColor)
-                    )
+                    .containsExactly(questionCategory.question.id, questionCategory.question.text,
+                        questionCategory.question.backgroundColor)
             },
             {
-                assertThat(result)
-                    .flatExtracting("categories")
+                assertThat(result.categories)
                     .extracting("categoryId", "categoryName")
-                    .containsExactlyInAnyOrder(
-                        Tuple.tuple(questionCategory1.category.id, questionCategory1.category.name),
-                        Tuple.tuple(questionCategory2.category.id, questionCategory2.category.name),
-                        Tuple.tuple(questionCategory3.category.id, questionCategory3.category.name)
-                    )
+                    .containsExactly(tuple(questionCategory.category.id, questionCategory.category.name))
             }
         )
+    }
+
+    @DisplayName("기본 질문이 존재하지 않는데 기본 질문들 조회를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingQuestion_whenGetDefaultQuestion_thenReturn() {
+        // given
+        val questionId: Long? = null
+
+        // when & then
+        assertThatThrownBy { questionService.getDefaultQuestion(questionId) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(QUESTION_NOT_FOUND)
     }
 
     @DisplayName("전체 카테고리 조회가 정상 작동한다")

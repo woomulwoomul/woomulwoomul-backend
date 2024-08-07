@@ -1,6 +1,7 @@
 package com.woomulwoomul.woomulwoomulbackend.domain.question.custom
 
 import com.woomulwoomul.woomulwoomulbackend.domain.question.QuestionCategoryEntity
+import java.time.LocalDateTime
 
 interface QuestionCategoryCustomRepository {
 
@@ -8,5 +9,5 @@ interface QuestionCategoryCustomRepository {
 
     fun findByQuestionId(questionId: Long): List<QuestionCategoryEntity>
 
-    fun findRandom(limit: Long = 5): List<QuestionCategoryEntity>
+    fun findAdmin(now: LocalDateTime): List<QuestionCategoryEntity>
 }

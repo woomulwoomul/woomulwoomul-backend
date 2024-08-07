@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -120,19 +121,39 @@ class QuestionCategoryRepositoryTest(
         )
     }
 
-    @DisplayName("랜덤 질문 카테고리 조회를 하면 정상 작동한다")
+    @DisplayName("관리자 질문 카테고리 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindRandom_thenReturn() {
+    fun givenValid_whenFindAdmin_thenReturn() {
         // given
+        val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(Role.ADMIN)
-        val questionCategory1 = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
-        val questionCategory2 = createAndSaveQuestionCategory(adminRole.user, "질문2", backgroundColor = "000002")
-        val questionCategory3 = createAndSaveQuestionCategory(adminRole.user, "질문3", backgroundColor = "000003")
 
-        val limit = 3L
+        val startDateTime = now.withHour(0).withMinute(0).withSecond(0)
+        val endDateTime = now.withHour(23).withMinute(59).withSecond(59)
+        val questionCategory1 = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문1",
+            backgroundColor = "000001",
+            startDateTime.minusDays(1),
+            endDateTime.minusDays(1)
+        )
+        val questionCategory2 = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문2",
+            backgroundColor = "000002",
+            startDateTime,
+            endDateTime
+        )
+        val questionCategory3 = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문3",
+            backgroundColor = "000003",
+            startDateTime.plusDays(1),
+            endDateTime.plusDays(1)
+        )
 
         // when
-        val questionCategories = questionCategoryRepository.findRandom(limit)
+        val questionCategories = questionCategoryRepository.findAdmin(now)
 
         // then
         assertAll(
@@ -140,39 +161,25 @@ class QuestionCategoryRepositoryTest(
                 assertThat(questionCategories)
                     .extracting("status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory1.status, questionCategory1.createDateTime,
-                            questionCategory1.updateDateTime),
                         tuple(questionCategory2.status, questionCategory2.createDateTime,
-                            questionCategory2.updateDateTime),
-                        tuple(questionCategory3.status, questionCategory3.createDateTime,
-                            questionCategory3.updateDateTime)
+                            questionCategory2.updateDateTime)
                     )
             }, {
                 assertThat(questionCategories)
                     .extracting("question")
                     .extracting("text", "backgroundColor", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory1.question.text, questionCategory1.question.backgroundColor,
-                            questionCategory1.question.status, questionCategory1.question.createDateTime,
-                            questionCategory1.question.updateDateTime),
                         tuple(questionCategory2.question.text, questionCategory2.question.backgroundColor,
                             questionCategory2.question.status, questionCategory2.question.createDateTime,
-                            questionCategory2.question.updateDateTime),
-                        tuple(questionCategory3.question.text, questionCategory3.question.backgroundColor,
-                            questionCategory3.question.status, questionCategory3.question.createDateTime,
-                            questionCategory3.question.updateDateTime)
+                            questionCategory2.question.updateDateTime)
                     )
             }, {
                 assertThat(questionCategories)
                     .extracting("category")
                     .extracting("name", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory1.category.name, questionCategory1.category.status,
-                            questionCategory1.category.createDateTime, questionCategory1.category.updateDateTime),
                         tuple(questionCategory2.category.name, questionCategory2.category.status,
-                            questionCategory2.category.createDateTime, questionCategory2.category.updateDateTime),
-                        tuple(questionCategory3.category.name, questionCategory3.category.status,
-                            questionCategory3.category.createDateTime, questionCategory3.category.updateDateTime)
+                            questionCategory2.category.createDateTime, questionCategory2.category.updateDateTime)
                     )
             }
         )
@@ -196,8 +203,16 @@ class QuestionCategoryRepositoryTest(
         user: UserEntity,
         text: String = "질문",
         backgroundColor: String = "0F0F0F",
+        startDateTime: LocalDateTime? = null,
+        endDateTime: LocalDateTime? = null,
     ): QuestionCategoryEntity {
-        val question = questionRepository.save(QuestionEntity(user = user, text = text, backgroundColor = backgroundColor))
+        val question = questionRepository.save(QuestionEntity(
+            user = user,
+            text = text,
+            backgroundColor = backgroundColor,
+            startDateTime = startDateTime,
+            endDateTime = endDateTime
+        ))
         val category = categoryRepository.save(CategoryEntity(name = "카테고리명", admin = user))
 
         return questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))

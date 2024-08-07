@@ -1,0 +1,28 @@
+[[get-default-questions]]
+=== 기본 질문 조회
+
+==== HTTP Request
+include::{snippets}/question/get-default-question/http-request.adoc[]
+include::{snippets}/question/get-default-question/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/question/get-default-question/http-response.adoc[]
+include::{snippets}/question/get-default-question/response-fields.adoc[]
+
+==== Exception
+
+===== 404
+----
+{
+  "code" : "QUESTION_NOT_FOUND",
+  "message" : "존재하지 않는 질문입니다."
+}
+----
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----
