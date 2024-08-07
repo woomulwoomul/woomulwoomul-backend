@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 import kotlin.random.Random
 
 @Service
@@ -61,12 +62,12 @@ class DevelopService(
      * 데이터 초기화 및 테스트 데이터 주입
      */
     @Transactional
-    fun resetAndInject() {
+    fun resetAndInject(now: LocalDateTime) {
         resetDatabase()
 
         val admin = injectAdmin()
         val categories = injectCategories(admin)
-        val questions = injectQuestions(admin)
+        val questions = injectQuestions(admin, now)
         injectQuestionCategories(categories, questions)
 
         val users = injectUsers()
@@ -138,12 +139,14 @@ class DevelopService(
     /**
      * 질문 주입
      */
-    private fun injectQuestions(admin: UserEntity): List<QuestionEntity> {
+    private fun injectQuestions(admin: UserEntity, now: LocalDateTime): List<QuestionEntity> {
         return (1 .. 50).map {
             QuestionEntity(
                 user = admin,
                 text = "질문${it}번 입니다.",
-                backgroundColor = COLOR_CODES_CONST[Random.nextInt(COLOR_CODES_CONST.size)]
+                backgroundColor = COLOR_CODES_CONST[Random.nextInt(COLOR_CODES_CONST.size)],
+                startDateTime = now.plusDays((it - 1).toLong()).withHour(0).withMinute(0).withSecond(0),
+                endDateTime = now.plusDays((it - 1).toLong()).withHour(23).withMinute(59).withSecond(59)
             )
         }.let {
             questionRepository.saveAll(it)

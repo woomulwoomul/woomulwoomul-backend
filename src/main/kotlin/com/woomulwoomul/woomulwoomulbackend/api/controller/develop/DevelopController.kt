@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RestController
+import java.time.LocalDateTime
 
 @Validated
 @RestController
@@ -33,7 +34,7 @@ class DevelopController(
 
     @PostMapping("/api/reset")
     fun reset(): ResponseEntity<DefaultResponse> {
-        developService.resetAndInject()
+        developService.resetAndInject(LocalDateTime.now())
 
         return DefaultResponse.toResponseEntity(DB_RESET)
     }
