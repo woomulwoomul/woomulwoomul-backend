@@ -1,4 +1,4 @@
-[[get-default-questions]]
+[[get-default-question]]
 === 기본 질문 조회
 
 ==== HTTP Request
