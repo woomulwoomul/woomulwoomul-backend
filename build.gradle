@@ -11,135 +11,146 @@ plugins {
 	id 'org.jetbrains.kotlin.kapt' version '1.9.21'
 }
 
-group = 'com.woomulwoomul'
-version = '0.0.1-SNAPSHOT'
+java.sourceCompatibility = JavaVersion.VERSION_21
+bootJar.enabled = false
 
-bootJar {
-	archiveFileName = 'app.jar'
-	dependsOn asciidoctor
-	from("${asciidoctor.outputDir}") {
-		into 'static/docs'
+allprojects {
+	group = 'com.woomulwoomul'
+	version = '0.0.1-SNAPSHOT'
+	repositories {
+		mavenCentral()
 	}
 }
 
-configurations {
-	asciidoctorExt
-}
 
-java {
-	sourceCompatibility = '21'
-}
-
-repositories {
-	mavenCentral()
-}
-
-ext {
-	set('snippetsDir', file("build/generated-snippets"))
-	set('queryDslVersion', '5.0.0')
-}
-
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.redisson:redisson-spring-boot-starter:3.17.7'
-	implementation 'it.ozimov:embedded-redis:0.7.2'
-	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-	implementation 'org.jetbrains.kotlin:kotlin-reflect'
-	implementation 'io.github.nefilim.kjwt:kjwt-core:0.9.0'
-	implementation 'io.sentry:sentry-spring-boot-starter:7.4.0'
-	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
-	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
-	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
-	kapt("jakarta.annotation:jakarta.annotation-api")
-	kapt("jakarta.persistence:jakarta.persistence-api")
-
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	runtimeOnly 'com.h2database:h2:'
-
-	asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
-}
-
-tasks.withType(KotlinCompile) {
-	kotlinOptions {
-		freeCompilerArgs += '-Xjsr305=strict'
-		jvmTarget = '21'
-	}
-}
-
-tasks.named('test') {
-	outputs.dir snippetsDir
-	useJUnitPlatform()
-	finalizedBy 'jacocoTestReport'
-}
-
-tasks.named('asciidoctor') {
-	inputs.dir snippetsDir
-	configurations 'asciidoctorExt'
-	sources {
-		include("**/index.adoc")
-	}
-	baseDirFollowsSourceFile()
-	dependsOn test
-}
-
-jacoco {
-	toolVersion = '0.8.12'
-}
-
-tasks.jacocoTestReport {
-	reports {
-		html.required = true
-		csv.required = true
-		xml.required = true
+subprojects {
+	ext {
+		set('snippetsDir', file("build/generated-snippets"))
+		set('queryDslVersion', '5.0.0')
 	}
 
-	def excludePattern = []
-	("QA".."QZ").each { qPattern ->
-		excludePattern.add("**/*$qPattern*")
+	apply {
+		plugin('jacoco')
+		plugin('org.springframework.boot')
+		plugin('io.spring.dependency-management')
+		plugin('org.asciidoctor.jvm.convert')
+		plugin('org.jetbrains.kotlin.jvm')
+		plugin('org.jetbrains.kotlin.plugin.spring')
+		plugin('org.jetbrains.kotlin.plugin.jpa')
+		plugin('org.jetbrains.kotlin.kapt')
 	}
 
-	afterEvaluate {
-		classDirectories.setFrom(files(classDirectories.files.collect {
-			fileTree(
-					dir: it,
-					excludes: [] + excludePattern
-			)
-		}))
+	configurations {
+		asciidoctorExt
 	}
 
-	finalizedBy 'jacocoTestCoverageVerification'
-}
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+		implementation 'org.jetbrains.kotlin:kotlin-reflect'
+		implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+		implementation 'io.github.nefilim.kjwt:kjwt-core:0.9.0'
+		implementation 'io.sentry:sentry-spring-boot-starter:7.4.0'
+		implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
-tasks.jacocoTestCoverageVerification {
-	def excludePattern = []
-	("QA".."QZ").each { qPattern ->
-		excludePattern.add("**/*\$qPattern*")
+		asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
+
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.springframework.security:spring-security-test'
+		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	}
 
-	violationRules {
+	tasks.withType(Test).configureEach {
+		outputs.dir snippetsDir
+		useJUnitPlatform()
+		finalizedBy 'jacocoTestReport'
+	}
 
-		rule {
-			enabled = true
-			element = 'BUNDLE'
-
-			limit {
-				counter = 'INSTRUCTION'
-				value = 'COVEREDRATIO'
-				minimum = 0.6
-			}
-			excludes = [] + excludePattern
+	tasks.withType(KotlinCompile).configureEach {
+		kotlinOptions {
+			freeCompilerArgs += '-Xjsr305=strict'
+			jvmTarget = '21'
 		}
+	}
+
+	tasks.named('asciidoctor') {
+		inputs.dir snippetsDir
+		configurations 'asciidoctorExt'
+		sources {
+			include("**/index.adoc")
+		}
+		baseDirFollowsSourceFile()
+		dependsOn test
+	}
+
+	jacoco {
+		toolVersion = '0.8.12'
+	}
+
+	tasks.jacocoTestReport {
+		reports {
+			html.required = true
+			csv.required = true
+			xml.required = true
+		}
+
+		def excludePattern = []
+		("QA".."QZ").each { qPattern ->
+			excludePattern.add("**/*$qPattern*")
+		}
+
+		afterEvaluate {
+			classDirectories.setFrom(files(classDirectories.files.collect {
+				fileTree(
+						dir: it,
+						excludes: [] + excludePattern
+				)
+			}))
+		}
+
+		finalizedBy 'jacocoTestCoverageVerification'
+	}
+
+	tasks.jacocoTestCoverageVerification {
+		def excludePattern = []
+		("QA".."QZ").each { qPattern ->
+			excludePattern.add("**/*\$qPattern*")
+		}
+
+		violationRules {
+
+			rule {
+				enabled = true
+				element = 'BUNDLE'
+
+				limit {
+					counter = 'INSTRUCTION'
+					value = 'COVEREDRATIO'
+					minimum = 0.6
+				}
+				excludes = [] + excludePattern
+			}
+		}
+	}
+}
+
+project(":core") {
+	bootJar.enabled = false
+	jar.enabled = true
+}
+
+project(":client-server") {
+	dependencies {
+		implementation(project(":core"))
+	}
+}
+
+project(":admin-server") {
+	dependencies {
+		implementation(project(":core"))
 	}
 }

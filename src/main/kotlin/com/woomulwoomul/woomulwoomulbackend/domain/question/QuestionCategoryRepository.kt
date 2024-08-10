@@ -1,6 +1,0 @@
-package com.woomulwoomul.woomulwoomulbackend.domain.question
-
-import com.woomulwoomul.woomulwoomulbackend.domain.question.custom.QuestionCategoryCustomRepository
-import org.springframework.data.jpa.repository.JpaRepository
-
-interface QuestionCategoryRepository : JpaRepository<QuestionCategoryEntity, Long>, QuestionCategoryCustomRepository

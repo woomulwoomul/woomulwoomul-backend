@@ -1,0 +1,9 @@
+plugins {
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'org.redisson:redisson-spring-boot-starter:3.17.7'
+    implementation 'it.ozimov:embedded-redis:0.7.2'
+}
