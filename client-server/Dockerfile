@@ -8,6 +8,6 @@ RUN apt-get update && \
     ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata
 
-ARG JAR_FILE=build/libs/client-app.jar
+ARG JAR_FILE=client-server/build/libs/client-app.jar
 COPY ${JAR_FILE} client-app.jar
 ENTRYPOINT ["java", "-jar", "/client-app.jar"]

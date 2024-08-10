@@ -8,6 +8,6 @@ RUN apt-get update && \
     ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata
 
-ARG JAR_FILE=build/libs/admin-app.jar
+ARG JAR_FILE=admin-server/build/libs/admin-app.jar
 COPY ${JAR_FILE} admin-app.jar
 ENTRYPOINT ["java", "-jar", "/admin-app.jar"]
