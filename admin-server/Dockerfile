@@ -10,4 +10,4 @@ RUN apt-get update && \
 
 ARG JAR_FILE=build/libs/admin-app.jar
 COPY ${JAR_FILE} admin-app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/admin-app.jar"]

@@ -10,4 +10,4 @@ RUN apt-get update && \
 
 ARG JAR_FILE=build/libs/client-app.jar
 COPY ${JAR_FILE} client-app.jar
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/client-app.jar"]
