@@ -9,5 +9,5 @@ RUN apt-get update && \
     dpkg-reconfigure -f noninteractive tzdata
 
 ARG JAR_FILE=build/libs/admin-app.jar
-COPY ${JAR_FILE} app.jar
+COPY ${JAR_FILE} admin-app.jar
 ENTRYPOINT ["java", "-jar", "/app.jar"]
