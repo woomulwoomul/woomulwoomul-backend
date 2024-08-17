@@ -56,12 +56,12 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
 
         val codePrefix = preFormatCode(constraintViolation.propertyPath.toString())
         val suffixCode = when (annotation) {
-            is NotNull -> ErrorField.NOT_NULL_CONST
-            is NotBlank -> ErrorField.NOT_BLANK_CONST
-            is Size -> ErrorField.SIZE_CONST
-            is ByteSize -> ErrorField.BYTE_SIZE_CONST
-            is Pattern -> ErrorField.PATTERN_CONST
-            is Email -> ErrorField.EMAIL_CONST
+            is NotNull -> ErrorField.code[ErrorField.NOT_NULL_CONST]
+            is NotBlank -> ErrorField.code[ErrorField.NOT_BLANK_CONST]
+            is Size -> ErrorField.code[ErrorField.SIZE_CONST]
+            is ByteSize -> ErrorField.code[ErrorField.BYTE_SIZE_CONST]
+            is Pattern -> ErrorField.code[ErrorField.PATTERN_CONST]
+            is Email -> ErrorField.code[ErrorField.EMAIL_CONST]
             else -> ""
         }
         val exceptionCode = ExceptionCode.valueOf(codePrefix + suffixCode)
@@ -131,6 +131,6 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         return lastCode.fold(StringBuilder(lastCode.length + 5)) { acc, c ->
             if (c.isUpperCase() && acc.isNotEmpty()) acc.append('_')
             acc.append(c)
-        }.toString()
+        }.toString().uppercase()
     }
 }

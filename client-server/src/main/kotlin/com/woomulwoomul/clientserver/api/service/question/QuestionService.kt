@@ -64,11 +64,12 @@ class QuestionService(
      * @param userId 회원 ID
      * @param request 회원 질문 생성 요청
      * @throws QUESTION_TEXT_SIZE_INVALID 400
-     * @throws QUESTION_BACKGROUND_COLOR 400
+     * @throws QUESTION_BACKGROUND_COLOR_SIZE_INVALID 400
      * @throws USER_NOT_FOUND 404
      * @throws CATEGORY_NOT_FOUND 404
      * @return 회원 질문 생성 응답
      */
+    @Transactional
     fun createUserQuestion(userId: Long, @Valid request: QuestionUserCreateServiceRequest): QuestionUserCreateResponse {
         val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
         val categories = categoryRepository.findByIds(request.categoryIds)
