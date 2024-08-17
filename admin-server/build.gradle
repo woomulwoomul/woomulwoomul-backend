@@ -3,10 +3,6 @@ plugins {
 
 bootJar {
     archiveFileName = 'admin-app.jar'
-    dependsOn asciidoctor
-    from("${asciidoctor.outputDir}") {
-        into 'static/docs'
-    }
 }
 
 dependencies {

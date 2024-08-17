@@ -4,7 +4,6 @@ plugins {
 	id 'jacoco'
 	id 'org.springframework.boot' version '3.3.0'
 	id 'io.spring.dependency-management' version '1.1.5'
-	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 	id 'org.jetbrains.kotlin.jvm' version '1.9.24'
 	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.24'
 	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.24'
@@ -24,24 +23,14 @@ allprojects {
 
 
 subprojects {
-	ext {
-		set('snippetsDir', file("build/generated-snippets"))
-		set('queryDslVersion', '5.0.0')
-	}
-
 	apply {
 		plugin('jacoco')
 		plugin('org.springframework.boot')
 		plugin('io.spring.dependency-management')
-		plugin('org.asciidoctor.jvm.convert')
 		plugin('org.jetbrains.kotlin.jvm')
 		plugin('org.jetbrains.kotlin.plugin.spring')
 		plugin('org.jetbrains.kotlin.plugin.jpa')
 		plugin('org.jetbrains.kotlin.kapt')
-	}
-
-	configurations {
-		asciidoctorExt
 	}
 
 	dependencies {
@@ -57,15 +46,12 @@ subprojects {
 		implementation 'io.sentry:sentry-spring-boot-starter:7.4.0'
 		implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 
-		asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
-
 		testImplementation 'org.springframework.boot:spring-boot-starter-test'
 		testImplementation 'org.springframework.security:spring-security-test'
 		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	}
 
-	tasks.withType(Test).configureEach {
-		outputs.dir snippetsDir
+	test.configure {
 		useJUnitPlatform()
 		finalizedBy 'jacocoTestReport'
 	}
@@ -77,21 +63,11 @@ subprojects {
 		}
 	}
 
-	tasks.named('asciidoctor') {
-		inputs.dir snippetsDir
-		configurations 'asciidoctorExt'
-		sources {
-			include("**/index.adoc")
-		}
-		baseDirFollowsSourceFile()
-		dependsOn test
-	}
-
 	jacoco {
 		toolVersion = '0.8.12'
 	}
 
-	tasks.jacocoTestReport {
+	jacocoTestReport {
 		reports {
 			html.required = true
 			csv.required = true
@@ -115,7 +91,7 @@ subprojects {
 		finalizedBy 'jacocoTestCoverageVerification'
 	}
 
-	tasks.jacocoTestCoverageVerification {
+	jacocoTestCoverageVerification {
 		def excludePattern = []
 		("QA".."QZ").each { qPattern ->
 			excludePattern.add("**/*\$qPattern*")
