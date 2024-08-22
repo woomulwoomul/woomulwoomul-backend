@@ -56,7 +56,6 @@ class AnswerServiceTest(
         val questionAnswers = listOf(
             createAndSaveQuestionAnswer(user, admin, questions[0]),
             createAndSaveQuestionAnswer(user, admin, questions[1]),
-            createAndSaveQuestionAnswer(user, admin, questions[2]),
         )
         val answers = listOf(
             createAndSaveAnswer(questionAnswers[0], "답변1", ""),

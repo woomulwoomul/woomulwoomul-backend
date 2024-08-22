@@ -1,7 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.domain.base.BaseDetailEntity
-import com.woomulwoomul.core.domain.base.DetailServiceStatus.INCOMPLETE
+import com.woomulwoomul.core.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.core.domain.base.DetailServiceStatus.USER_DEL
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
@@ -31,7 +31,7 @@ class QuestionAnswerEntity(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "answer_id")
     var answer: AnswerEntity? = null,
-) : BaseDetailEntity(INCOMPLETE) {
+) : BaseDetailEntity(COMPLETE) {
 
     /**
      * 회원이 삭제
