@@ -2,11 +2,8 @@ package com.woomulwoomul.core.config.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.woomulwoomul.core.common.constant.CustomHttpHeaders.Companion.REFRESH_TOKEN
-import com.woomulwoomul.core.common.constant.ExceptionCode.USER_NOT_FOUND
 import com.woomulwoomul.core.common.constant.SuccessCode.OAUTH2_LOGIN
-import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.DefaultResponse
-import com.woomulwoomul.core.domain.user.UserRepository
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.http.Consts.UTF_8
@@ -22,7 +19,6 @@ import org.springframework.web.util.UriComponentsBuilder
 @Component
 class OAuth2AuthenticationSuccessHandler(
     private val jwtProvider: JwtProvider,
-    private val userRepository: UserRepository,
     private val objectMapper: ObjectMapper,
     @Value(value = "\${web.domain}")
     private val frontendDomain: String,
@@ -34,7 +30,6 @@ class OAuth2AuthenticationSuccessHandler(
         authentication: Authentication?
     ) {
         val userId = authentication!!.name.toLong()
-        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
 
         val headers = jwtProvider.createToken(userId)
 
@@ -49,6 +44,10 @@ class OAuth2AuthenticationSuccessHandler(
         response.contentType = APPLICATION_JSON_VALUE
         response.characterEncoding = UTF_8.name()
         response.writer.write(objectMapper.writeValueAsString(body))
+
+        println("======================================")
+        println(request?.requestURL)
+        println("======================================")
 
         redirectStrategy.sendRedirect(request, response, UriComponentsBuilder.fromUriString(frontendDomain)
 						.path("login")
