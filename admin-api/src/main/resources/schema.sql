@@ -19,8 +19,8 @@ CREATE TABLE users
     image_url                   VARCHAR(500)                NOT NULL,
     introduction                VARCHAR(60),
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     CONSTRAINT uq_user_nickname UNIQUE (nickname),
     CONSTRAINT uq_user_email UNIQUE (email)
 );
@@ -28,8 +28,8 @@ CREATE TABLE users
 CREATE TABLE withdraw_user
 (
     withdraw_user_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     CONSTRAINT fk_withdraw_user_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
@@ -39,8 +39,8 @@ CREATE TABLE user_role
     user_role_id                BIGINT AUTO_INCREMENT PRIMARY KEY,
     role                        VARCHAR(6)                  NOT NULL,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     CONSTRAINT fk_user_role_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
@@ -51,8 +51,8 @@ CREATE TABLE user_provider
     provider                    VARCHAR(10)                 NOT NULL,
     provider_id                 VARCHAR(100)                NOT NULL,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     CONSTRAINT fk_user_provider_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
@@ -61,8 +61,8 @@ CREATE TABLE user_visit
 (
     user_visit_id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     visitor_user_id             BIGINT                      NOT NULL,
     CONSTRAINT fk_user_visit_user FOREIGN KEY (user_id) REFERENCES users(user_id),
@@ -73,8 +73,8 @@ CREATE TABLE follow
 (
     follow_id                   BIGINT AUTO_INCREMENT PRIMARY KEY,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     follower_user_id            BIGINT                      NOT NULL,
     CONSTRAINT fk_follow_user FOREIGN KEY (user_id) REFERENCES users(user_id),
@@ -89,8 +89,8 @@ CREATE TABLE question
     start_date_time             DATETIME(6),
     end_date_time               DATETIME(6),
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     CONSTRAINT fk_question_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
@@ -100,8 +100,8 @@ CREATE TABLE category
     category_id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
     name                        VARCHAR(10)                 NOT NULL,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     admin_id                    BIGINT                      NOT NULL,
     CONSTRAINT fk_question_admin FOREIGN KEY (admin_id) REFERENCES users(user_id)
 );
@@ -110,8 +110,8 @@ CREATE TABLE question_category
 (
     question_category_id        BIGINT AUTO_INCREMENT PRIMARY KEY,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     question_id                 BIGINT                      NOT NULL,
     category_id                 BIGINT                      NOT NULL,
     CONSTRAINT fk_question_category_question FOREIGN KEY (question_id) REFERENCES question(question_id),
@@ -124,16 +124,16 @@ CREATE TABLE answer
     text                        VARCHAR(280),
     image_url                   VARCHAR(500),
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL
 );
 
 CREATE TABLE question_answer
 (
     question_answer_id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     sender_id                   BIGINT                      NOT NULL,
     receiver_id                 BIGINT                      NOT NULL,
     question_id                 BIGINT                      NOT NULL,
@@ -152,12 +152,12 @@ CREATE TABLE notification
     context                     VARCHAR(100)                NOT NULL,
     link                        VARCHAR(500)                NOT NULL,
     status                      VARCHAR(10)                 NOT NULL,
-    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP NOT NULL,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     receiver_id                 BIGINT                      NOT NULL,
     sender_user_id              BIGINT,
     sender_admin_id             BIGINT,
     CONSTRAINT fk_notification_receiver FOREIGN KEY (receiver_id) REFERENCES users(user_id),
     CONSTRAINT fk_notification_sender_user_id FOREIGN KEY (sender_user_id) REFERENCES users(user_id),
     CONSTRAINT fk_notification_sender_admin_id FOREIGN KEY (sender_admin_id) REFERENCES users(user_id)
-)
+);
