@@ -65,6 +65,7 @@ class QuestionService(
      * @param request 회원 질문 생성 요청
      * @throws QUESTION_TEXT_SIZE_INVALID 400
      * @throws QUESTION_BACKGROUND_COLOR_SIZE_INVALID 400
+     * @throws CATEGORY_IDS_SIZE_INVALID 400
      * @throws USER_NOT_FOUND 404
      * @throws CATEGORY_NOT_FOUND 404
      * @return 회원 질문 생성 응답

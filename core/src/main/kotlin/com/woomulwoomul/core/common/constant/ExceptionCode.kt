@@ -27,6 +27,7 @@ enum class ExceptionCode(
     USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0자 ~ 60자 이내로 입력해 주세요."),
     QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1자 ~ 60자 이내로 입력해 주세요."),
     QUESTION_BACKGROUND_COLOR_SIZE_INVALID(BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
+    CATEGORY_IDS_SIZE_INVALID(BAD_REQUEST, "질문 카테고리는 1개 ~ 3개 이내로 입력해 주세요."),
     ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0자 ~ 280자 이내로 입력해 주세요."),
     ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요."),
 

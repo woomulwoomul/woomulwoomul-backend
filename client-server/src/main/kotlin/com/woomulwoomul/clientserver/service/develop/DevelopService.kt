@@ -129,7 +129,7 @@ class DevelopService(
         questions: List<QuestionEntity>,
     ) {
         questions.forEach { question ->
-            categories.shuffled().take((1..categories.size.coerceAtMost(5)).random())
+            categories.shuffled().take((1..categories.size.coerceAtMost(3)).random())
                 .forEach { category ->
                     questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))
             }

@@ -43,7 +43,7 @@ class DevelopServiceTest(
     fun givenValid_whenGetTesterToken_thenReturn() {
         // given
         val testerId = 1L
-        val userRole = createAndSaveUserRole(role = USER, nickname = "tester".plus(testerId))
+        createAndSaveUserRole(role = USER, nickname = "tester".plus(testerId))
 
         // when
         val headers = developService.getTesterToken(testerId)

@@ -567,7 +567,6 @@ class AnswerServiceTest(
     @Test
     fun givenNonExistingAnswer_whenDeleteAnswer_thenThrow() {
         // given
-        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
         val answerId = Long.MAX_VALUE
 

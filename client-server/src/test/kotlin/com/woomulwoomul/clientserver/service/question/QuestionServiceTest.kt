@@ -341,6 +341,50 @@ class QuestionServiceTest(
             .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
     }
 
+    @DisplayName("질문 카테고리 1개 미만으로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenLesserThan1SizeCategoryIds_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categoryIds = emptyList<Long>()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_IDS_SIZE_INVALID.message)
+    }
+
+    @DisplayName("질문 카테고리 3개 초과로 회원 질문 생성을 하면 예외를 던진다")
+    @Test
+    fun givenGreaterThan3SizeCategoryIds_whenCreateUserQuestion_thenThrows() {
+        // given
+        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
+        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+            createAndSaveCategory(adminRole.user, "카테고리4"),
+        )
+        val categoryIds = categories.stream()
+            .map { it.id!! }
+            .toList()
+
+        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
+
+        // when & then
+        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_IDS_SIZE_INVALID.message)
+    }
+
     private fun createValidQuestionUserCreateServiceRequest(categoryIds: List<Long>): QuestionUserCreateServiceRequest {
         return QuestionUserCreateServiceRequest("질문", "0F0F0F", categoryIds)
     }
