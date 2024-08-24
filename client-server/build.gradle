@@ -36,9 +36,9 @@ asciidoctor {
 }
 
 bootJar {
-    archiveFileName = 'client-app.jar'
     dependsOn asciidoctor
-    from("${asciidoctor.outputDir}") {
+    from("${asciidoctor.outputDir}/html5") {
         into 'static/docs'
     }
+    archiveFileName = 'client-app.jar'
 }
