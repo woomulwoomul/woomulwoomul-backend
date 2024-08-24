@@ -2,20 +2,12 @@ plugins {
     id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
 
-bootJar {
-    archiveFileName = 'client-app.jar'
-    dependsOn asciidoctor
-    from("${asciidoctor.outputDir}") {
-        into 'static/docs'
-    }
+configurations {
+    asciidoctorExt
 }
 
 ext {
     set('snippetsDir', file("build/generated-snippets"))
-}
-
-configurations {
-    asciidoctorExt
 }
 
 dependencies {
@@ -27,16 +19,24 @@ dependencies {
     asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor'
 }
 
-test.configure {
+test {
     outputs.dir snippetsDir
 }
 
 asciidoctor {
+    dependsOn test
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
     sources {
         include("**/index.adoc")
     }
     baseDirFollowsSourceFile()
-    dependsOn test
+}
+
+bootJar {
+    dependsOn asciidoctor
+    archiveFileName = 'client-app.jar'
+    from ("${asciidoctor.outputDir}") {
+        into "static/docs"
+    }
 }

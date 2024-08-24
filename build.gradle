@@ -51,7 +51,7 @@ subprojects {
 		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	}
 
-	test.configure {
+	test {
 		useJUnitPlatform()
 		finalizedBy 'jacocoTestReport'
 	}

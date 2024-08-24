@@ -1,10 +1,10 @@
 plugins {
 }
 
-bootJar {
-    archiveFileName = 'admin-app.jar'
-}
-
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+}
+
+bootJar {
+    archiveFileName = 'admin-app.jar'
 }
