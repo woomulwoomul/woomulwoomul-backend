@@ -7,7 +7,7 @@ configurations {
 }
 
 ext {
-    set('snippetsDir', file("build/generated-snippets"))
+    snippetsDir = file('build/generated-snippets')
 }
 
 dependencies {
@@ -20,23 +20,22 @@ dependencies {
 }
 
 test {
+    delete snippetsDir
     outputs.dir snippetsDir
 }
 
 asciidoctor {
-    dependsOn test
     inputs.dir snippetsDir
     configurations 'asciidoctorExt'
-    sources {
-        include("**/index.adoc")
-    }
-    baseDirFollowsSourceFile()
+    dependsOn test
 }
 
 bootJar {
     dependsOn asciidoctor
-    archiveFileName = 'client-app.jar'
-    from ("${asciidoctor.outputDir}") {
-        into "static/docs"
+    delete file('src/main/resources/static/docs')
+    copy {
+        from "${asciidoctor.outputDir}"			// /html5를 사용하지 않음
+        into 'src/main/resources/static/docs'	// /static/docs로 복사
     }
+    archiveFileName = 'client-app.jar'
 }
