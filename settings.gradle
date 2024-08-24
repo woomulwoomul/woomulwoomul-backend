@@ -1,4 +1,4 @@
 rootProject.name = 'woomulwoomulbackend'
 include 'core'
-include 'client-server'
-include 'admin-server'
+include 'client-api'
+include 'admin-api'

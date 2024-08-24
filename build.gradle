@@ -114,13 +114,13 @@ project(":core") {
 	jar.enabled = true
 }
 
-project(":client-server") {
+project(":client-api") {
 	dependencies {
 		implementation(project(":core"))
 	}
 }
 
-project(":admin-server") {
+project(":admin-api") {
 	dependencies {
 		implementation(project(":core"))
 	}
