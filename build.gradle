@@ -51,11 +51,6 @@ subprojects {
 		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	}
 
-	test {
-		useJUnitPlatform()
-		finalizedBy 'jacocoTestReport'
-	}
-
 	tasks.withType(KotlinCompile).configureEach {
 		kotlinOptions {
 			freeCompilerArgs += '-Xjsr305=strict'
