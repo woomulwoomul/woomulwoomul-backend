@@ -63,7 +63,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: code-coverage-report-html
-          path: admin-server/build/reports/jacoco/test/html
+          path: admin-api/build/reports/jacoco/test/html
           retention-days: 90
 
       - name: Build and Push Docker image
