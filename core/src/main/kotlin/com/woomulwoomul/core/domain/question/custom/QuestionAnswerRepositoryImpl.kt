@@ -57,7 +57,7 @@ class QuestionAnswerRepositoryImpl(
         return PageData(data, total)
     }
 
-    override fun findAnswered(userId: Long, answerId: Long): QuestionAnswerEntity? {
+    override fun findAnsweredByUserIdAndAnswerId(userId: Long, answerId: Long): QuestionAnswerEntity? {
         return queryFactory
             .selectFrom(questionAnswerEntity)
             .innerJoin(questionEntity)
@@ -67,6 +67,24 @@ class QuestionAnswerRepositoryImpl(
             .innerJoin(answerEntity)
             .on(answerEntity.id.eq(questionAnswerEntity.answer.id)
                 .and(answerEntity.id.eq(answerId))
+                .and(answerEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .where(
+                questionAnswerEntity.status.eq(COMPLETE),
+                questionAnswerEntity.receiver.id.eq(userId)
+            ).fetchFirst()
+    }
+
+    override fun findAnsweredByUserIdAndQuestionId(userId: Long, questionId: Long): QuestionAnswerEntity? {
+        return queryFactory
+            .selectFrom(questionAnswerEntity)
+            .innerJoin(questionEntity)
+            .on(questionEntity.id.eq(questionAnswerEntity.question.id)
+                .and(questionEntity.id.eq(questionId))
+                .and(questionEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .innerJoin(answerEntity)
+            .on(answerEntity.id.eq(questionAnswerEntity.answer.id)
                 .and(answerEntity.status.eq(ACTIVE)))
             .fetchJoin()
             .where(

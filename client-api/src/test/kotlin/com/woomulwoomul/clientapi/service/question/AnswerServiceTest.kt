@@ -144,9 +144,9 @@ class AnswerServiceTest(
             .isEqualTo(USER_NOT_FOUND)
     }
 
-    @DisplayName("답변 조회가 정상 작동한다")
+    @DisplayName("회원 ID와 답변 ID로 답변 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenGetAnswer_thenReturn() {
+    fun givenValid_whenGetAnswerByUserIdAndAnswerId_thenReturn() {
         // given
         val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
@@ -162,7 +162,7 @@ class AnswerServiceTest(
         val answer = createAndSaveAnswer(questionAnswer, "답변1", "")
 
         // when
-        val response = answerService.getAnswer(user.id!!, answer.id!!)
+        val response = answerService.getAnswerByUserIdAndAnswerId(user.id!!, answer.id!!)
 
         // then
         assertAll(
@@ -185,16 +185,76 @@ class AnswerServiceTest(
         )
     }
 
-    @DisplayName("존재하지 않는 답변을 조회하면 예외가 발생한다")
+    @DisplayName("존재하지 않는 답변 ID로 답변을 조회하면 예외가 발생한다")
     @Test
-    fun givenNonExistingAnswer_whenGetAnswer_thenThrow() {
+    fun givenNonExistingAnswer_whenGetAnswerByUserIdAndAnswerId_thenThrow() {
         // given
         val user = createAndSaveUser("user","user@woomulwoomul.com")
 
         val answerId = 1L
 
         // when & then
-        assertThatThrownBy { answerService.getAnswer(user.id!!, answerId) }
+        assertThatThrownBy { answerService.getAnswerByUserIdAndAnswerId(user.id!!, answerId) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ANSWER_NOT_FOUND)
+    }
+
+    @DisplayName("회원 ID와 질문 ID로 답변 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenGetAnswerByUserIdAndQuestionId_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user = createAndSaveUser("user", "user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변1", "")
+
+        // when
+        val response = answerService.getAnswerByUserIdAndQuestionId(user.id!!, question.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(response)
+                    .extracting(
+                        "answerId", "answerText", "answerImageUrl", "answerUpdateDateTime", "answeredUserCnt",
+                        "answeredUserImageUrls", "questionId", "questionText", "questionBackgroundColor"
+                    )
+                    .containsExactly(
+                        answer.id, answer.text, answer.imageUrl, answer.updateDateTime, 1L,
+                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor
+                    )
+            },
+            {
+                assertThat(response.categories)
+                    .extracting("categoryId", "name")
+                    .containsExactly(
+                        tuple(categories[0].id, categories[0].name),
+                        tuple(categories[1].id, categories[1].name),
+                        tuple(categories[2].id, categories[2].name)
+                    )
+            }
+        )
+    }
+
+    @DisplayName("존재하지 않는 질문 ID로 답변을 조회하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingAnswer_whenGetAnswerByUserIdAndQuestionId_thenThrow() {
+        // given
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val questionId = 1L
+
+        // when & then
+        assertThatThrownBy { answerService.getAnswerByUserIdAndQuestionId(user.id!!, questionId) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(ANSWER_NOT_FOUND)

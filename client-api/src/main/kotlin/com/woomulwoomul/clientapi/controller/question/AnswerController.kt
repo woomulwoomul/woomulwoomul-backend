@@ -36,10 +36,19 @@ class AnswerController(
     }
 
     @GetMapping("/api/users/{userId}/answers/{answerId}")
-    fun getAnswer(@PathVariable userId: Long,
+    fun getAnswerByUserIdAndAnswerId(@PathVariable userId: Long,
                   @PathVariable answerId: Long):
             ResponseEntity<DefaultSingleResponse> {
-        val response = answerService.getAnswer(userId, answerId)
+        val response = answerService.getAnswerByUserIdAndAnswerId(userId, answerId)
+
+        return DefaultSingleResponse.toResponseEntity(FOUND_USER_ANSWER, response)
+    }
+
+    @GetMapping("/api/users/{userId}/questions/{questionId}/answers")
+    fun getAnswerByUserIdAndQuestionId(principal: Principal,
+                                       @PathVariable userId: Long,
+                                       @PathVariable questionId: Long): ResponseEntity<DefaultSingleResponse> {
+        val response = answerService.getAnswerByUserIdAndQuestionId(userId, questionId)
 
         return DefaultSingleResponse.toResponseEntity(FOUND_USER_ANSWER, response)
     }
@@ -60,11 +69,9 @@ class AnswerController(
     }
 
     @PatchMapping("/api/answers/{answerId}")
-    fun updateAnswer(
-        principal: Principal,
-        @PathVariable answerId: Long,
-        @RequestBody @Valid request: AnswerUpdateRequest,
-    ): ResponseEntity<DefaultSingleResponse> {
+    fun updateAnswer(principal: Principal,
+                     @PathVariable answerId: Long,
+                     @RequestBody @Valid request: AnswerUpdateRequest): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.updateAnswer(UserUtils.getUserId(principal), answerId, request.toServiceRequest())
 
         return DefaultSingleResponse.toResponseEntity(ANSWER_UPDATED, response)
@@ -80,8 +87,7 @@ class AnswerController(
     @PostMapping("/api/questions/{questionId}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
     fun uploadImage(principal: Principal,
                     @PathVariable questionId: Long,
-                    @RequestPart(required = false) file: MultipartFile?):
-            ResponseEntity<DefaultSingleResponse> {
+                    @RequestPart(required = false) file: MultipartFile?): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.uploadImage(UserUtils.getUserId(principal), questionId, file)
 
         return DefaultSingleResponse.toResponseEntity(ANSWER_IMAGE_UPLOADED, response)

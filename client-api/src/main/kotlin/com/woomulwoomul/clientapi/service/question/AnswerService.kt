@@ -89,8 +89,34 @@ class AnswerService(
      * @throws ANSWER_NOT_FOUND 404
      * @return 답변 응답
      */
-    fun getAnswer(userId: Long, answerId: Long): AnswerFindResponse {
-        val questionAnswer = questionAnswerRepository.findAnswered(userId, answerId)
+    fun getAnswerByUserIdAndAnswerId(userId: Long, answerId: Long): AnswerFindResponse {
+        val questionAnswer = questionAnswerRepository.findAnsweredByUserIdAndAnswerId(userId, answerId)
+            ?: throw CustomException(ANSWER_NOT_FOUND)
+        val questionCategories = questionCategoryRepository.findByQuestionIds(listOf(questionAnswer.question.id!!))
+
+        val randomAnsweredImageUrls = questionAnswerRepository.findRandomAnsweredUserImageUrls(
+            questionAnswer.question.id!!,
+            ANSWERED_USER_CONST
+        )
+        val answeredUserCnt = questionAnswerRepository.countAnsweredUser(questionAnswer.question.id!!)
+
+        return AnswerFindResponse(
+            questionAnswer,
+            answeredUserCnt,
+            randomAnsweredImageUrls,
+            questionCategories.map { it.category }
+        )
+    }
+
+    /**
+     * 답변 조회
+     * @param userId 회원 ID
+     * @param questionId 질문 ID
+     * @throws ANSWER_NOT_FOUND 404
+     * @return 답변 응답
+     */
+    fun getAnswerByUserIdAndQuestionId(userId: Long, questionId: Long): AnswerFindResponse {
+        val questionAnswer = questionAnswerRepository.findAnsweredByUserIdAndQuestionId(userId, questionId)
             ?: throw CustomException(ANSWER_NOT_FOUND)
         val questionCategories = questionCategoryRepository.findByQuestionIds(listOf(questionAnswer.question.id!!))
 
@@ -191,7 +217,7 @@ class AnswerService(
      */
     @Transactional
     fun updateAnswer(userId: Long, answerId: Long, @Valid request: AnswerUpdateServiceRequest): com.woomulwoomul.clientapi.service.question.response.AnswerUpdateResponse {
-        val questionAnswer = questionAnswerRepository.findAnswered(userId, answerId)
+        val questionAnswer = questionAnswerRepository.findAnsweredByUserIdAndAnswerId(userId, answerId)
             ?: throw CustomException(ANSWER_NOT_FOUND)
         questionAnswer.answer!!.update(request.answerText, request.answerImageUrl)
 
@@ -219,7 +245,7 @@ class AnswerService(
      */
     @Transactional
     fun deleteAnswer(userId: Long, answerId: Long) {
-        questionAnswerRepository.findAnswered(userId, answerId)?.apply {
+        questionAnswerRepository.findAnsweredByUserIdAndAnswerId(userId, answerId)?.apply {
             deleteByUser()
         } ?: throw CustomException(ANSWER_NOT_FOUND)
     }

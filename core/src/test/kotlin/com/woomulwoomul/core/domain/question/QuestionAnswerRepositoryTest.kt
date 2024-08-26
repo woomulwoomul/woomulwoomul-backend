@@ -26,7 +26,7 @@ class QuestionAnswerRepositoryTest(
     @Autowired private val answerRepository: AnswerRepository,
 ) {
 
-    @DisplayName("질문 ID와 회원 ID로 질문 답변 전체 조회가 정상 작동한다")
+    @DisplayName("회원 ID와 답변 ID로 질문 답변 전체 조회가 정상 작동한다")
     @Test
     fun givenValid_whenFindAllAnswered_thenReturn() {
         // given
@@ -111,9 +111,9 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
-    @DisplayName("질문 ID와 회원 ID로 질문 답변 조회가 정상 작동한다")
+    @DisplayName("회원 ID와 답변 ID로 질문 답변 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAnswered_thenReturn() {
+    fun givenValid_whenFindAnsweredByUserIdAndAnswerId_thenReturn() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user = createAndSaveUser("user", "user@woomulwoomul.com")
@@ -128,7 +128,7 @@ class QuestionAnswerRepositoryTest(
         val answer = createAndSaveAnswer(questionAnswer, "답변1", "")
 
         // when
-        val foundQuestionAnswer = questionAnswerRepository.findAnswered(user.id!!, answer.id!!)
+        val foundQuestionAnswer = questionAnswerRepository.findAnsweredByUserIdAndAnswerId(user.id!!, answer.id!!)
 
         // then
         assertAll(
@@ -155,6 +155,68 @@ class QuestionAnswerRepositoryTest(
                             questionAnswer.sender.email, questionAnswer.sender.imageUrl,
                             questionAnswer.sender.introduction, questionAnswer.sender.status,
                             questionAnswer.sender.createDateTime, questionAnswer.sender.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.question)
+                    .extracting("id", "text", "backgroundColor", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.question.id, questionAnswer.question.text,
+                        questionAnswer.question.backgroundColor, questionAnswer.question.status,
+                        questionAnswer.question.createDateTime, questionAnswer.question.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.answer)
+                    .extracting("id", "text", "imageUrl", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.answer!!.id, questionAnswer.answer!!.text,
+                        questionAnswer.answer!!.imageUrl, questionAnswer.answer!!.status,
+                        questionAnswer.answer!!.createDateTime, questionAnswer.answer!!.updateDateTime)
+            }
+        )
+    }
+
+    @DisplayName("회원 ID와 질문 ID로 질문 답변 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindAnsweredByUserIdAndQuestionId_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user = createAndSaveUser("user", "user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변1", "")
+
+        // when
+        val foundQuestionAnswer = questionAnswerRepository.findAnsweredByUserIdAndQuestionId(user.id!!, question.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionAnswer)
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.id, questionAnswer.status, questionAnswer.createDateTime,
+                        questionAnswer.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.receiver)
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(questionAnswer.receiver.id, questionAnswer.receiver.nickname,
+                        questionAnswer.receiver.email, questionAnswer.receiver.imageUrl,
+                        questionAnswer.receiver.introduction, questionAnswer.receiver.status,
+                        questionAnswer.receiver.createDateTime, questionAnswer.receiver.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.sender)
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(questionAnswer.sender.id, questionAnswer.sender.nickname,
+                        questionAnswer.sender.email, questionAnswer.sender.imageUrl,
+                        questionAnswer.sender.introduction, questionAnswer.sender.status,
+                        questionAnswer.sender.createDateTime, questionAnswer.sender.updateDateTime)
             },
             {
                 assertThat(foundQuestionAnswer!!.question)

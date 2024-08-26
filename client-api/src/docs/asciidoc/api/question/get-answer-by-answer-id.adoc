@@ -1,12 +1,12 @@
-[[get-answer]]
-=== 답변 조회
+[[get-answer-by-answer-id]]
+=== 답변 ID로 답변 조회
 
 ==== HTTP Request
-include::{snippets}/answer/get-answer/http-request.adoc[]
+include::{snippets}/answer/get-answer-by-answer-id/http-request.adoc[]
 
 ==== HTTP Response
-include::{snippets}/answer/get-answer/http-response.adoc[]
-include::{snippets}/answer/get-answer/response-fields.adoc[]
+include::{snippets}/answer/get-answer-by-answer-id/http-response.adoc[]
+include::{snippets}/answer/get-answer-by-answer-id/response-fields.adoc[]
 
 ==== Exception
 

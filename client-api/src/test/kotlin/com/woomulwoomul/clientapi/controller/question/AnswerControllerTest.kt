@@ -132,11 +132,11 @@ class AnswerControllerTest : RestDocsSupport() {
             )
     }
 
-    @DisplayName("답변 조회를 하면 200을 반환한다")
+    @DisplayName("회원 ID와 답변 ID로 답변 조회를 하면 200을 반환한다")
     @Test
-    fun givenValid_whenGetAnswer_thenReturn200() {
+    fun givenValid_whenGetAnswerByUserIdAndAnswerId_thenReturn200() {
         // given
-        `when`(answerService.getAnswer(anyLong(), anyLong()))
+        `when`(answerService.getAnswerByUserIdAndAnswerId(anyLong(), anyLong()))
             .thenReturn(
                 AnswerFindResponse(1L,
                     "답변",
@@ -164,7 +164,78 @@ class AnswerControllerTest : RestDocsSupport() {
             .andExpect(status().isOk)
             .andDo(
                 document(
-                    "answer/get-answer",
+                    "answer/get-answer-by-answer-id",
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                        fieldWithPath("data").type(JsonFieldType.OBJECT)
+                            .description("데이터"),
+                        fieldWithPath("data.answerId").type(JsonFieldType.NUMBER)
+                            .description("답변 ID"),
+                        fieldWithPath("data.answerText").type(JsonFieldType.STRING).optional()
+                            .description("답변 내용"),
+                        fieldWithPath("data.answerImageUrl").type(JsonFieldType.STRING).optional()
+                            .description("답변 이미지"),
+                        fieldWithPath("data.answerUpdateDateTime").type(JsonFieldType.STRING)
+                            .description("답변 수정일"),
+                        fieldWithPath("data.answeredUserCnt").type(JsonFieldType.NUMBER)
+                            .description("답변한 회원수"),
+                        fieldWithPath("data.answeredUserImageUrls").type(JsonFieldType.ARRAY)
+                            .description("답변한 회원 프로필 이미지"),
+                        fieldWithPath("data.questionId").type(JsonFieldType.NUMBER)
+                            .description("질문 ID"),
+                        fieldWithPath("data.questionText").type(JsonFieldType.STRING)
+                            .description("질문 내용"),
+                        fieldWithPath("data.questionBackgroundColor").type(JsonFieldType.STRING)
+                            .description("질문 배경 색상"),
+                        fieldWithPath("data.categories").type(JsonFieldType.ARRAY)
+                            .description("카테고리들"),
+                        fieldWithPath("data.categories[].categoryId").type(JsonFieldType.NUMBER)
+                            .description("카테고리 ID"),
+                        fieldWithPath("data.categories[].name").type(JsonFieldType.STRING)
+                            .description("카테고리명"),
+                    )
+                )
+            )
+    }
+
+    @DisplayName("회원 ID와 질문 ID로 답변 조회를 하면 200을 반환한다")
+    @Test
+    fun givenValid_whenGetAnswerByUserIdAndQuestionId_thenReturn200() {
+        // given
+        `when`(answerService.getAnswerByUserIdAndQuestionId(anyLong(), anyLong()))
+            .thenReturn(
+                AnswerFindResponse(1L,
+                    "답변",
+                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                    LocalDateTime.of(2024, 1, 1, 0, 0, 0),
+                    3L,
+                    listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                    1L,
+                    "질문",
+                    "0F0F0F",
+                    listOf(AnswerFindCategoryResponse(1L, "카테고리1"),
+                        AnswerFindCategoryResponse(2L, "카테고리2"),
+                        AnswerFindCategoryResponse(3L, "카테고리3")))
+            )
+
+        // when & then
+        mockMvc.perform(
+            get("/api/users/{userId}/questions/{questionId}/answers", 1, 1)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+                .contentType(APPLICATION_JSON_VALUE)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "answer/get-answer-by-question-id",
                     preprocessResponse(prettyPrint()),
                     requestHeaders(headerWithName(AUTHORIZATION).description("액세스 토큰")),
                     responseFields(

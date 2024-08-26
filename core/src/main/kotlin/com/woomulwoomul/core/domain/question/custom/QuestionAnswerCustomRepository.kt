@@ -9,7 +9,9 @@ interface QuestionAnswerCustomRepository {
 
     fun findAllAnswered(userId: Long, pageRequest: PageRequest): PageData<QuestionAnswerEntity>
 
-    fun findAnswered(userId: Long, answerId: Long): QuestionAnswerEntity?
+    fun findAnsweredByUserIdAndAnswerId(userId: Long, answerId: Long): QuestionAnswerEntity?
+
+    fun findAnsweredByUserIdAndQuestionId(userId: Long, questionId: Long): QuestionAnswerEntity?
 
     fun findRandomAnsweredUserImageUrls(questionId: Long, limit: Long): List<String>
 
