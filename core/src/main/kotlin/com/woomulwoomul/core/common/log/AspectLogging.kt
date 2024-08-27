@@ -16,8 +16,7 @@ class AspectLogging {
         private val log = LoggerFactory.getLogger(this::class.java)
     }
 
-    @Pointcut("execution(public * com.woomulwoomul.core.domain..*(..))" +
-            "|| execution(public * com.woomulwoomul.core.api..*(..))")
+    @Pointcut("execution(public * com.woomulwoomul.*.*..*(..))")
     private fun global() {}
 
     @Before("global()")

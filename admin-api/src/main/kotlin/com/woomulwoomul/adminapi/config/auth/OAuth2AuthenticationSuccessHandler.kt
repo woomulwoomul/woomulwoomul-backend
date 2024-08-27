@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
+import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class OAuth2AuthenticationSuccessHandler(
@@ -41,6 +42,18 @@ class OAuth2AuthenticationSuccessHandler(
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = Consts.UTF_8.name()
         response.writer.write(objectMapper.writeValueAsString(body))
+
+        println("=========================================")
+        println(redirectStrategy.toString())
+        println("=========================================")
+        redirectStrategy.sendRedirect(request, response, UriComponentsBuilder.fromUriString("http://localhost:8082")
+            .path("dashboard")
+            .build()
+            .toUriString())
+
+        println("=========================================")
+        println(redirectStrategy.toString())
+        println("=========================================")
     }
 
     private fun trimJwtToken(token: String): String {

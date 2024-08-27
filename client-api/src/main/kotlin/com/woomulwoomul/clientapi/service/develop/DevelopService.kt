@@ -33,9 +33,9 @@ class DevelopService(
     private val jwtProvider: JwtProvider,
 ) {
 
-    private val TESTER_CONST = "tester"
-    private val IMAGE_URL_CONST = "https://img.freepik.com/free-photo/copy-space-coffee-beans_23-2148937252.jpg?w=900&t=st=1721451022~exp=1721451622~hmac=bee6c7b6b1a6a02fb5e296f5ff380f7dc0e9c36e2b20ded8272e8cde418e1e40"
-    private val COLOR_CODES_CONST = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6", "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
+    private val testerConst = "tester"
+    private val imageUrlConst = "https://img.freepik.com/free-photo/copy-space-coffee-beans_23-2148937252.jpg?w=900&t=st=1721451022~exp=1721451622~hmac=bee6c7b6b1a6a02fb5e296f5ff380f7dc0e9c36e2b20ded8272e8cde418e1e40"
+    private val colorCodesConst = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6", "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
 
     /**
      * 서버명 조회
@@ -52,7 +52,7 @@ class DevelopService(
      * @return 헤더
      */
     fun getTesterToken(testerId: Long): HttpHeaders {
-        val tester = userRepository.findByNickname(TESTER_CONST.plus(testerId))
+        val tester = userRepository.findByNickname(testerConst.plus(testerId))
             ?: throw CustomException(TESTER_NOT_FOUND)
 
         return jwtProvider.createToken(tester.id!!)
@@ -98,8 +98,8 @@ class DevelopService(
     private fun injectUsers(): List<UserEntity> {
         val users = (1..100).map {
             UserEntity(
-                nickname = "${TESTER_CONST}${it}",
-                email = "${TESTER_CONST}${it}@woomulwoomul.com",
+                nickname = "${testerConst}${it}",
+                email = "${testerConst}${it}@woomulwoomul.com",
                 imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                 introduction = "소개${it}"
             )
@@ -144,7 +144,7 @@ class DevelopService(
             QuestionEntity(
                 user = admin,
                 text = "질문${it}번 입니다.",
-                backgroundColor = COLOR_CODES_CONST[Random.nextInt(COLOR_CODES_CONST.size)],
+                backgroundColor = colorCodesConst[Random.nextInt(colorCodesConst.size)],
                 startDateTime = now.plusDays((it - 1).toLong()).withHour(0).withMinute(0).withSecond(0),
                 endDateTime = now.plusDays((it - 1).toLong()).withHour(23).withMinute(59).withSecond(59)
             )
@@ -158,7 +158,7 @@ class DevelopService(
      */
     private fun injectAnswers(cnt: Int): List<AnswerEntity> {
         return (1..cnt).map { index ->
-            if (index % 5 == 0) AnswerEntity(text = "", imageUrl = IMAGE_URL_CONST)
+            if (index % 5 == 0) AnswerEntity(text = "", imageUrl = imageUrlConst)
             else AnswerEntity(text = "답변${index}번 입니다.", imageUrl = "")
         }.also { answerRepository.saveAll(it) }
     }

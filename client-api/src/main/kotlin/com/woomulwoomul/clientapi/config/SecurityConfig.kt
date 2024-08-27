@@ -1,10 +1,10 @@
 package com.woomulwoomul.clientapi.config
 
 import com.woomulwoomul.clientapi.config.auth.CustomAuthenticationEntryPoint
+import com.woomulwoomul.clientapi.config.auth.CustomOAuth2UserService
 import com.woomulwoomul.clientapi.config.auth.OAuth2AuthenticationFailureHandler
 import com.woomulwoomul.clientapi.config.auth.OAuth2AuthenticationSuccessHandler
 import com.woomulwoomul.core.config.auth.CustomAuthenticationFilter
-import com.woomulwoomul.core.config.auth.CustomOAuth2UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod

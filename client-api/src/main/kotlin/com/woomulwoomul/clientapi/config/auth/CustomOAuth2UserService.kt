@@ -1,7 +1,6 @@
-package com.woomulwoomul.core.config.auth
+package com.woomulwoomul.clientapi.config.auth
 
-import com.woomulwoomul.core.common.constant.ExceptionCode.OAUTH_UNAUTHENTICATED
-import com.woomulwoomul.core.common.constant.ExceptionCode.NICKNAME_GENERATE_FAIL
+import com.woomulwoomul.core.common.constant.ExceptionCode
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.utils.UserUtils
 import com.woomulwoomul.core.config.auth.OAuth2Provider
@@ -23,32 +22,34 @@ class CustomOAuth2UserService(
     private val userRoleRepository: UserRoleRepository,
 ) : DefaultOAuth2UserService() {
 
-    private val USER_ID_CONST = "userId"
-    private val PROVIDER_ID_CONST = "providerId"
+    private val userIdConst = "userId"
+    private val providerIdConst = "providerId"
 
     @Transactional
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
         if (userRequest == null || !StringUtils.hasText(userRequest.clientRegistration.providerDetails.userInfoEndpoint.uri))
-            throw CustomException(OAUTH_UNAUTHENTICATED)
+            throw CustomException(ExceptionCode.OAUTH_UNAUTHENTICATED)
 
         val provider = ProviderType.of(userRequest.clientRegistration.registrationId)
         val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName
         val oAuth2User = super.loadUser(userRequest)
         val attributes = OAuth2Provider.of(provider, userNameAttributeName, oAuth2User.attributes)
 
-        var userProvider = userProviderRepository.findInnerFetchJoinUser(attributes[PROVIDER_ID_CONST]!!)
+        var userProvider = userProviderRepository.findInnerFetchJoinUser(attributes[providerIdConst]!!)
         val userRoles = if (userProvider == null) {
             attributes["nickname"] = createRandomNickname(attributes["email"]!!)
-            val user = userRepository.save(OAuth2Provider.toUserEntity(
+            val user = userRepository.save(
+                OAuth2Provider.toUserEntity(
                 attributes["nickname"]!!,
                 attributes["email"]!!,
                 attributes["imageUrl"]!!
             ))
 
-            userProvider = userProviderRepository.save(OAuth2Provider.toUserProviderEntity(
+            userProvider = userProviderRepository.save(
+                OAuth2Provider.toUserProviderEntity(
                 user = user,
                 provider = provider,
-                providerId = attributes[PROVIDER_ID_CONST]!!
+                providerId = attributes[providerIdConst]!!
             ))
 
             listOf(userRoleRepository.save(OAuth2Provider.toUserRoleEntity(user)))
@@ -56,11 +57,11 @@ class CustomOAuth2UserService(
             userRoleRepository.findAllFetchUser(userProvider.user.id!!)
         }
 
-        attributes[USER_ID_CONST] = userProvider.user.id.toString()
+        attributes[userIdConst] = userProvider.user.id.toString()
 
         val authorities: List<GrantedAuthority> = Role.getSimpleGrantedAuthorities(userRoles)
 
-        return DefaultOAuth2User(authorities, attributes.toMap(), USER_ID_CONST)
+        return DefaultOAuth2User(authorities, attributes.toMap(), userIdConst)
     }
 
     private fun createRandomNickname(email: String): String {
@@ -71,6 +72,6 @@ class CustomOAuth2UserService(
             val tmpNickname = UserUtils.generateRandomNickname(nickname)
             if (!userRepository.existsByNickname(tmpNickname)) return tmpNickname
         }
-        throw CustomException(NICKNAME_GENERATE_FAIL)
+        throw CustomException(ExceptionCode.NICKNAME_GENERATE_FAIL)
     }
 }

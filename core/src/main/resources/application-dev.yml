@@ -19,13 +19,6 @@ spring:
     init:
       mode: ${SQL_INIT_MODE}
 
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            redirect-uri: https://${OAUTH2_HOST}/login/oauth2/code/kakao
-
 logging:
   config: classpath:logback/prod-logback.xml
 
