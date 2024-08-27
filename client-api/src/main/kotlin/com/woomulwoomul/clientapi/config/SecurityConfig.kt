@@ -1,11 +1,13 @@
-package com.woomulwoomul.core.config
+package com.woomulwoomul.clientapi.config
 
-import com.woomulwoomul.core.config.auth.*
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest
+import com.woomulwoomul.clientapi.config.auth.CustomAuthenticationEntryPoint
+import com.woomulwoomul.clientapi.config.auth.OAuth2AuthenticationFailureHandler
+import com.woomulwoomul.clientapi.config.auth.OAuth2AuthenticationSuccessHandler
+import com.woomulwoomul.core.config.auth.CustomAuthenticationFilter
+import com.woomulwoomul.core.config.auth.CustomOAuth2UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -25,9 +27,8 @@ class SecurityConfig(
 
     private val WHITE_LIST = hashMapOf(
         HttpMethod.GET to arrayOf(
-            "/docs/index.html", "/css/**", "/image/**",
-            "/api/health", "/api/tester/**", "/oauth2/authorization/**", "/api/users/nickname", "/api/questions",
-            "/", "/login"
+            "/docs/index.html",
+            "/api/health", "/api/tester/**", "/oauth2/authorization/**", "/api/users/nickname", "/api/questions"
         ),
         HttpMethod.POST to arrayOf("/api/reset")
     )
@@ -40,8 +41,6 @@ class SecurityConfig(
         return http
             .csrf{ it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .formLogin(Customizer.withDefaults())
-            .logout{ it.logoutSuccessUrl("/") }
             .oauth2Login{ it ->
                 it.userInfoEndpoint{ it.userService(customOAuth2UserService) }
                     .successHandler(oAuth2AuthenticationSuccessHandler)
@@ -52,7 +51,6 @@ class SecurityConfig(
                         it.requestMatchers(method, path).permitAll()
                     }
                 }
-//                it.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 it.anyRequest().authenticated()
             }.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling{ it.authenticationEntryPoint(customAuthenticationEntryPoint) }

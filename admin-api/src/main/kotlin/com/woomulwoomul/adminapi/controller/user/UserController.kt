@@ -10,4 +10,9 @@ class UserController {
     fun home(): String {
         return "home"
     }
+
+    @GetMapping("/dashboard")
+    fun dashboard(): String {
+        return "home"
+    }
 }

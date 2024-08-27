@@ -1,12 +1,12 @@
-package com.woomulwoomul.core.config.auth
+package com.woomulwoomul.adminapi.config.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.woomulwoomul.core.common.constant.ExceptionCode.OAUTH_UNAUTHENTICATED
+import com.woomulwoomul.core.common.constant.ExceptionCode
 import com.woomulwoomul.core.common.response.ExceptionResponse
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.apache.http.Consts.UTF_8
-import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import org.apache.http.Consts
+import org.springframework.http.MediaType
 import org.springframework.security.core.AuthenticationException
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler
 import org.springframework.stereotype.Component
@@ -21,11 +21,11 @@ class OAuth2AuthenticationFailureHandler(
         response: HttpServletResponse?,
         exception: AuthenticationException?
     ) {
-        response!!.status = OAUTH_UNAUTHENTICATED.httpStatus.value()
-        response.contentType = APPLICATION_JSON_VALUE
-        response.characterEncoding = UTF_8.name()
+        response!!.status = ExceptionCode.OAUTH_UNAUTHENTICATED.httpStatus.value()
+        response.contentType = MediaType.APPLICATION_JSON_VALUE
+        response.characterEncoding = Consts.UTF_8.name()
 
-        val responseBody: String = objectMapper.writeValueAsString(ExceptionResponse.toResponseEntity(OAUTH_UNAUTHENTICATED))
+        val responseBody: String = objectMapper.writeValueAsString(ExceptionResponse.toResponseEntity(ExceptionCode.OAUTH_UNAUTHENTICATED))
         val outputStream = response.outputStream
         outputStream.write(responseBody.toByteArray())
         outputStream.flush()
