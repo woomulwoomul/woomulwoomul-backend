@@ -93,7 +93,7 @@ class UserControllerTest : RestDocsSupport() {
             .thenReturn(UserGetProfileResponse(
                 1L,
                 "tester",
-                "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                 "우물우물"
             ))
 
@@ -140,7 +140,7 @@ class UserControllerTest : RestDocsSupport() {
                 UserProfileUpdateResponse(
                 1L,
                 "tester",
-                "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                 "우물우물"
             )
             )
@@ -259,7 +259,7 @@ class UserControllerTest : RestDocsSupport() {
         val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
 
         `when`(userService.uploadImage(anyLong(), Mockito.any()))
-            .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640")
+            .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg")
 
         // when & then
         mockMvc.perform(
@@ -293,7 +293,7 @@ class UserControllerTest : RestDocsSupport() {
     private fun createValidUserUpdateProfileRequest(): UserProfileUpdateRequest {
         return UserProfileUpdateRequest(
             "tester",
-            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+            "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
             "우물우물"
         )
     }

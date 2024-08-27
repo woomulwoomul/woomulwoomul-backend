@@ -29,7 +29,7 @@ class UserEntityTest {
             1L,
             "tester",
             "tester@woomulwoomul.com",
-            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+            "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
             "우물우물",
         )
     }

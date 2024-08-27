@@ -8,7 +8,6 @@ import com.woomulwoomul.core.config.auth.CustomOAuth2UserService
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
-import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
@@ -27,7 +26,7 @@ class SecurityConfig(
 ) {
 
     private val WHITE_LIST = hashMapOf(
-        HttpMethod.GET to arrayOf("/api/health", "/", "/dashboard")
+        HttpMethod.GET to arrayOf("/api/health", "/")
     )
 
     @Bean
@@ -38,8 +37,6 @@ class SecurityConfig(
         return http
             .csrf{ it.disable() }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .formLogin(Customizer.withDefaults())
-            .logout{ it.logoutSuccessUrl("/") }
             .oauth2Login{ it ->
                 it.userInfoEndpoint{ it.userService(customOAuth2UserService) }
                     .successHandler(oAuth2AuthenticationSuccessHandler)
@@ -50,7 +47,7 @@ class SecurityConfig(
                         it.requestMatchers(method, path).permitAll()
                     }
                 }
-                it.anyRequest().authenticated()
+                it.anyRequest().permitAll()
             }.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling{ it.authenticationEntryPoint(customAuthenticationEntryPoint) }
             .build()

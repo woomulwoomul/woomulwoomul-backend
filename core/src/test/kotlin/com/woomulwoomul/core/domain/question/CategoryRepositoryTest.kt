@@ -131,7 +131,7 @@ class CategoryRepositoryTest(
             UserEntity(
                 nickname = nickname,
                 email = email,
-                imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
             ))
 
         return userRoleRepository.save(UserRoleEntity(user = user, role = role))

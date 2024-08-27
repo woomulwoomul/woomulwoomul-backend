@@ -82,7 +82,7 @@ class DevelopService(
      */
     private fun injectAdmin(): UserEntity {
         val admin = userRepository.save(UserEntity(nickname = "관리자", email = "admin@woomulwoomul.com",
-            imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"))
+            imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg"))
 
         userRoleRepository.saveAll(listOf(
             UserRoleEntity(user = admin, role = Role.USER),
@@ -100,7 +100,7 @@ class DevelopService(
             UserEntity(
                 nickname = "${TESTER_CONST}${it}",
                 email = "${TESTER_CONST}${it}@woomulwoomul.com",
-                imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                 introduction = "소개${it}"
             )
         }.also { userRepository.saveAll(it) }

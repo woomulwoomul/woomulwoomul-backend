@@ -43,23 +43,23 @@ class FollowControllerTest : RestDocsSupport() {
                 listOf(
                     com.woomulwoomul.clientapi.service.user.response.UserGetAllFollowingResponse(
                         1L, 1L, "tester1",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     ),
                     com.woomulwoomul.clientapi.service.user.response.UserGetAllFollowingResponse(
                         2L, 2L, "tester2",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     ),
                     com.woomulwoomul.clientapi.service.user.response.UserGetAllFollowingResponse(
                         3L, 3L, "tester3",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     ),
                     com.woomulwoomul.clientapi.service.user.response.UserGetAllFollowingResponse(
                         4L, 4L, "tester4",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     ),
                     com.woomulwoomul.clientapi.service.user.response.UserGetAllFollowingResponse(
                         5L, 5L, "tester5",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     )
                 ),
                 pageRequest.size

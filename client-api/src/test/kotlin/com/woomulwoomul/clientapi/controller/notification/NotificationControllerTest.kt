@@ -59,7 +59,7 @@ class NotificationControllerTest : RestDocsSupport() {
                         NotificationGetAllSenderResponse(
                             2L,
                             "tester1",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                         )
                     ),
                     NotificationGetAllResponse(
@@ -72,7 +72,7 @@ class NotificationControllerTest : RestDocsSupport() {
                         NotificationGetAllSenderResponse(
                             1L,
                             "tester1",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                         )
                     )
                 ),

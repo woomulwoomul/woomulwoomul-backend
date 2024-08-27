@@ -8,21 +8,17 @@ import com.woomulwoomul.core.config.auth.JwtProvider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.http.Consts
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class OAuth2AuthenticationSuccessHandler(
     private val jwtProvider: JwtProvider,
     private val objectMapper: ObjectMapper,
-    @Value(value = "\${web.domain}")
-    private val frontendDomain: String,
 ) : SimpleUrlAuthenticationSuccessHandler() {
 
     override fun onAuthenticationSuccess(
@@ -45,12 +41,6 @@ class OAuth2AuthenticationSuccessHandler(
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = Consts.UTF_8.name()
         response.writer.write(objectMapper.writeValueAsString(body))
-
-        redirectStrategy.sendRedirect(request, response, UriComponentsBuilder.fromUriString(frontendDomain)
-            .path("login")
-            .queryParams(queryParams)
-            .build()
-            .toUriString())
     }
 
     private fun trimJwtToken(token: String): String {

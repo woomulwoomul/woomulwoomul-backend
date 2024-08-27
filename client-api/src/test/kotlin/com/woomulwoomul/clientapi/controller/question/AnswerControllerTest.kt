@@ -46,27 +46,27 @@ class AnswerControllerTest : RestDocsSupport() {
                 listOf(
                     AnswerFindAllResponse(1L, "답변", "", LocalDateTime.now(),
                         10L,
-                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                         1L, "질문", "0F0F0F",
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3"))),
                     AnswerFindAllResponse(2L, "답변", "", LocalDateTime.now(),
                         10L,
-                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                         2L, "질문", "0F0F0F",
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3"))),
                     AnswerFindAllResponse(3L, "답변", "", LocalDateTime.now(),
                         10L,
-                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                        listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                            "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                         3L, "질문", "0F0F0F",
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
@@ -140,12 +140,12 @@ class AnswerControllerTest : RestDocsSupport() {
             .thenReturn(
                 AnswerFindResponse(1L,
                     "답변",
-                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                     LocalDateTime.of(2024, 1, 1, 0, 0, 0),
                     3L,
-                    listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                    listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                     1L,
                     "질문",
                     "0F0F0F",
@@ -211,12 +211,12 @@ class AnswerControllerTest : RestDocsSupport() {
             .thenReturn(
                 AnswerFindResponse(1L,
                     "답변",
-                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                     LocalDateTime.of(2024, 1, 1, 0, 0, 0),
                     3L,
-                    listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"),
+                    listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                     1L,
                     "질문",
                     "0F0F0F",
@@ -353,13 +353,13 @@ class AnswerControllerTest : RestDocsSupport() {
                 com.woomulwoomul.clientapi.service.question.response.AnswerUpdateResponse(
                     1L,
                     "답변",
-                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
+                    "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                     LocalDateTime.of(2024, 1, 1, 0, 0, 0),
                     3L,
                     listOf(
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640",
-                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640"
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
+                        "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     ),
                     1L,
                     "질문",
@@ -476,7 +476,7 @@ class AnswerControllerTest : RestDocsSupport() {
     fun givenValid_whenUploadImage_thenReturn200() {
         // given
         `when`(answerService.uploadImage(anyLong(), anyLong(), any()))
-            .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg.twg.thumb.R640x640")
+            .thenReturn("https://t1.kakaocdn.net/account_images/default_profile.jpeg")
 
         val file = MockMultipartFile("file", "file.png", "image/png", ByteArray(1))
         val questionId = 1L
