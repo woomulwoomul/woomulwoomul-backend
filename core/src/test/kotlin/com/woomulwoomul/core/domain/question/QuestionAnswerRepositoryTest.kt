@@ -111,6 +111,28 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
+    @DisplayName("질문 답변이 없을때 회원 ID와 답변 ID로 질문 답변 전체 조회를 하면 정상 작동한다")
+    @Test
+    fun givenEmpty_whenFindAllAnswered_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val pageRequest = PageRequest.of(null, 1)
+
+        // when
+        val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageRequest)
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionAnswers.total).isEqualTo(0)
+            },
+            {
+                assertThat(foundQuestionAnswers.data).isEmpty()
+            }
+        )
+    }
+
     @DisplayName("회원 ID와 답변 ID로 질문 답변 조회가 정상 작동한다")
     @Test
     fun givenValid_whenFindAnsweredByUserIdAndAnswerId_thenReturn() {

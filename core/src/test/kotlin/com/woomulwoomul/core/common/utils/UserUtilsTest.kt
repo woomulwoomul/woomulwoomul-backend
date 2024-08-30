@@ -1,6 +1,5 @@
 package com.woomulwoomul.core.common.utils
 
-import arrow.core.computations.result
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
