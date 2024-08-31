@@ -34,7 +34,10 @@ class JwtProvider(
 
     private val userRoleRepository: UserRoleRepository,
 ) {
-    private val tokenPrefix: String = "Bearer "
+
+    companion object {
+        const val TOKEN_PREFIX: String = "Bearer "
+    }
 
     /**
      * JWT 토큰 생성
@@ -95,7 +98,7 @@ class JwtProvider(
      * @return JWT 토큰
      */
     fun verifyToken(token: String, jwtType: JwtType): JWT<JWSHMAC256Algorithm> {
-        return when (val jwt = verifySignature<JWSHMAC256Algorithm>(token.substring(tokenPrefix.length), secret)) {
+        return when (val jwt = verifySignature<JWSHMAC256Algorithm>(token.substring(TOKEN_PREFIX.length), secret)) {
             is Either.Left -> throw CustomException(TOKEN_UNAUTHENTICATED)
             is Either.Right -> {
                 val user = getUserDetails(jwt.value.subject()
@@ -120,7 +123,7 @@ class JwtProvider(
             throw CustomException(TOKEN_UNAUTHENTICATED)
         }
 
-        return when (val decodedJwt = JWT.decodeT(token.substring(tokenPrefix.length), JWSHMAC256Algorithm)) {
+        return when (val decodedJwt = JWT.decodeT(token.substring(TOKEN_PREFIX.length), JWSHMAC256Algorithm)) {
             is Either.Left -> throw CustomException(TOKEN_UNAUTHENTICATED)
             is Either.Right -> decodedJwt.value
         }

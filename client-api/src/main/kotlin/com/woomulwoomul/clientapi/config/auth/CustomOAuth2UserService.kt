@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.util.StringUtils
 
 @Service
 @Transactional(readOnly = true)
@@ -27,8 +26,10 @@ class CustomOAuth2UserService(
 
     @Transactional
     override fun loadUser(userRequest: OAuth2UserRequest?): OAuth2User {
-        if (userRequest == null || !StringUtils.hasText(userRequest.clientRegistration.providerDetails.userInfoEndpoint.uri))
-            throw CustomException(ExceptionCode.OAUTH_UNAUTHENTICATED)
+        userRequest?.let {
+            if (!it.clientRegistration.providerDetails.userInfoEndpoint.uri.isNullOrBlank().not())
+                throw CustomException(ExceptionCode.OAUTH_UNAUTHENTICATED)
+        } ?: throw CustomException(ExceptionCode.OAUTH_UNAUTHENTICATED)
 
         val provider = ProviderType.of(userRequest.clientRegistration.registrationId)
         val userNameAttributeName = userRequest.clientRegistration.providerDetails.userInfoEndpoint.userNameAttributeName

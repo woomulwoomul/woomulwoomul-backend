@@ -1,20 +1,16 @@
 package com.woomulwoomul.adminapi.config.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.woomulwoomul.core.common.constant.CustomHttpHeaders
+import com.woomulwoomul.core.common.constant.CustomHttpHeaders.Companion.REFRESH_TOKEN
 import com.woomulwoomul.core.common.constant.SuccessCode
-import com.woomulwoomul.core.common.response.DefaultResponse
 import com.woomulwoomul.core.config.auth.JwtProvider
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.http.Consts
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
+import org.springframework.http.HttpHeaders.AUTHORIZATION
 import org.springframework.security.core.Authentication
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler
 import org.springframework.stereotype.Component
-import org.springframework.util.LinkedMultiValueMap
-import org.springframework.web.util.UriComponentsBuilder
 
 @Component
 class OAuth2AuthenticationSuccessHandler(
@@ -31,32 +27,17 @@ class OAuth2AuthenticationSuccessHandler(
 
         val headers = jwtProvider.createToken(userId)
 
-        val queryParams = LinkedMultiValueMap<String, String>()
-        queryParams["user-id"] = userId.toString()
-        queryParams["access-token"] = trimJwtToken(headers.getValue(HttpHeaders.AUTHORIZATION).toString())
-        queryParams["refresh-token"] = trimJwtToken(headers.getValue(CustomHttpHeaders.REFRESH_TOKEN).toString())
-
-        val body = DefaultResponse(code = SuccessCode.OAUTH2_LOGIN.name, message = SuccessCode.OAUTH2_LOGIN.message,)
-
         response!!.status = SuccessCode.OAUTH2_LOGIN.httpStatus.value()
-        response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = Consts.UTF_8.name()
-        response.writer.write(objectMapper.writeValueAsString(body))
+        response.setHeader(AUTHORIZATION, trimJwtToken(headers.getValue(AUTHORIZATION).toString()))
+        response.setHeader(REFRESH_TOKEN, trimJwtToken(headers.getValue(REFRESH_TOKEN).toString()))
 
-        println("=========================================")
-        println(redirectStrategy.toString())
-        println("=========================================")
-        redirectStrategy.sendRedirect(request, response, UriComponentsBuilder.fromUriString("http://localhost:8082")
-            .path("dashboard")
-            .build()
-            .toUriString())
-
-        println("=========================================")
-        println(redirectStrategy.toString())
-        println("=========================================")
+        redirectStrategy.sendRedirect(request,
+            response,
+            "${request?.scheme}://${request?.serverName}:${request?.serverPort}/dashboard")
     }
 
     private fun trimJwtToken(token: String): String {
-        return token.trim('[', ']')
+        return JwtProvider.TOKEN_PREFIX + token.trim('[', ']')
     }
 }

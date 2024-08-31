@@ -2,6 +2,7 @@ package com.woomulwoomul.adminapi.controller.user
 
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
+import java.security.Principal
 
 @Controller
 class UserController {
@@ -12,7 +13,7 @@ class UserController {
     }
 
     @GetMapping("/dashboard")
-    fun dashboard(): String {
-        return "home"
+    fun dashboard(principal: Principal?): String {
+        return "dashboard"
     }
 }

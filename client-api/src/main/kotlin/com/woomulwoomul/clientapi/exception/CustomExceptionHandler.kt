@@ -1,8 +1,8 @@
-package com.woomulwoomul.core.common.exception
+package com.woomulwoomul.clientapi.exception
 
 import com.woomulwoomul.core.common.constant.ErrorField
 import com.woomulwoomul.core.common.constant.ExceptionCode
-import com.woomulwoomul.core.common.constant.ExceptionCode.*
+import com.woomulwoomul.core.common.exception.ByteSize
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.ExceptionResponse
 import io.sentry.Sentry
@@ -37,7 +37,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        val fieldError = ex.bindingResult.fieldErrors.firstOrNull() ?: throw CustomException(SERVER_ERROR)
+        val fieldError = ex.bindingResult.fieldErrors.firstOrNull() ?: throw CustomException(ExceptionCode.SERVER_ERROR)
         val fieldErrorCode = fieldError.code ?: ""
 
         val codePrefix = preFormatCode(fieldErrorCode)
@@ -51,7 +51,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(ConstraintViolationException::class)
     protected fun handleConstraintViolationException(ex: ConstraintViolationException):
             ResponseEntity<ExceptionResponse> {
-        val constraintViolation = ex.constraintViolations.firstOrNull() ?: throw CustomException(SERVER_ERROR)
+        val constraintViolation = ex.constraintViolations.firstOrNull() ?: throw CustomException(ExceptionCode.SERVER_ERROR)
         val annotation = constraintViolation.constraintDescriptor.annotation
 
         val codePrefix = preFormatCode(constraintViolation.propertyPath.toString())
@@ -75,7 +75,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
      */
     @ExceptionHandler(AccessDeniedException::class)
     protected fun handleAccessDeniedException(ex: AccessDeniedException): ResponseEntity<ExceptionResponse> {
-        return ExceptionResponse.toResponseEntity(TOKEN_UNAUTHENTICATED)
+        return ExceptionResponse.toResponseEntity(ExceptionCode.TOKEN_UNAUTHENTICATED)
     }
 
     /**
@@ -87,8 +87,8 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return ResponseEntity.status(METHOD_DISABLED.httpStatus)
-            .body(ExceptionResponse(METHOD_DISABLED))
+        return ResponseEntity.status(ExceptionCode.METHOD_DISABLED.httpStatus)
+            .body(ExceptionResponse(ExceptionCode.METHOD_DISABLED))
     }
 
     /**
@@ -100,8 +100,8 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         status: HttpStatusCode,
         request: WebRequest
     ): ResponseEntity<Any>? {
-        return ResponseEntity.status(FILE_SIZE_EXCEED.httpStatus)
-            .body(ExceptionResponse(FILE_SIZE_EXCEED))
+        return ResponseEntity.status(ExceptionCode.FILE_SIZE_EXCEED.httpStatus)
+            .body(ExceptionResponse(ExceptionCode.FILE_SIZE_EXCEED))
     }
 
     /**
@@ -110,7 +110,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(Exception::class)
     protected fun handleException(ex: Exception): ResponseEntity<ExceptionResponse> {
         Sentry.captureException(ex)
-        return ExceptionResponse.toResponseEntity(SERVER_ERROR)
+        return ExceptionResponse.toResponseEntity(ExceptionCode.SERVER_ERROR)
     }
 
     /**
@@ -119,7 +119,7 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     @ExceptionHandler(InterruptedException::class)
     protected fun handleInterruptedException(ex: InterruptedException): ResponseEntity<ExceptionResponse> {
         Sentry.captureException(ex)
-        return ExceptionResponse.toResponseEntity(SERVER_ERROR)
+        return ExceptionResponse.toResponseEntity(ExceptionCode.SERVER_ERROR)
     }
 
     private fun preFormatCode(code: String): String {

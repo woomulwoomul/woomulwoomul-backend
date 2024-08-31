@@ -26,7 +26,8 @@ class SecurityConfig(
 ) {
 
     private val WHITE_LIST = hashMapOf(
-        HttpMethod.GET to arrayOf("/api/health", "/")
+        HttpMethod.GET to arrayOf("/api/health", "/image/**",
+            "/", "/login/oauth2/code/**", "/dashboard")
     )
 
     @Bean
@@ -47,7 +48,7 @@ class SecurityConfig(
                         it.requestMatchers(method, path).permitAll()
                     }
                 }
-                it.anyRequest().permitAll()
+                it.anyRequest().authenticated()
             }.addFilterBefore(customAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .exceptionHandling{ it.authenticationEntryPoint(customAuthenticationEntryPoint) }
             .build()
