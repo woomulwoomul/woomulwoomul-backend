@@ -19,7 +19,7 @@
 ![Dev-Admin-API-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Ddev%26token%3D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&style=flat&label=Dev-Admin-API-CI&logo=GitHub-Actions)
 ![Dev-Core-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Ddev%26token%3D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&style=flat&label=Dev-Core-CI&logo=GitHub-Actions)
 
-![Java](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?style=flat)
+![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?logo=Kotlin&style=flat)
 ![SpringBoot](https://img.shields.io/badge/Spring_Boot-3.3.0-6DB33F?logo=Spring-Boot&style=flat)
 ![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)
 
