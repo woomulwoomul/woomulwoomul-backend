@@ -16,6 +16,7 @@ import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.validation.annotation.Validated
+import java.time.LocalDateTime
 
 @Service
 @Validated
@@ -33,12 +34,14 @@ class QuestionService(
      * @throws QUESTION_NOT_FOUND 404
      * @return 기본 질문 응답
      */
-    fun getDefaultQuestion(questionId: Long?): QuestionFindResponse {
+    fun getDefaultQuestion(questionId: Long?, now: LocalDateTime): QuestionFindResponse {
         val questionCategories = questionId?.let {
             questionCategoryRepository.findByQuestionIds(listOf(it))
         } ?: run {
-            val randomQuestionId = questionRepository.findRandomAdminQuestionId() ?: throw CustomException(QUESTION_NOT_FOUND)
-            questionCategoryRepository.findByQuestionId(randomQuestionId)
+            val qId = questionRepository.findAdminQuestionId(now)
+                ?: questionRepository.findRandomAdminQuestionId()
+                ?: throw CustomException(QUESTION_NOT_FOUND)
+            questionCategoryRepository.findByQuestionId(qId)
         }
 
         val (question, categories) = questionCategories

@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -32,16 +33,57 @@ class QuestionServiceTest(
     @Autowired private val userRepository: UserRepository,
 ) {
 
-    @DisplayName("기본 질문들 조회를 하면 정상 작동한다")
+    @DisplayName("현재 날짜 기준 질문이 있을시 기본 질문들 조회를 하면 정상 작동한다")
     @Test
     fun givenValid_whenGetDefaultQuestion_thenReturn() {
         // given
+        val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(ADMIN)
-        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문", backgroundColor = "000000")
+        val questionCategory = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문",
+            backgroundColor = "000000",
+            now.withHour(0).withMinute(0).withSecond(0),
+            now.withHour(23).withMinute(59).withSecond(59)
+        )
         val questionId: Long? = null
 
         // when
-        val result = questionService.getDefaultQuestion(questionId)
+        val result = questionService.getDefaultQuestion(questionId, now)
+
+        // then
+        assertAll(
+            {
+                assertThat(result)
+                    .extracting("questionId", "questionText", "backgroundColor")
+                    .containsExactly(questionCategory.question.id, questionCategory.question.text,
+                        questionCategory.question.backgroundColor)
+            },
+            {
+                assertThat(result.categories)
+                    .extracting("categoryId", "categoryName")
+                    .containsExactly(tuple(questionCategory.category.id, questionCategory.category.name))
+            }
+        )
+    }
+
+    @DisplayName("현재 날짜 기준 질문이 없을시 기본 질문 조회를 하면 정상 작동한다")
+    @Test
+    fun givenNonExistingQuestionInCurrentTime_whenGetDefaultQuestion_thenReturn() {
+        // given
+        val now = LocalDateTime.now()
+        val adminRole = createAndSaveUserRole(ADMIN)
+        val questionCategory = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문",
+            backgroundColor = "000000",
+            now.minusDays(2),
+            now.minusDays(1)
+        )
+        val questionId: Long? = null
+
+        // when
+        val result = questionService.getDefaultQuestion(questionId, now)
 
         // then
         assertAll(
@@ -63,11 +105,12 @@ class QuestionServiceTest(
     @Test
     fun givenQuestionIds_whenGetDefaultQuestion_thenReturn() {
         // given
+        val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(ADMIN)
         val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
 
         // when
-        val result = questionService.getDefaultQuestion(questionCategory.question.id!!)
+        val result = questionService.getDefaultQuestion(questionCategory.question.id!!, now)
 
         // then
         assertAll(
@@ -89,10 +132,11 @@ class QuestionServiceTest(
     @Test
     fun givenNonExistingQuestion_whenGetDefaultQuestion_thenReturn() {
         // given
+        val now = LocalDateTime.now()
         val questionId: Long? = null
 
         // when & then
-        assertThatThrownBy { questionService.getDefaultQuestion(questionId) }
+        assertThatThrownBy { questionService.getDefaultQuestion(questionId, now) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(QUESTION_NOT_FOUND)
@@ -400,8 +444,16 @@ class QuestionServiceTest(
         user: UserEntity,
         text: String = "질문",
         backgroundColor: String = "0F0F0F",
+        startDateTime: LocalDateTime? = null,
+        endDateTime: LocalDateTime? = null,
     ): QuestionCategoryEntity {
-        val question = questionRepository.save(QuestionEntity(user = user, text = text, backgroundColor = backgroundColor))
+        val question = questionRepository.save(QuestionEntity(
+            user = user,
+            text = text,
+            backgroundColor = backgroundColor,
+            startDateTime = startDateTime,
+            endDateTime = endDateTime
+        ))
         val category = categoryRepository.save(CategoryEntity(name = "카테고리", admin = user))
 
         return questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))

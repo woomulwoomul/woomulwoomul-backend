@@ -33,6 +33,27 @@ class QuestionRepositoryTest(
         assertThat(questionId).isEqualTo(question.id!!)
     }
 
+    @DisplayName("현재 날짜 기준 관리자 질문 ID 조회를 하면 정상 작동한다")
+    @Test
+    fun givenValid_whenFindAdminQuestionId_thenReturn() {
+        // given
+        val now = LocalDateTime.now()
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val question = createAndSaveQuestion(
+            adminRole.user,
+            "질문",
+            "000000",
+            now.withHour(0).withMinute(0).withSecond(0),
+            now.withHour(23).withMinute(59).withSecond(59)
+        )
+
+        // when
+        val questionId = questionRepository.findAdminQuestionId(now)
+
+        // then
+        assertThat(questionId).isEqualTo(question.id!!)
+    }
+
     private fun createAndSaveUserRole(
         role: Role,
         nickname: String = "tester",

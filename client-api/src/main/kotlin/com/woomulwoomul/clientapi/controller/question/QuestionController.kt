@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.security.Principal
+import java.time.LocalDateTime
 
 @Validated
 @RestController
@@ -23,7 +24,7 @@ class QuestionController(
     @GetMapping("/api/questions")
     fun getDefaultQuestion(@RequestParam(required = false, name = "question-id") questionId: Long?):
             ResponseEntity<DefaultSingleResponse> {
-        val responses = questionService.getDefaultQuestion(questionId)
+        val responses = questionService.getDefaultQuestion(questionId, LocalDateTime.now())
 
         return DefaultSingleResponse.toResponseEntity(DEFAULT_QUESTION_FOUND, responses)
     }

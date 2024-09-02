@@ -36,7 +36,7 @@ class QuestionControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetDefaultQuestion_thenReturn200() {
         // given
-        `when`(questionService.getDefaultQuestion(any()))
+        `when`(questionService.getDefaultQuestion(any(), any()))
             .thenReturn(QuestionFindResponse(
                 1L,
                 "질문1",

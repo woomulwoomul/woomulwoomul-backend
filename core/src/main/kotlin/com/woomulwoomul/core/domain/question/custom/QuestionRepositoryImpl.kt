@@ -6,8 +6,9 @@ import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.question.QQuestionEntity.questionEntity
 import com.woomulwoomul.core.domain.user.QUserEntity.userEntity
 import com.woomulwoomul.core.domain.user.QUserRoleEntity.userRoleEntity
-import com.woomulwoomul.core.domain.user.Role
+import com.woomulwoomul.core.domain.user.Role.ADMIN
 import org.springframework.stereotype.Repository
+import java.time.LocalDateTime
 
 @Repository
 class QuestionRepositoryImpl(
@@ -24,9 +25,27 @@ class QuestionRepositoryImpl(
             .innerJoin(userRoleEntity)
             .on(userRoleEntity.user.id.eq(userEntity.id)
                 .and(userRoleEntity.status.eq(ACTIVE))
-                .and(userRoleEntity.role.eq(Role.ADMIN)))
+                .and(userRoleEntity.role.eq(ADMIN)))
             .where(questionEntity.status.eq(ACTIVE))
             .orderBy(Expressions.numberTemplate(Double::class.java, "RAND()").asc())
             .fetchFirst()
+    }
+
+    override fun findAdminQuestionId(now: LocalDateTime): Long? {
+        return queryFactory
+            .select(questionEntity.id)
+            .from(questionEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(questionEntity.user.id)
+                .and(userEntity.status.eq(ACTIVE)))
+            .innerJoin(userRoleEntity)
+            .on(userRoleEntity.user.id.eq(userEntity.id)
+                .and(userRoleEntity.status.eq(ACTIVE))
+                .and(userRoleEntity.role.eq(ADMIN)))
+            .where(
+                questionEntity.status.eq(ACTIVE),
+                questionEntity.startDateTime.loe(now),
+                questionEntity.endDateTime.goe(now)
+            ).fetchFirst()
     }
 }
