@@ -509,6 +509,72 @@ class AnswerControllerTest : RestDocsSupport() {
             )
     }
 
+    @DisplayName("답변이 존재할시 답변 존재 여부 조회를 하면 200을 반환한다")
+    @Test
+    fun givenExistingAnswer_whenIsExistingAnswer_thenReturn200() {
+        // given
+        `when`(answerService.isExistingAnswer(anyLong(), anyLong()))
+            .thenReturn(true)
+
+        val questionId = 1L
+
+        // when & then
+        mockMvc.perform(
+            get("/api/questions/{questionId}/answers", questionId)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "answer/is-existing-answer/true-response",
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                    )
+                )
+            )
+    }
+
+    @DisplayName("답변이 미존재할시 답변 존재 여부 조회를 하면 200을 반환한다")
+    @Test
+    fun givenNonExistingAnswer_whenIsExistingAnswer_thenReturn200() {
+        // given
+        `when`(answerService.isExistingAnswer(anyLong(), anyLong()))
+            .thenReturn(false)
+
+        val questionId = 1L
+
+        // when & then
+        mockMvc.perform(
+            get("/api/questions/{questionId}/answers", questionId)
+                .header(AUTHORIZATION, "Bearer access-token")
+                .principal(mockPrincipal)
+        ).andDo(print())
+            .andExpect(status().isOk)
+            .andDo(
+                document(
+                    "answer/is-existing-answer/false-response",
+                    preprocessResponse(prettyPrint()),
+                    requestHeaders(
+                        headerWithName(AUTHORIZATION).description("액세스 토큰")
+                    ),
+                    responseFields(
+                        fieldWithPath("code").type(JsonFieldType.STRING)
+                            .description("코드"),
+                        fieldWithPath("message").type(JsonFieldType.STRING)
+                            .description("메세지"),
+                    )
+                )
+            )
+    }
+
     private fun createValidAnswerUpdateRequest(): AnswerUpdateRequest {
         return AnswerUpdateRequest("수정 답변", "")
     }

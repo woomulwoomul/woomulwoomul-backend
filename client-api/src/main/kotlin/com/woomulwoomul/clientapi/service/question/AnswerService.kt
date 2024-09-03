@@ -271,4 +271,14 @@ class AnswerService(
             userId.toString().plus(UUID.randomUUID().toString())
         )
     }
+
+    /**
+     * 답변 존재 여부 확인
+     * @param userId 수신자 회원 ID
+     * @param questionId 질문 회원 ID
+     * @return 답변 존재 여부
+     */
+    fun isExistingAnswer(userId: Long, questionId: Long): Boolean {
+        return questionAnswerRepository.exists(userId, questionId)
+    }
 }

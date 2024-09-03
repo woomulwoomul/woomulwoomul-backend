@@ -35,6 +35,8 @@ enum class SuccessCode(
     ANSWER_IMAGE_UPLOADED(OK, "답변 이미지를 업로드했습니다."),
     ANSWER_UPDATED(OK, "답변 업데이트를 완료했습니다."),
     ANSWER_DELETED(OK, "답변 삭제를 완료했습니다."),
+    ANSWER_EXISTS(OK, "이미 답변 완료한 질문입니다."),
+    ANSWER_NON_EXISTS(OK, "아직 답변하지 않은 질문입니다."),
 
     /**
      * Question Controller

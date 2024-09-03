@@ -47,6 +47,7 @@ include::api/question/create-answer.adoc[]
 include::api/question/update-answer.adoc[]
 include::api/question/delete-answer.adoc[]
 include::api/question/upload-image.adoc[]
+include::api/question/is-existing-answer.adoc[]
 
 [[Notification-API]]
 === Notification API

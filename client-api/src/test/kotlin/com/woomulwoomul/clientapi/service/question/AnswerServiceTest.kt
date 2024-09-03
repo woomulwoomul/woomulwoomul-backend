@@ -710,6 +710,29 @@ class AnswerServiceTest(
             .isEqualTo(IMAGE_TYPE_UNSUPPORTED)
     }
 
+    @DisplayName("답변 존재 여부 확인이 정상 작동한다")
+    @Test
+    fun givenValid_whenIsExistingAnswer_thenReturn() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user = createAndSaveUser("user", "user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        createAndSaveAnswer(questionAnswer, "답변", "")
+
+        // when
+        val result = answerService.isExistingAnswer(user.id!!, question.id!!)
+
+        // then
+        assertThat(result).isTrue()
+    }
+
     private fun createValidAnswerUpdateResponse(): AnswerUpdateServiceRequest {
         return AnswerUpdateServiceRequest("수정 답변", "")
     }

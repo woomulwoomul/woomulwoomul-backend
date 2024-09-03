@@ -84,12 +84,22 @@ class AnswerController(
         return DefaultResponse.toResponseEntity(ANSWER_DELETED)
     }
 
-    @PostMapping("/api/questions/{questionId}/answers/image", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE], produces = [MediaType.APPLICATION_JSON_VALUE])
+    @PostMapping("/api/questions/{questionId}/answers/image",
+        consumes = [MediaType.MULTIPART_FORM_DATA_VALUE],
+        produces = [MediaType.APPLICATION_JSON_VALUE])
     fun uploadImage(principal: Principal,
                     @PathVariable questionId: Long,
                     @RequestPart(required = false) file: MultipartFile?): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.uploadImage(UserUtils.getUserId(principal), questionId, file)
 
         return DefaultSingleResponse.toResponseEntity(ANSWER_IMAGE_UPLOADED, response)
+    }
+
+    @GetMapping("/api/questions/{questionId}/answers")
+    fun isExistingAnswer(principal: Principal,
+                         @PathVariable questionId: Long): ResponseEntity<DefaultResponse> {
+        val response = answerService.isExistingAnswer(UserUtils.getUserId(principal), questionId)
+
+        return DefaultResponse.toResponseEntity(if (response) ANSWER_EXISTS else ANSWER_NON_EXISTS)
     }
 }
