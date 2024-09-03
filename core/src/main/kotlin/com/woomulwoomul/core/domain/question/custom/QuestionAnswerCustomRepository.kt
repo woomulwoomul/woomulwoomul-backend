@@ -18,4 +18,6 @@ interface QuestionAnswerCustomRepository {
     fun countAnsweredUser(questionId: Long): Long
 
     fun countAnsweredUsers(questionIds: List<Long>): List<AnsweredUserCntVo>
+
+    fun exists(receiverUserId: Long, questionId: Long): Boolean
 }

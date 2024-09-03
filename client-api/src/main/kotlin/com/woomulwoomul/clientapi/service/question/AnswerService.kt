@@ -144,6 +144,7 @@ class AnswerService(
      * @throws ANSWER_IMAGE_URL_SIZE_INVALID 400
      * @throws USER_NOT_FOUND 404
      * @throws QUESTION_NOT_FOUND 404
+     * @throws EXISTING_ANSWER 409
      * @return 답변 작성 응답
      */
     @Transactional
@@ -154,6 +155,8 @@ class AnswerService(
                      ): AnswerCreateResponse {
         val receiver = userRepository.findByUserId(receiverUserId) ?: throw CustomException(USER_NOT_FOUND)
         val sender = userRepository.findByUserId(senderUserId) ?: throw CustomException(USER_NOT_FOUND)
+
+        if (questionAnswerRepository.exists(receiverUserId, questionId)) throw CustomException(EXISTING_ANSWER)
 
         val questionCategories = questionCategoryRepository.findByQuestionId(questionId)
             .takeIf { it.isNotEmpty() } ?: throw CustomException(QUESTION_NOT_FOUND)

@@ -61,6 +61,14 @@ include::{snippets}/answer/create-answer/response-fields.adoc[]
 }
 ----
 
+===== 409
+----
+{
+  "code" : "EXISTING_ANSWER",
+  "message" : "이미 작성 완료한 질문입니다."
+}
+----
+
 ===== 500
 ----
 {

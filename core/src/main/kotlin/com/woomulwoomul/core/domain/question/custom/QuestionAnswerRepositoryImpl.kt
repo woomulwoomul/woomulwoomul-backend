@@ -151,4 +151,19 @@ class QuestionAnswerRepositoryImpl(
             .groupBy(questionEntity.id)
             .fetch()
     }
+
+    override fun exists(receiverUserId: Long, questionId: Long): Boolean {
+        return queryFactory
+            .select(questionAnswerEntity.id)
+            .from(questionAnswerEntity)
+            .innerJoin(questionEntity)
+            .on(questionEntity.id.eq(questionAnswerEntity.question.id)
+                .and(questionEntity.id.eq(questionId))
+                .and(questionEntity.status.eq(ACTIVE)))
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(questionAnswerEntity.receiver.id)
+                .and(userEntity.id.eq(receiverUserId))
+                .and(userEntity.status.eq(ACTIVE)))
+            .fetchFirst() != null
+    }
 }

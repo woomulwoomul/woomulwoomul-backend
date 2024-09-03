@@ -9,10 +9,14 @@ import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.stream.Stream
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -372,6 +376,36 @@ class QuestionAnswerRepositoryTest(
             )
     }
 
+    @ParameterizedTest(name = "[{index}] 수신자 회원 ID와 질문 ID로 질문 답변 존재 여부 조회를 하면 {0}를 반환한다")
+    @MethodSource("providerExists")
+    @DisplayName("수신자 회원 ID와 질문 ID로 질문 답변 존재 여부 조회가 정상 작동한다")
+    fun givenProvider_whenExists_thenReturn(expected: Boolean) {
+        // given
+        val (receiverUserId, questionId) = if (expected) {
+            val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+            val user = createAndSaveUser("user", "user@woomulwoomul.com")
+
+            val categories = listOf(
+                createAndSaveCategory(admin, "카테고리1"),
+                createAndSaveCategory(admin, "카테고리2"),
+                createAndSaveCategory(admin, "카테고리3")
+            )
+            val question = createAndSaveQuestion(categories, admin, "질문")
+            val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+            createAndSaveAnswer(questionAnswer, "답변", "")
+
+            Pair(user.id!!, question.id!!)
+        } else {
+            Pair(Long.MAX_VALUE, Long.MAX_VALUE)
+        }
+
+        // when
+        val result = questionAnswerRepository.exists(receiverUserId, questionId)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
     private fun createAndSaveAnswer(questionAnswer: QuestionAnswerEntity, text: String, imageUrl: String): AnswerEntity {
         val answer = answerRepository.save(AnswerEntity(text = text, imageUrl = imageUrl))
 
@@ -420,5 +454,15 @@ class QuestionAnswerRepositoryTest(
             imageUrl = "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
         )
         )
+    }
+
+    companion object {
+        @JvmStatic
+        fun providerExists(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(true),
+                Arguments.of(false)
+            )
+        }
     }
 }

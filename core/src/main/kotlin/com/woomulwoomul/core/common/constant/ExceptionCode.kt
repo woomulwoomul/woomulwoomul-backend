@@ -80,6 +80,7 @@ enum class ExceptionCode(
     NICKNAME_GENERATE_FAIL(CONFLICT, "닉네임 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."),
     UNAVAILABLE_NICKNAME(CONFLICT, "사용 불가능한 닉네임입니다."),
     EXISTING_NICKNAME(CONFLICT, "이미 사용중인 닉네임입니다."),
+    EXISTING_ANSWER(CONFLICT, "이미 작성 완료한 질문입니다."),
 
     /**
      * 413 Payload too large

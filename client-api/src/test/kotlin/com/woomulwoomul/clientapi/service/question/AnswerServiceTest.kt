@@ -477,6 +477,31 @@ class AnswerServiceTest(
             .isEqualTo(QUESTION_NOT_FOUND)
     }
 
+    @DisplayName("이미 작성한 질문 답변에 답변 작성을 하면 예외가 발생한다")
+    @Test
+    fun givenExistingQuestion_whenCreateAnswer_thenThrow() {
+        // given
+        val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
+        val user = createAndSaveUser("user", "user@woomulwoomul.com")
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        createAndSaveAnswer(questionAnswer, "답변", "")
+
+        val request = createValidAnswerCreateServiceRequest()
+
+        // when & then
+        assertThatThrownBy { answerService.createAnswer(user.id!!, admin.id!!, question.id!!, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(EXISTING_ANSWER)
+    }
+
     @DisplayName("답변 업데이트가 정상 작동한다")
     @Test
     fun givenValid_whenUpdateAnswer_thenReturn() {
