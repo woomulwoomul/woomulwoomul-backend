@@ -42,7 +42,8 @@ class QuestionControllerTest : RestDocsSupport() {
                 "질문1",
                 "0F0F0F",
                 listOf(QuestionFindCategoryResponse(1L, "카테고리1"),
-                    QuestionFindCategoryResponse(2L, "카테고리2"))
+                    QuestionFindCategoryResponse(2L, "카테고리2")),
+                1L
             ))
 
         // when & then
@@ -75,6 +76,8 @@ class QuestionControllerTest : RestDocsSupport() {
                             .description("카테고리 ID"),
                         fieldWithPath("data.categories[].categoryName").type(JsonFieldType.STRING)
                             .description("카테고리명"),
+                        fieldWithPath("data.userId").type(JsonFieldType.NUMBER)
+                            .description("회원 ID")
                     ),
                     queryParameters(
                         parameterWithName("question-id").description("질문 ID")
