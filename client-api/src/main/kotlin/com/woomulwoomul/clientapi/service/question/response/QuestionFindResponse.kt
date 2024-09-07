@@ -7,14 +7,16 @@ data class QuestionFindResponse(
     val questionId: Long,
     val questionText: String,
     val backgroundColor: String,
-    val categories: List<QuestionFindCategoryResponse>
+    val categories: List<QuestionFindCategoryResponse>,
+    val userId: Long,
 ) {
     constructor(question: QuestionEntity, categories: Set<CategoryEntity>): this(
         question.id ?: 0,
         question.text,
         question.backgroundColor,
         categories.ifEmpty { listOf() }
-            .map { QuestionFindCategoryResponse(it) }
+            .map { QuestionFindCategoryResponse(it) },
+        question.user.id ?: 0
     )
 }
 
