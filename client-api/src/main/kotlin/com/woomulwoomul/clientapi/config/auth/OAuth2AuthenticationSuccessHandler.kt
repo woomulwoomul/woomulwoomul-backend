@@ -32,7 +32,7 @@ class OAuth2AuthenticationSuccessHandler(
     ) {
         val userId = authentication!!.name.toLong()
 
-        val headers = jwtProvider.createToken(userId)
+        val headers = jwtProvider.createTokenHeaders(userId)
 
         val queryParams = LinkedMultiValueMap<String, String>()
         queryParams["user-id"] = userId.toString()

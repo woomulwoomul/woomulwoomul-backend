@@ -2,13 +2,14 @@ package com.woomulwoomul.core.config.auth
 
 import arrow.core.Either
 import arrow.core.getOrElse
-import com.woomulwoomul.core.common.constant.CustomHttpHeaders.Companion.REFRESH_TOKEN
-import com.woomulwoomul.core.common.constant.ExceptionCode
+import com.woomulwoomul.core.common.constant.CustomCookies
+import com.woomulwoomul.core.common.constant.CustomHttpHeaders
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.domain.user.Role
 import com.woomulwoomul.core.domain.user.UserRoleRepository
 import io.github.nefilim.kjwt.*
+import jakarta.servlet.http.Cookie
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -40,74 +41,125 @@ class JwtProvider(
     }
 
     /**
-     * JWT 토큰 생성
-     * @param userId 회원 식별자
+     * JWT 토큰 헤더 생성
+     * @param userId 회원 ID
      * @throws USER_NOT_FOUND 404
      * @throws SERVER_ERROR 500
      * @return HTTP 헤더
      */
-    fun createToken(userId: Long): HttpHeaders {
+    fun createTokenHeaders(userId: Long): HttpHeaders {
         val userDetails = getUserDetails(userId)
         val time = System.currentTimeMillis()
-
-        val authorities = userDetails.authorities.stream()
-            .map { it.authority }
-            .toList()
+        val authorities = userDetails.authorities.map { it.authority }
 
         val headers = HttpHeaders()
 
-        val accessToken = JWT.hs256 {
-            subject(userDetails.username)
-            issuedAt(Instant.ofEpochMilli(time))
-            expiresAt(Instant.ofEpochMilli(time + accessTokenTime))
-            issuer(domain)
-            claim("roles", authorities)
-        }
-
-        when (val signedJWT = accessToken.sign(secret)) {
-            is Either.Left -> throw CustomException(SERVER_ERROR)
-            is Either.Right -> headers.add(HttpHeaders.AUTHORIZATION, signedJWT.value.rendered)
-        }
+        generateToken(userDetails, time, accessTokenTime, authorities)
+            .sign(secret)
+            .fold(
+                { throw CustomException(SERVER_ERROR) },
+                { signedJWT ->
+                    headers.add(HttpHeaders.AUTHORIZATION, signedJWT.rendered) }
+            )
 
         if (authorities.contains(Role.MASTER.name))
             return headers
 
-        val refreshToken = JWT.hs256() {
-            subject(userDetails.username)
-            issuedAt(Instant.ofEpochMilli(time))
-            expiresAt(Instant.ofEpochMilli(time + refreshTokenTime))
-            issuer(domain)
-            claim("roles", authorities)
-        }
-
-        when (val signedJWT = refreshToken.sign(secret)) {
-            is Either.Left -> throw CustomException(SERVER_ERROR)
-            is Either.Right -> headers.add(REFRESH_TOKEN, signedJWT.value.rendered)
-        }
+        generateToken(userDetails, time, refreshTokenTime, authorities)
+            .sign(secret)
+            .fold(
+                { throw CustomException(SERVER_ERROR) },
+                { signedJWT ->
+                    headers.add(CustomHttpHeaders.REFRESH_TOKEN, signedJWT.rendered) }
+            )
 
         return headers
     }
 
     /**
+     * JWT 토큰 쿠키 생성
+     * @param userId 회원 ID
+     * @throws USER_NOT_FOUND 404
+     * @throws SERVER_ERROR 500
+     * @return HTTP 헤더
+     */
+    fun createTokenCookies(userId: Long): Array<Cookie> {
+        val userDetails = getUserDetails(userId)
+        val time = System.currentTimeMillis()
+        val authorities = userDetails.authorities.map { it.authority }
+
+        val accessTokenCookie = generateToken(userDetails, time, accessTokenTime, authorities)
+            .sign(secret)
+            .fold(
+                { throw CustomException(SERVER_ERROR) }, 
+                { signedJWT -> Cookie(CustomCookies.ACCESS_TOKEN, signedJWT.rendered) }
+            ).apply {
+                path = "/"
+                maxAge = (accessTokenTime / 1000).toInt()
+            }
+
+        if (authorities.contains(Role.MASTER.name))
+            return arrayOf(accessTokenCookie)
+
+        val refreshTokenCookie = generateToken(userDetails, time, refreshTokenTime, authorities)
+            .sign(secret)
+            .fold(
+                { throw CustomException(SERVER_ERROR) }, 
+                { signedJWT -> Cookie(CustomCookies.REFRESH_TOKEN, signedJWT.rendered) }
+            ).apply {
+                path = "/"
+                maxAge = (refreshTokenTime / 1000).toInt()
+        }
+
+        return arrayOf(accessTokenCookie, refreshTokenCookie)
+    }
+
+    /**
      * JWT 토큰 검증
      * @param token 토큰
-     * @param jwtType 토큰 타입
      * @throws TOKEN_UNAUTHENTICATED 401
      * @throws TOKEN_UNAUTHORIZED 403
-     * @throws USER_NOT_FOUND 404
-     * @return JWT 토큰
      */
-    fun verifyToken(token: String, jwtType: JwtType): JWT<JWSHMAC256Algorithm> {
-        return when (val jwt = verifySignature<JWSHMAC256Algorithm>(token.substring(TOKEN_PREFIX.length), secret)) {
-            is Either.Left -> throw CustomException(TOKEN_UNAUTHENTICATED)
+    fun verifyToken(token: String) {
+        val jwt = verifySignature<JWSHMAC256Algorithm>(token.removePrefix(TOKEN_PREFIX), secret)
+
+        return jwt.fold(
+            { throw CustomException(TOKEN_UNAUTHENTICATED) },
+            {
+                val user = getUserDetails(it.subject()
+                    .getOrElse { throw CustomException(TOKEN_UNAUTHORIZED) }
+                    .toLong())
+
+                SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+                    user.username,
+                    user.password,
+                    user.authorities
+                )
+            }
+        )
+    }
+
+    /**
+     * JWT 토큰 검증
+     * @param token 토큰
+     * @throws TOKEN_UNAUTHORIZED 403
+     * @return 토큰 검증 결과
+     */
+    fun isValidToken(token: String): Boolean {
+        return when (val jwt = verifySignature<JWSHMAC256Algorithm>(token.removePrefix(TOKEN_PREFIX), secret)) {
+            is Either.Left -> false
             is Either.Right -> {
                 val user = getUserDetails(jwt.value.subject()
                     .getOrElse { throw CustomException(TOKEN_UNAUTHORIZED) }
                     .toLong())
 
-                SecurityContextHolder.getContext().authentication =
-                    UsernamePasswordAuthenticationToken(user.username, user.password, user.authorities)
-                jwt.value
+                SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
+                    user.username,
+                    user.password,
+                    user.authorities
+                )
+
+                true
             }
         }
     }
@@ -118,14 +170,33 @@ class JwtProvider(
      * @throws TOKEN_UNAUTHENTICATED 401
      * @return 해독 JWT 토큰
      */
-    private fun decodeToken(token: String): DecodedJWT<JWSHMAC256Algorithm> {
+    fun decodeToken(token: String): DecodedJWT<JWSHMAC256Algorithm> {
         require(token.isEmpty()) {
             throw CustomException(TOKEN_UNAUTHENTICATED)
         }
 
-        return when (val decodedJwt = JWT.decodeT(token.substring(TOKEN_PREFIX.length), JWSHMAC256Algorithm)) {
+        return when (val decodedJwt = JWT.decodeT(token.removePrefix(TOKEN_PREFIX), JWSHMAC256Algorithm)) {
             is Either.Left -> throw CustomException(TOKEN_UNAUTHENTICATED)
             is Either.Right -> decodedJwt.value
+        }
+    }
+
+    /**
+     * 토큰 제작
+     * @param userDetails 회원 정보
+     * @param currentTime 현재 시간
+     * @param tokenTime 토큰 시간
+     * @param authorities 회원 권한들
+     * @return JWT 토큰
+     */
+    private fun generateToken(userDetails: User, currentTime: Long, tokenTime: Long, authorities: List<String>):
+            JWT<JWSHMAC256Algorithm> {
+        return JWT.hs256 {
+            subject(userDetails.username)
+            issuedAt(Instant.ofEpochMilli(currentTime))
+            expiresAt(Instant.ofEpochMilli(currentTime + tokenTime))
+            issuer(domain)
+            claim("roles", authorities)
         }
     }
 
@@ -140,7 +211,7 @@ class JwtProvider(
 
         val user = userRoles.stream()
             .findFirst()
-            .orElseThrow{ CustomException(ExceptionCode.USER_NOT_FOUND) }
+            .orElseThrow{ CustomException(USER_NOT_FOUND) }
             .user
 
         val grantedAuthorities = userRoles.stream()

@@ -55,7 +55,7 @@ class DevelopService(
         val tester = userRepository.findByNickname(testerConst.plus(testerId))
             ?: throw CustomException(TESTER_NOT_FOUND)
 
-        return jwtProvider.createToken(tester.id!!)
+        return jwtProvider.createTokenHeaders(tester.id!!)
     }
 
     /**

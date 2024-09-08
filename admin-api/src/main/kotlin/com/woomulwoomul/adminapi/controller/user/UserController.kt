@@ -1,8 +1,8 @@
 package com.woomulwoomul.adminapi.controller.user
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
-import java.security.Principal
 
 @Controller
 class UserController {
@@ -13,7 +13,7 @@ class UserController {
     }
 
     @GetMapping("/dashboard")
-    fun dashboard(principal: Principal?): String {
+    fun dashboard(user: User): String {
         return "dashboard"
     }
 }

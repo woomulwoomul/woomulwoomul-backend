@@ -43,41 +43,44 @@ class QuestionCategoryRepositoryTest(
         assertAll(
             {
                 assertThat(questionCategories)
-                    .extracting("status", "createDateTime", "updateDateTime")
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory1.status, questionCategory1.createDateTime,
+                        tuple(questionCategory1.id, questionCategory1.status, questionCategory1.createDateTime,
                             questionCategory1.updateDateTime),
-                        tuple(questionCategory2.status, questionCategory2.createDateTime,
+                        tuple(questionCategory2.id, questionCategory2.status, questionCategory2.createDateTime,
                             questionCategory2.updateDateTime),
-                        tuple(questionCategory3.status, questionCategory3.createDateTime,
+                        tuple(questionCategory3.id, questionCategory3.status, questionCategory3.createDateTime,
                             questionCategory3.updateDateTime)
                     )
             }, {
                 assertThat(questionCategories)
                     .extracting("question")
-                    .extracting("text", "backgroundColor", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "text", "backgroundColor", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory1.question.text, questionCategory1.question.backgroundColor,
-                            questionCategory1.question.status, questionCategory1.question.createDateTime,
-                            questionCategory1.question.updateDateTime),
-                        tuple(questionCategory2.question.text, questionCategory2.question.backgroundColor,
-                            questionCategory2.question.status, questionCategory2.question.createDateTime,
-                            questionCategory2.question.updateDateTime),
-                        tuple(questionCategory3.question.text, questionCategory3.question.backgroundColor,
-                            questionCategory3.question.status, questionCategory3.question.createDateTime,
-                            questionCategory3.question.updateDateTime)
+                        tuple(questionCategory1.question.id, questionCategory1.question.text,
+                            questionCategory1.question.backgroundColor, questionCategory1.question.status,
+                            questionCategory1.question.createDateTime, questionCategory1.question.updateDateTime),
+                        tuple(questionCategory2.question.id, questionCategory2.question.text,
+                            questionCategory2.question.backgroundColor, questionCategory2.question.status,
+                            questionCategory2.question.createDateTime, questionCategory2.question.updateDateTime),
+                        tuple(questionCategory3.question.id, questionCategory3.question.text,
+                            questionCategory3.question.backgroundColor, questionCategory3.question.status,
+                            questionCategory3.question.createDateTime, questionCategory3.question.updateDateTime)
                     )
             }, {
                 assertThat(questionCategories)
                     .extracting("category")
-                    .extracting("name", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "name", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory1.category.name, questionCategory1.category.status,
-                            questionCategory1.category.createDateTime, questionCategory1.category.updateDateTime),
-                        tuple(questionCategory2.category.name, questionCategory2.category.status,
-                            questionCategory2.category.createDateTime, questionCategory2.category.updateDateTime),
-                        tuple(questionCategory3.category.name, questionCategory3.category.status,
-                            questionCategory3.category.createDateTime, questionCategory3.category.updateDateTime)
+                        tuple(questionCategory1.category.id, questionCategory1.category.name,
+                            questionCategory1.category.status, questionCategory1.category.createDateTime,
+                            questionCategory1.category.updateDateTime),
+                        tuple(questionCategory2.category.id, questionCategory2.category.name,
+                            questionCategory2.category.status, questionCategory2.category.createDateTime,
+                            questionCategory2.category.updateDateTime),
+                        tuple(questionCategory3.category.id, questionCategory3.category.name,
+                            questionCategory3.category.status, questionCategory3.category.createDateTime,
+                            questionCategory3.category.updateDateTime)
                     )
             }
         )
@@ -97,25 +100,39 @@ class QuestionCategoryRepositoryTest(
         assertAll(
             {
                 assertThat(foundQuestionCategories)
-                    .extracting("status", "createDateTime", "updateDateTime")
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        tuple(questionCategory.status, questionCategory.createDateTime, questionCategory.updateDateTime)
+                        tuple(questionCategory.id, questionCategory.status, questionCategory.createDateTime,
+                            questionCategory.updateDateTime)
                     )
             }, {
                 assertThat(foundQuestionCategories)
                     .extracting("question")
-                    .extracting("text", "backgroundColor", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "text", "backgroundColor", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        tuple(questionCategory.question.text, questionCategory.question.backgroundColor,
-                            questionCategory.question.status, questionCategory.question.createDateTime,
-                            questionCategory.question.updateDateTime))
+                        tuple(questionCategory.question.id, questionCategory.question.text,
+                            questionCategory.question.backgroundColor, questionCategory.question.status,
+                            questionCategory.question.createDateTime, questionCategory.question.updateDateTime))
             }, {
                 assertThat(foundQuestionCategories)
                     .extracting("category")
-                    .extracting("name", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "name", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        tuple(questionCategory.category.name, questionCategory.category.status,
-                            questionCategory.category.createDateTime, questionCategory.category.updateDateTime)
+                        tuple(questionCategory.category.id, questionCategory.category.name,
+                            questionCategory.category.status, questionCategory.category.createDateTime,
+                            questionCategory.category.updateDateTime)
+                    )
+            }, {
+                assertThat(foundQuestionCategories)
+                    .extracting("question")
+                    .extracting("user")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(
+                        tuple(questionCategory.question.user.id, questionCategory.question.user.nickname,
+                        questionCategory.question.user.email, questionCategory.question.user.imageUrl,
+                        questionCategory.question.user.introduction, questionCategory.question.user.status,
+                        questionCategory.question.user.createDateTime, questionCategory.question.user.updateDateTime)
                     )
             }
         )
@@ -159,26 +176,26 @@ class QuestionCategoryRepositoryTest(
         assertAll(
             {
                 assertThat(questionCategories)
-                    .extracting("status", "createDateTime", "updateDateTime")
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory2.status, questionCategory2.createDateTime,
+                        tuple(questionCategory2.id, questionCategory2.status, questionCategory2.createDateTime,
                             questionCategory2.updateDateTime)
                     )
             }, {
                 assertThat(questionCategories)
                     .extracting("question")
-                    .extracting("text", "backgroundColor", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "text", "backgroundColor", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory2.question.text, questionCategory2.question.backgroundColor,
-                            questionCategory2.question.status, questionCategory2.question.createDateTime,
-                            questionCategory2.question.updateDateTime)
+                        tuple(questionCategory2.question.id, questionCategory2.question.text,
+                            questionCategory2.question.backgroundColor, questionCategory2.question.status,
+                            questionCategory2.question.createDateTime, questionCategory2.question.updateDateTime)
                     )
             }, {
                 assertThat(questionCategories)
                     .extracting("category")
-                    .extracting("name", "status", "createDateTime", "updateDateTime")
+                    .extracting("id", "name", "status", "createDateTime", "updateDateTime")
                     .containsExactlyInAnyOrder(
-                        tuple(questionCategory2.category.name, questionCategory2.category.status,
+                        tuple(questionCategory2.category.id, questionCategory2.category.name, questionCategory2.category.status,
                             questionCategory2.category.createDateTime, questionCategory2.category.updateDateTime)
                     )
             }

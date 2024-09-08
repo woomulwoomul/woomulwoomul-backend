@@ -18,7 +18,7 @@ class AuthController(
 
     @GetMapping("/api/auth/token")
     fun refreshToken(principal: Principal): ResponseEntity<DefaultResponse> {
-        val headers = jwtProvider.createToken(UserUtils.getUserId(principal))
+        val headers = jwtProvider.createTokenHeaders(UserUtils.getUserId(principal))
 
         return DefaultResponse.toResponseEntity(headers, TOKEN_REFRESHED)
     }

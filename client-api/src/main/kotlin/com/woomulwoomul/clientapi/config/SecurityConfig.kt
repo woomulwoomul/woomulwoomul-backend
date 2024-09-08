@@ -1,10 +1,6 @@
 package com.woomulwoomul.clientapi.config
 
-import com.woomulwoomul.clientapi.config.auth.CustomAuthenticationEntryPoint
-import com.woomulwoomul.clientapi.config.auth.CustomOAuth2UserService
-import com.woomulwoomul.clientapi.config.auth.OAuth2AuthenticationFailureHandler
-import com.woomulwoomul.clientapi.config.auth.OAuth2AuthenticationSuccessHandler
-import com.woomulwoomul.core.config.auth.CustomAuthenticationFilter
+import com.woomulwoomul.clientapi.config.auth.*
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpMethod
@@ -25,7 +21,7 @@ class SecurityConfig(
     private val oAuth2AuthenticationFailureHandler: OAuth2AuthenticationFailureHandler,
 ) {
 
-    private val WHITE_LIST = hashMapOf(
+    private val whiteList = hashMapOf(
         HttpMethod.GET to arrayOf(
             "/docs/index.html",
             "/api/health", "/api/tester/**", "/oauth2/authorization/**", "/api/users/nickname", "/api/questions"
@@ -46,7 +42,7 @@ class SecurityConfig(
                     .successHandler(oAuth2AuthenticationSuccessHandler)
                     .failureHandler(oAuth2AuthenticationFailureHandler)
             }.authorizeHttpRequests {
-                WHITE_LIST.forEach { (method, paths) ->
+                whiteList.forEach { (method, paths) ->
                     paths.forEach { path ->
                         it.requestMatchers(method, path).permitAll()
                     }

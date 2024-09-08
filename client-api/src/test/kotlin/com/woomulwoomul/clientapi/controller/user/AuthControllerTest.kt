@@ -35,7 +35,7 @@ class AuthControllerTest : RestDocsSupport() {
         val headers = HttpHeaders()
         headers.add(AUTHORIZATION, "access-token")
         headers.add(REFRESH_TOKEN, "refresh-token")
-        `when`(jwtProvider.createToken(anyLong()))
+        `when`(jwtProvider.createTokenHeaders(anyLong()))
             .thenReturn(headers)
 
         // when & then
