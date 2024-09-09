@@ -1,7 +1,7 @@
 package com.woomulwoomul.core.domain.follow.custom
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DatabaseUtils
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
@@ -33,7 +33,7 @@ class FollowRepositoryImpl(
             ).fetchFirst() != null
     }
 
-    override fun findAllByFollower(userId: Long, pageRequest: PageRequest): PageData<FollowEntity> {
+    override fun findAllByFollower(userId: Long, pageCursorRequest: PageCursorRequest): PageData<FollowEntity> {
         val followerUserEntity = QUserEntity("followerUserEntity")
         val userEntity = QUserEntity("userEntity")
 
@@ -65,10 +65,10 @@ class FollowRepositoryImpl(
                 .and(followerUserEntity.id.eq(userId))
                 .and(followerUserEntity.status.eq(ACTIVE)))
             .where(
-                followEntity.id.loe(pageRequest.from),
+                followEntity.id.loe(pageCursorRequest.from),
                 followEntity.status.eq(ACTIVE)
             ).orderBy(followEntity.id.desc())
-            .limit(pageRequest.size)
+            .limit(pageCursorRequest.size)
             .fetch()
 
         return PageData(data, total)

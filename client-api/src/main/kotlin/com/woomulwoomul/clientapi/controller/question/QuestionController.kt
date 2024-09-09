@@ -4,7 +4,7 @@ import com.woomulwoomul.clientapi.controller.question.request.QuestionUserCreate
 import com.woomulwoomul.clientapi.service.question.QuestionService
 import com.woomulwoomul.clientapi.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.core.common.constant.SuccessCode.*
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.DefaultPageResponse
 import com.woomulwoomul.core.common.response.DefaultSingleResponse
 import com.woomulwoomul.core.common.utils.UserUtils
@@ -34,7 +34,7 @@ class QuestionController(
         @RequestParam(name = "page-from", required = false) pageFrom: Long?,
         @RequestParam(name = "page-size", required = false) pageSize: Long?,
     ): ResponseEntity<DefaultPageResponse<QuestionFindAllCategoryResponse>> {
-        val response = questionService.getAllCategories(PageRequest.of(pageFrom, pageSize))
+        val response = questionService.getAllCategories(PageCursorRequest.of(pageFrom, pageSize))
 
         return DefaultPageResponse.toResponseEntity(ALL_CATEGORIES_FOUND, response)
     }

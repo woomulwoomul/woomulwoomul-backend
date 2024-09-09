@@ -5,7 +5,7 @@ import com.woomulwoomul.clientapi.service.question.response.QuestionFindAllCateg
 import com.woomulwoomul.clientapi.service.question.response.QuestionFindResponse
 import com.woomulwoomul.clientapi.service.question.response.QuestionUserCreateResponse
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.domain.question.CategoryRepository
@@ -54,11 +54,11 @@ class QuestionService(
 
     /**
      * 카테고리 전체 조회
-     * @param pageRequest 페이징 요청
+     * @param pageCursorRequest 페이징 커서 요청
      * @return 카테고리 전체 응답
      */
-    fun getAllCategories(pageRequest: PageRequest): PageData<QuestionFindAllCategoryResponse> {
-        val categories = categoryRepository.findAll(pageRequest)
+    fun getAllCategories(pageCursorRequest: PageCursorRequest): PageData<QuestionFindAllCategoryResponse> {
+        val categories = categoryRepository.findAll(pageCursorRequest)
         return PageData(categories.data.map { QuestionFindAllCategoryResponse(it) }, categories.total)
     }
 

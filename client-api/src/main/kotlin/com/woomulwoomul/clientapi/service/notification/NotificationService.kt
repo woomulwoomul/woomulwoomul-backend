@@ -2,7 +2,7 @@ package com.woomulwoomul.clientapi.service.notification
 
 import com.woomulwoomul.clientapi.service.notification.response.NotificationGetAllResponse
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.domain.notification.NotificationRepository
@@ -21,13 +21,13 @@ class NotificationService(
     /**
      * 알림 전체 조회
      * @param userId 회원 ID
-     * @param pageRequest 페이징 요청
+     * @param pageCursorRequest 페이징 커서 요청
      * @param now 현재 시간
      * @return 알림 전체 조회 응답
      */
-    fun getAllNotification(userId: Long, pageRequest: PageRequest, now: LocalDateTime):
+    fun getAllNotification(userId: Long, PageCursorRequest: PageCursorRequest, now: LocalDateTime):
             PageData<NotificationGetAllResponse> {
-        val notifications = notificationRepository.findAll(userId, pageRequest)
+        val notifications = notificationRepository.findAll(userId, PageCursorRequest)
 
         return PageData(notifications.data.map { NotificationGetAllResponse(it, now) }, notifications.total)
     }

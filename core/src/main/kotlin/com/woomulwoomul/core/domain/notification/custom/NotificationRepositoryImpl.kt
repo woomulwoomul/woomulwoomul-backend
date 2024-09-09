@@ -1,7 +1,7 @@
 package com.woomulwoomul.core.domain.notification.custom
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DatabaseUtils
 import com.woomulwoomul.core.domain.base.NotificationServiceStatus
@@ -17,7 +17,7 @@ class NotificationRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : NotificationCustomRepository {
 
-    override fun findAll(userId: Long, pageRequest: PageRequest): PageData<NotificationEntity> {
+    override fun findAll(userId: Long, pageCursorRequest: PageCursorRequest): PageData<NotificationEntity> {
         val receiver = QUserEntity("receiver")
         val senderUser = QUserEntity("senderUser")
         val senderAdmin = QUserEntity("senderAdmin")
@@ -52,8 +52,8 @@ class NotificationRepositoryImpl(
             .fetchJoin()
             .where(
                 notificationEntity.status.notIn(NotificationServiceStatus.USER_DEL, NotificationServiceStatus.ADMIN_DEL),
-                notificationEntity.id.loe(pageRequest.from)
-            ).limit(pageRequest.size)
+                notificationEntity.id.loe(pageCursorRequest.from)
+            ).limit(pageCursorRequest.size)
             .orderBy(notificationEntity.id.desc())
             .fetch()
 

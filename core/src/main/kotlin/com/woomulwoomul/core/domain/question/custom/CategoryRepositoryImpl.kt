@@ -1,7 +1,8 @@
 package com.woomulwoomul.core.domain.question.custom
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
+import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DatabaseUtils
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
@@ -14,7 +15,7 @@ class CategoryRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : CategoryCustomRepository {
 
-    override fun findAll(pageRequest: PageRequest): PageData<CategoryEntity> {
+    override fun findAll(pageCursorRequest: PageCursorRequest): PageData<CategoryEntity> {
         val total = DatabaseUtils.count(queryFactory
             .select(categoryEntity.id.count())
             .from(categoryEntity)
@@ -27,10 +28,31 @@ class CategoryRepositoryImpl(
             .selectFrom(categoryEntity)
             .where(
                 categoryEntity.status.eq(ACTIVE),
-                categoryEntity.id.loe(pageRequest.from)
+                categoryEntity.id.loe(pageCursorRequest.from)
             )
             .orderBy(categoryEntity.id.desc())
-            .limit(pageRequest.size)
+            .limit(pageCursorRequest.size)
+            .fetch()
+
+        return PageData(data, total)
+    }
+
+    override fun findAll(pageOffsetRequest: PageOffsetRequest): PageData<CategoryEntity> {
+        val total = DatabaseUtils.count(queryFactory
+            .select(categoryEntity.id.count())
+            .from(categoryEntity)
+            .where(categoryEntity.status.eq(ACTIVE))
+            .fetchFirst())
+
+        if (total == 0L) return PageData(emptyList(), total)
+
+        val data = queryFactory
+            .selectFrom(categoryEntity)
+            .where(categoryEntity.status.eq(ACTIVE))
+            .orderBy(categoryEntity.id.desc())
+            .offset(pageOffsetRequest.from)
+            .limit(pageOffsetRequest.size)
+            .orderBy(categoryEntity.createDateTime.desc())
             .fetch()
 
         return PageData(data, total)

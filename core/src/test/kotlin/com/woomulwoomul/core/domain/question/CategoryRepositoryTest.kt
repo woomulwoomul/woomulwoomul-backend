@@ -1,6 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
+import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.domain.user.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
@@ -21,9 +22,9 @@ class CategoryRepositoryTest(
     @Autowired private val userRoleRepository: UserRoleRepository,
 ) {
 
-    @DisplayName("전체 카테고리 조회가 정상 작동한다")
+    @DisplayName("전체 카테고리 커서 페이징 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAll_thenReturn() {
+    fun givenValidCursorRequest_whenFindAll_thenReturn() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val categories = listOf(
@@ -33,10 +34,10 @@ class CategoryRepositoryTest(
             createAndSaveCategory(adminRole.user, "카테고리4"),
             createAndSaveCategory(adminRole.user, "카테고리5")
         )
-        val pageRequest = PageRequest.of(categories[2].id, 2)
+        val pageCursorRequest = PageCursorRequest.of(categories[2].id, 2)
 
         // when
-        val foundCategories = categoryRepository.findAll(pageRequest)
+        val foundCategories = categoryRepository.findAll(pageCursorRequest)
 
         // then
         assertAll(
@@ -60,14 +61,73 @@ class CategoryRepositoryTest(
         )
     }
 
-    @DisplayName("카테고리가 없는데 전체 카테고리 조회를 하면 정상 작동한다")
+    @DisplayName("카테고리가 없는데 전체 카테고리 커서 페이징 조회를 하면 정상 작동한다")
     @Test
-    fun givenEmpty_whenFindAll_thenReturn() {
+    fun givenEmptyCursorRequest_whenFindAll_thenReturn() {
         // given
-        val pageRequest = PageRequest.of(null, null)
+        val pageCursorRequest = PageCursorRequest.of(null, null)
 
         // when
-        val categories = categoryRepository.findAll(pageRequest)
+        val categories = categoryRepository.findAll(pageCursorRequest)
+
+        // then
+        assertAll(
+            {
+                assertThat(categories.total).isEqualTo(0L)
+            },
+            {
+                assertThat(categories.data).isEqualTo(emptyList<CategoryEntity>())
+            }
+        )
+    }
+
+    @DisplayName("전체 카테고리 오프셋 페이징 조회가 정상 작동한다")
+    @Test
+    fun givenValidOffsetRequest_whenFindAll_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+            createAndSaveCategory(adminRole.user, "카테고리4"),
+            createAndSaveCategory(adminRole.user, "카테고리5")
+        )
+        val pageOffsetRequest = PageOffsetRequest.of(1, 2)
+
+        // when
+        val foundCategories = categoryRepository.findAll(pageOffsetRequest)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundCategories.total).isEqualTo(categories.size.toLong())
+            },
+            {
+                assertThat(foundCategories.data)
+                    .extracting("id", "name", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(
+                            categories[2].id, categories[2].name, categories[2].status, categories[2].createDateTime,
+                            categories[2].updateDateTime
+                        ),
+                        tuple(
+                            categories[1].id, categories[1].name, categories[1].status, categories[1].createDateTime,
+                            categories[1].updateDateTime
+                        )
+                    )
+            }
+        )
+    }
+
+    @DisplayName("카테고리가 없는데 전체 카테고리 오프셋 페이징 조회를 하면 정상 작동한다")
+    @Test
+    fun givenEmptyOffsetRequest_whenFindAll_thenReturn() {
+        // given
+        val pageCursorRequest = PageCursorRequest.of(null, null)
+
+        // when
+        val categories = categoryRepository.findAll(pageCursorRequest)
 
         // then
         assertAll(

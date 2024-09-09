@@ -5,7 +5,7 @@ import com.woomulwoomul.clientapi.controller.question.request.AnswerUpdateReques
 import com.woomulwoomul.clientapi.service.question.AnswerService
 import com.woomulwoomul.clientapi.service.question.response.AnswerFindAllResponse
 import com.woomulwoomul.core.common.constant.SuccessCode.*
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.DefaultPageResponse
 import com.woomulwoomul.core.common.response.DefaultResponse
 import com.woomulwoomul.core.common.response.DefaultSingleResponse
@@ -30,7 +30,7 @@ class AnswerController(
                       @RequestParam(name = "page-size", required = false) pageSize: Long?,
                       principal: Principal):
             ResponseEntity<DefaultPageResponse<AnswerFindAllResponse>> {
-        val response = answerService.getAllAnswers(UserUtils.getUserId(principal), userId, PageRequest.of(pageFrom, pageSize))
+        val response = answerService.getAllAnswers(UserUtils.getUserId(principal), userId, PageCursorRequest.of(pageFrom, pageSize))
 
         return DefaultPageResponse.toResponseEntity(FOUND_USER_ANSWERS, response)
     }

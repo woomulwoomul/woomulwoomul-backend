@@ -1,6 +1,6 @@
 package com.woomulwoomul.clientapi.service.follow
 
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.domain.base.ServiceStatus.USER_DEL
 import com.woomulwoomul.core.domain.follow.FollowEntity
 import com.woomulwoomul.core.domain.follow.FollowRepository
@@ -43,10 +43,10 @@ class FollowServiceTest(
             createAndSaveFollow(users[4], users[0]),
         )
 
-        val pageRequest = PageRequest.of(null, null)
+        val pageCursorRequest = PageCursorRequest.of(null, null)
 
         // when
-        val foundFollows = followService.getAllFollowing(users[0].id!!, pageRequest)
+        val foundFollows = followService.getAllFollowing(users[0].id!!, pageCursorRequest)
 
         // then
         assertAll(

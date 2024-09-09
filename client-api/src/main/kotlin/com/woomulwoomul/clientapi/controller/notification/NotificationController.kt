@@ -4,7 +4,7 @@ import com.woomulwoomul.clientapi.service.notification.NotificationService
 import com.woomulwoomul.clientapi.service.notification.response.NotificationGetAllResponse
 import com.woomulwoomul.core.common.constant.SuccessCode.NOTIFICATIONS_FOUND
 import com.woomulwoomul.core.common.constant.SuccessCode.NOTIFICATION_READ
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.DefaultPageResponse
 import com.woomulwoomul.core.common.response.DefaultResponse
 import com.woomulwoomul.core.common.utils.UserUtils
@@ -25,7 +25,7 @@ class NotificationController(
                             @RequestParam(name = "page-size", required = false) pageSize: Long?,
                             principal: Principal): ResponseEntity<DefaultPageResponse<NotificationGetAllResponse>> {
         val response = notificationService.getAllNotification(UserUtils.getUserId(principal),
-            PageRequest.of(pageFrom, pageSize),
+            PageCursorRequest.of(pageFrom, pageSize),
             LocalDateTime.now())
 
         return DefaultPageResponse.toResponseEntity(NOTIFICATIONS_FOUND, response)

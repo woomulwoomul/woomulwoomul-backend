@@ -2,7 +2,7 @@ package com.woomulwoomul.clientapi.controller.follow
 
 import com.woomulwoomul.clientapi.controller.RestDocsSupport
 import com.woomulwoomul.clientapi.service.follow.FollowService
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -35,7 +35,7 @@ class FollowControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllFollowing_thenReturn200() {
         // given
-        val pageRequest = PageRequest.of(null, 5)
+        val pageCursorRequest = PageCursorRequest.of(null, 5)
 
         `when`(followService.getAllFollowing(anyLong(), any()))
             .thenReturn(
@@ -62,7 +62,7 @@ class FollowControllerTest : RestDocsSupport() {
                         "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
                     )
                 ),
-                pageRequest.size
+                pageCursorRequest.size
             )
             )
 
@@ -71,8 +71,8 @@ class FollowControllerTest : RestDocsSupport() {
             get("/api/following")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
-                .queryParam("page-from", pageRequest.from.toString())
-                .queryParam("page-size", pageRequest.size.toString())
+                .queryParam("page-from", pageCursorRequest.from.toString())
+                .queryParam("page-size", pageCursorRequest.size.toString())
                 .contentType(APPLICATION_JSON_VALUE)
         ).andDo(print())
             .andExpect(status().isOk)

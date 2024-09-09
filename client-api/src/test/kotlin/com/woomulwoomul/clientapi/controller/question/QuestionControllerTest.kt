@@ -4,7 +4,7 @@ import com.woomulwoomul.clientapi.controller.RestDocsSupport
 import com.woomulwoomul.clientapi.controller.question.request.QuestionUserCreateRequest
 import com.woomulwoomul.clientapi.service.question.QuestionService
 import com.woomulwoomul.clientapi.service.question.response.*
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -90,21 +90,21 @@ class QuestionControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllCategories_thenReturn200() {
         // given
-        val pageRequest = PageRequest.of(null, 2)
+        val pageCursorRequest = PageCursorRequest.of(null, 2)
 
         `when`(questionService.getAllCategories(any()))
             .thenReturn(PageData(listOf(
                 QuestionFindAllCategoryResponse(1L, "카테고리1"),
                 QuestionFindAllCategoryResponse(2L, "카테고리2")
-            ), pageRequest.size))
+            ), pageCursorRequest.size))
 
         // when & then
         mockMvc.perform(
             get("/api/categories")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
-                .queryParam("page-from", pageRequest.from.toString())
-                .queryParam("page-size", pageRequest.size.toString())
+                .queryParam("page-from", pageCursorRequest.from.toString())
+                .queryParam("page-size", pageCursorRequest.size.toString())
                 .contentType(APPLICATION_JSON_VALUE)
         ).andDo(print())
             .andExpect(status().isOk)

@@ -1,7 +1,7 @@
 package com.woomulwoomul.core.domain.notification
 
 import com.woomulwoomul.core.common.constant.NotificationConstants
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.domain.notification.NotificationType.*
 import com.woomulwoomul.core.domain.user.UserEntity
 import com.woomulwoomul.core.domain.user.UserRepository
@@ -43,10 +43,10 @@ class NotificationRepositoryTest(
             createAndSaveNotification(users[0], null, admin, ADMIN_UNANSWERED,
                 NotificationConstants.ADMIN_UNANSWERED.toMessage(), "", NotificationConstants.ANSWER.toLink()))
 
-        val pageRequest = PageRequest.of(null, 3)
+        val pageCursorRequest = PageCursorRequest.of(null, 3)
 
         // when
-        val foundNotifications = notificationRepository.findAll(users[0].id!!, pageRequest)
+        val foundNotifications = notificationRepository.findAll(users[0].id!!, pageCursorRequest)
 
         // then
         assertAll(
@@ -90,10 +90,10 @@ class NotificationRepositoryTest(
     fun givenEmpty_whenFindAll_thenReturn() {
         // given
         val user = createAndSaveUser("tester1", "tester1@woomulwoomul.com")
-        val pageRequest = PageRequest.of(null, null)
+        val pageCursorRequest = PageCursorRequest.of(null, null)
 
         // when
-        val foundNotifications = notificationRepository.findAll(user.id!!, pageRequest)
+        val foundNotifications = notificationRepository.findAll(user.id!!, pageCursorRequest)
 
         // then
         assertAll(

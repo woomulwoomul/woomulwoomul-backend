@@ -9,7 +9,7 @@ import com.woomulwoomul.clientapi.service.s3.S3Service
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.constant.NotificationConstants.ANSWER
 import com.woomulwoomul.core.common.constant.NotificationConstants.FOLLOW
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.domain.notification.NotificationRepository
@@ -48,19 +48,19 @@ class AnswerService(
      * 답변 전체 조회
      * @param visitorUserId 방문자 회원 ID
      * @param userId 회원 ID
-     * @param pageRequest 페이징 요청
+     * @param pageCursorRequest 페이징 커서 요청
      * @throws USER_NOT_FOUND 404
      * @return 답변 전체 응답
      */
     @Transactional
-    fun getAllAnswers(visitorUserId: Long, userId: Long, pageRequest: PageRequest): PageData<AnswerFindAllResponse> {
+    fun getAllAnswers(visitorUserId: Long, userId: Long, pageCursorRequest: PageCursorRequest): PageData<AnswerFindAllResponse> {
         val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
                 if (visitorUserId != userId) {
                     val visitorUser = userRepository.findByUserId(visitorUserId) ?: throw CustomException(USER_NOT_FOUND)
             userVisitRepository.save(UserVisitEntity(user = user, visitorUser = visitorUser))
         }
 
-        val questionAnswers = questionAnswerRepository.findAllAnswered(userId, pageRequest)
+        val questionAnswers = questionAnswerRepository.findAllAnswered(userId, pageCursorRequest)
 
         val questionCategoryMap = questionCategoryRepository.findByQuestionIds(
             questionAnswers.data.mapNotNull { it.question.id }

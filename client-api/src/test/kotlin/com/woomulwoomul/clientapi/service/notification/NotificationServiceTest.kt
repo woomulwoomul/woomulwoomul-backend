@@ -2,7 +2,7 @@ package com.woomulwoomul.clientapi.service.notification
 
 import com.woomulwoomul.core.common.constant.ExceptionCode.NOTIFICATION_NOT_FOUND
 import com.woomulwoomul.core.common.constant.NotificationConstants
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.utils.DateTimeUtils
 import com.woomulwoomul.core.domain.base.NotificationServiceStatus.READ
@@ -49,11 +49,11 @@ class NotificationServiceTest(
                 NotificationConstants.ANSWER.toMessage(users[1].nickname), "",
                 NotificationConstants.ANSWER.toLink(listOf(users[1].id!!, 2L))))
 
-        val pageRequest = PageRequest.of(null, 3)
+        val pageCursorRequest = PageCursorRequest.of(null, 3)
         val now = LocalDateTime.now()
 
         // when
-        val response = notificationService.getAllNotification(users[0].id!!, pageRequest, now)
+        val response = notificationService.getAllNotification(users[0].id!!, pageCursorRequest, now)
 
         // then
         assertAll(

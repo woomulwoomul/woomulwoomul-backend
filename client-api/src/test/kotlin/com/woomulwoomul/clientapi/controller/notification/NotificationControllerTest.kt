@@ -5,7 +5,7 @@ import com.woomulwoomul.clientapi.service.notification.NotificationService
 import com.woomulwoomul.clientapi.service.notification.response.NotificationGetAllResponse
 import com.woomulwoomul.clientapi.service.notification.response.NotificationGetAllSenderResponse
 import com.woomulwoomul.core.common.constant.NotificationConstants
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DateTimeUtils
 import com.woomulwoomul.core.domain.notification.NotificationType
@@ -42,7 +42,7 @@ class NotificationControllerTest : RestDocsSupport() {
     @Test
     fun givenValid_whenGetAllNotifications_thenReturn200() {
         // given
-        val pageRequest = PageRequest.of(null, 3)
+        val pageCursorRequest = PageCursorRequest.of(null, 3)
         val now = LocalDateTime.now()
 
         `when`(notificationService.getAllNotification(anyLong(), any(), any()))
@@ -76,7 +76,7 @@ class NotificationControllerTest : RestDocsSupport() {
                         )
                     )
                 ),
-                    pageRequest.size
+                    pageCursorRequest.size
                 )
             )
 
@@ -85,8 +85,8 @@ class NotificationControllerTest : RestDocsSupport() {
             get("/api/notification")
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
-                .queryParam("page-from", pageRequest.from.toString())
-                .queryParam("page-size", pageRequest.size.toString())
+                .queryParam("page-from", pageCursorRequest.from.toString())
+                .queryParam("page-size", pageCursorRequest.size.toString())
                 .contentType(APPLICATION_JSON_VALUE)
         ).andDo(print())
             .andExpect(status().isOk)

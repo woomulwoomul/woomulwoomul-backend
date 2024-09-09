@@ -3,7 +3,7 @@ package com.woomulwoomul.core.domain.question.custom
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DatabaseUtils
 import com.woomulwoomul.core.common.vo.AnsweredUserCntVo
@@ -21,7 +21,7 @@ class QuestionAnswerRepositoryImpl(
     private val queryFactory: JPAQueryFactory,
 ) : QuestionAnswerCustomRepository {
 
-    override fun findAllAnswered(userId: Long, pageRequest: PageRequest): PageData<QuestionAnswerEntity> {
+    override fun findAllAnswered(userId: Long, pageCursorRequest: PageCursorRequest): PageData<QuestionAnswerEntity> {
         val total = DatabaseUtils.count(queryFactory
             .select(questionAnswerEntity.id.count())
             .from(questionAnswerEntity)
@@ -46,12 +46,12 @@ class QuestionAnswerRepositoryImpl(
             .innerJoin(answerEntity)
             .on(answerEntity.id.eq(questionAnswerEntity.answer.id)
                 .and(answerEntity.status.eq(ACTIVE))
-                .and(answerEntity.id.loe(pageRequest.from)))
+                .and(answerEntity.id.loe(pageCursorRequest.from)))
             .where(
                 questionAnswerEntity.status.eq(COMPLETE),
                 questionAnswerEntity.receiver.id.eq(userId)
             ).orderBy(answerEntity.id.desc())
-            .limit(pageRequest.size)
+            .limit(pageCursorRequest.size)
             .fetch()
 
         return PageData(data, total)

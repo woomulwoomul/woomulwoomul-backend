@@ -1,6 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.domain.base.DetailServiceStatus.*
 import com.woomulwoomul.core.domain.user.UserEntity
 import com.woomulwoomul.core.domain.user.UserRepository
@@ -57,10 +57,10 @@ class QuestionAnswerRepositoryTest(
             createAndSaveAnswer(questionAnswers[1], "", "답변2")
         )
 
-        val pageRequest = PageRequest.of(null, 1)
+        val pageCursorRequest = PageCursorRequest.of(null, 1)
 
         // when
-        val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageRequest)
+        val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageCursorRequest)
         // then
         assertAll(
             {
@@ -122,10 +122,10 @@ class QuestionAnswerRepositoryTest(
         val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
 
-        val pageRequest = PageRequest.of(null, 1)
+        val pageCursorRequest = PageCursorRequest.of(null, 1)
 
         // when
-        val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageRequest)
+        val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageCursorRequest)
         // then
         assertAll(
             {

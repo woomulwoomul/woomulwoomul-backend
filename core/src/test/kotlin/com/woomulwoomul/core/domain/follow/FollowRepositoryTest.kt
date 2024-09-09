@@ -1,6 +1,6 @@
 package com.woomulwoomul.core.domain.follow
 
-import com.woomulwoomul.core.common.request.PageRequest
+import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.domain.user.UserEntity
 import com.woomulwoomul.core.domain.user.UserRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -63,10 +63,10 @@ class FollowRepositoryTest(
             createAndSaveFollow(users[3], users[0]),
             createAndSaveFollow(users[4], users[0]))
 
-        val pageRequest = PageRequest.of(follows[2].id, 2)
+        val pageCursorRequest = PageCursorRequest.of(follows[2].id, 2)
 
         // when
-        val foundFollows = followRepository.findAllByFollower(users[0].id!!, pageRequest)
+        val foundFollows = followRepository.findAllByFollower(users[0].id!!, pageCursorRequest)
 
         // then
         assertAll(
@@ -113,10 +113,10 @@ class FollowRepositoryTest(
     fun givenEmpty_whenFindAllByFollower_thenReturn() {
         // given
         val user = createAndSaveUser("tester1", "tester1@woomulwoomul.com")
-        val pageRequest = PageRequest.of(null, null)
+        val pageCursorRequest = PageCursorRequest.of(null, null)
 
         // when
-        val foundFollows = followRepository.findAllByFollower(user.id!!, pageRequest)
+        val foundFollows = followRepository.findAllByFollower(user.id!!, pageCursorRequest)
 
         // then
         assertAll(
