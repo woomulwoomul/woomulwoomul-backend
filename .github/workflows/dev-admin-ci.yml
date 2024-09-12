@@ -53,18 +53,18 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           skip_check_run: false
           publish_only_summary: true
-#          minimum_coverage: 70
+          minimum_coverage: 50
           fail_below_threshold: true
 
       - name: Add Coverage Job Summary
         run: echo "${{ steps.jacoco_reporter.outputs.coverageSummary }}" >> $GITHUB_STEP_SUMMARY
 
       - name: Upload Code Coverage Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-html
           path: admin-api/build/reports/jacoco/test/html
-          retention-days: 90
+          retention-days: 9
 
       - name: Build and Push Docker image
         uses: mr-smithers-excellent/docker-build-push@v6
