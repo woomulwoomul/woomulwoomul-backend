@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <style>
+        .navbar {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            padding: 10px;
+        }
+
+        .navbar img {
+            height: 40px;
+            margin-right: 20px;
+        }
+
+        /* Flexbox for aligning menu items side by side */
+        .navbar ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center; /* Aligns items vertically */
+        }
+
+        .navbar ul li {
+            margin-right: 15px;
+        }
+
+        .navbar ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            background-color: #444;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .navbar ul li a:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <a th:href="@{/home}">
+        <img th:src="@{/image/woomulwoomul_text_logo.png}" alt="woomulwoomul-text-logo" width="100" height="100">
+    </a>
+    <ul>
+        <li><a th:href="@{/categories}">카테고리</a></li>
+        <li><a th:href="@{/questions}">질문</a></li>
+    </ul>
+</div>
+</body>
+</html>

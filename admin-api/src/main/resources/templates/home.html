@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extars/spring-security">
+      xmlns:sec="http://www.thymeleaf.org/extars/spring-security"
+      lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>우물우물 Admin</title>
 </head>
 <body>
-<div class="container">
 
-    <h2>메뉴</h2>
-    <ul>
-        <li><a th:href="@{/questions}">질문</a></li>
-        <li><a th:href="@{/categories}">카테고리</a></li>
-    </ul>
-</div>
+    <div th:replace="~{fragments/header :: body}"></div>
+
 </body>
 </html>

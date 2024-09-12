@@ -31,6 +31,6 @@ class OAuth2AuthenticationSuccessHandler(
             cookies.forEach { addCookie(it) }
         }
 
-        redirectStrategy.sendRedirect(request, response, "/dashboard")
+        redirectStrategy.sendRedirect(request, response, "/home")
     }
 }

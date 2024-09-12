@@ -1,6 +1,5 @@
 package com.woomulwoomul.adminapi.controller.user
 
-import org.springframework.boot.autoconfigure.security.SecurityProperties.User
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 
@@ -8,12 +7,12 @@ import org.springframework.web.bind.annotation.GetMapping
 class UserController {
 
     @GetMapping("/")
-    fun home(): String {
-        return "home"
+    fun getIndex(): String {
+        return "index"
     }
 
-    @GetMapping("/dashboard")
-    fun dashboard(user: User): String {
-        return "dashboard"
+    @GetMapping("/home")
+    fun getHome(): String {
+        return "home"
     }
 }

@@ -18,11 +18,12 @@ class PageOffsetRequest(
 ) {
 
     companion object {
+
         fun of(from: Long?, size: Long?): PageOffsetRequest {
-            val s = size?.takeIf { it >= 1 } ?: 10L
-            return PageOffsetRequest(
-                from?.takeIf { it > 0 }?.times(s) ?: 0L,
-                size?.takeIf { it >= 1 } ?: 10L)
+            val validSize = size?.takeIf { it >= 1 } ?: 20L
+            val validFrom = (from?.takeIf { it > 1 }?.minus(1) ?: 0) * validSize
+
+            return PageOffsetRequest(validFrom, validSize)
         }
     }
 }

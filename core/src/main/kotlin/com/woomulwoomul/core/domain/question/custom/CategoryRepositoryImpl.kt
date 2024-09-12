@@ -8,6 +8,7 @@ import com.woomulwoomul.core.common.utils.DatabaseUtils
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QCategoryEntity.categoryEntity
+import com.woomulwoomul.core.domain.user.QUserEntity.userEntity
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -41,6 +42,9 @@ class CategoryRepositoryImpl(
         val total = DatabaseUtils.count(queryFactory
             .select(categoryEntity.id.count())
             .from(categoryEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(categoryEntity.admin.id)
+                .and(userEntity.status.eq(ACTIVE)))
             .where(categoryEntity.status.eq(ACTIVE))
             .fetchFirst())
 
@@ -48,8 +52,11 @@ class CategoryRepositoryImpl(
 
         val data = queryFactory
             .selectFrom(categoryEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(categoryEntity.admin.id)
+                .and(userEntity.status.eq(ACTIVE)))
+            .fetchJoin()
             .where(categoryEntity.status.eq(ACTIVE))
-            .orderBy(categoryEntity.id.desc())
             .offset(pageOffsetRequest.from)
             .limit(pageOffsetRequest.size)
             .orderBy(categoryEntity.createDateTime.desc())

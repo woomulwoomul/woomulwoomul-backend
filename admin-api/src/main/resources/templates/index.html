@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
 <head>
     <meta charset="UTF-8">
     <title>우물우물 Admin</title>
@@ -34,11 +35,11 @@
     </style>
 </head>
 <body>
-<div class="container">
-    <img th:src="@{/image/woomulwoomul_logo.png}" alt="woomulwoomul-logo" class="logo-image">
-    <a th:href="@{/oauth2/authorization/kakao}" class="login-button">
-        <img th:src="@{/image/kakao_login_medium_wide.png}" alt="kakao-login-button">
-    </a>
-</div>
+    <div class="container">
+        <img th:src="@{/image/woomulwoomul_logo.png}" alt="woomulwoomul-logo" class="logo-image">
+        <a th:href="@{/oauth2/authorization/kakao}" class="login-button">
+            <img th:src="@{/image/kakao_login_medium_wide.png}" alt="kakao-login-button">
+        </a>
+    </div>
 </body>
 </html>

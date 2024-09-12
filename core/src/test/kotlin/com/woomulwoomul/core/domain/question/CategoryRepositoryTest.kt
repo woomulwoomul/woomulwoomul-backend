@@ -93,7 +93,7 @@ class CategoryRepositoryTest(
             createAndSaveCategory(adminRole.user, "카테고리4"),
             createAndSaveCategory(adminRole.user, "카테고리5")
         )
-        val pageOffsetRequest = PageOffsetRequest.of(1, 2)
+        val pageOffsetRequest = PageOffsetRequest.of(2, 2)
 
         // when
         val foundCategories = categoryRepository.findAll(pageOffsetRequest)
@@ -114,7 +114,7 @@ class CategoryRepositoryTest(
                         tuple(
                             categories[1].id, categories[1].name, categories[1].status, categories[1].createDateTime,
                             categories[1].updateDateTime
-                        )
+                        ),
                     )
             }
         )
