@@ -24,28 +24,36 @@
 <body>
     <div th:replace="~{fragments/header :: body}"></div>
 
-    <h1>카테고리</h1>
+    <h1>질문</h1>
 
     <table>
         <thead>
             <tr>
                 <th>ID</th>
+                <th>내용</th>
+                <th>배경 색상</th>
+                <th>닉네임</th>
                 <th>카테고리명</th>
-                <th>관리자 닉네임</th>
+                <th>시작일</th>
+                <th>종료일</th>
                 <th>상태</th>
                 <th>생성일</th>
                 <th>수정일</th>
             </tr>
         </thead>
         <tbody>
-            <!--/*@thymesVar id="data" type="java.util.List<com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse>"*/-->
-            <tr th:each="category : ${data}">
-                <td th:text="${category.id}">ID</td>
-                <td th:text="${category.name}">카테고리명</td>
-                <td th:text="${category.adminNickname}">관리자 닉네임</td>
-                <td th:text="${category.status}">상태</td>
-                <td th:text="${category.createDateTime}">생성일</td>
-                <td th:text="${category.updateDateTime}">수정일</td>
+            <!--/*@thymesVar id="data" type="java.util.List<com.woomulwoomul.adminapi.service.question.response.QuestionFindAllResponse>"*/-->
+            <tr th:each="question : ${data}">
+                <td th:text="${question.id}">ID</td>
+                <td th:text="${question.text}">내용</td>
+                <td th:text="${question.backgroundColor}">배경 색상</td>
+                <td th:text="${question.userNickname}">닉네임</td>
+                <td th:text="${question.categoryNames}">카테고리명</td>
+                <td th:text="${question.startDateTime}">시작일</td>
+                <td th:text="${question.endDateTime}">종료일</td>
+                <td th:text="${question.status}">상태</td>
+                <td th:text="${question.createDateTime}">생성일</td>
+                <td th:text="${question.updateDateTime}">수정일</td>
             </tr>
         </tbody>
     </table>
@@ -58,7 +66,7 @@
             </li>
             <!--/*@thymesVar id="totalPage" type="java.lang.Long"*/-->
             <li th:each="i : ${#numbers.sequence(1, totalPage)}">
-                <a th:href="@{/categories(page-from=${i}, page-size=20)}"
+                <a th:href="@{/questions(page-from=${i}, page-size=20)}"
                    th:text="${i}"
                    th:classappend="${i == currentPage} ? 'active' : ''"></a>
             </li>

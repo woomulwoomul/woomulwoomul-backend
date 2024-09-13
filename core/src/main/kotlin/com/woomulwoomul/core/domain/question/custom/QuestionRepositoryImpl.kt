@@ -2,8 +2,12 @@ package com.woomulwoomul.core.domain.question.custom
 
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.woomulwoomul.core.common.request.PageOffsetRequest
+import com.woomulwoomul.core.common.response.PageData
+import com.woomulwoomul.core.common.utils.DatabaseUtils
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.question.QQuestionEntity.questionEntity
+import com.woomulwoomul.core.domain.question.QuestionEntity
 import com.woomulwoomul.core.domain.user.QUserEntity.userEntity
 import com.woomulwoomul.core.domain.user.QUserRoleEntity.userRoleEntity
 import com.woomulwoomul.core.domain.user.Role.ADMIN
@@ -47,5 +51,34 @@ class QuestionRepositoryImpl(
                 questionEntity.startDateTime.loe(now),
                 questionEntity.endDateTime.goe(now)
             ).fetchFirst()
+    }
+
+    override fun findAll(pageOffsetRequest: PageOffsetRequest): PageData<QuestionEntity> {
+        val total = DatabaseUtils.count(queryFactory
+            .select(questionEntity.id.count())
+            .from(questionEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(questionEntity.user.id)
+                .and(userEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .where(questionEntity.status.eq(ACTIVE))
+            .fetchFirst())
+
+        if (total == 0L) return PageData(emptyList(), total)
+
+        val data = queryFactory
+            .select(questionEntity)
+            .from(questionEntity)
+            .innerJoin(userEntity)
+            .on(userEntity.id.eq(questionEntity.user.id)
+                .and(userEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .where(questionEntity.status.eq(ACTIVE))
+            .offset(pageOffsetRequest.from)
+            .limit(pageOffsetRequest.size)
+            .orderBy(questionEntity.id.desc())
+            .fetch()
+
+        return PageData(data, total)
     }
 }

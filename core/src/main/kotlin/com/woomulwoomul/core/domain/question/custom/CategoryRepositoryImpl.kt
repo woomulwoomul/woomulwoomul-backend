@@ -59,7 +59,7 @@ class CategoryRepositoryImpl(
             .where(categoryEntity.status.eq(ACTIVE))
             .offset(pageOffsetRequest.from)
             .limit(pageOffsetRequest.size)
-            .orderBy(categoryEntity.createDateTime.desc())
+            .orderBy(categoryEntity.id.desc())
             .fetch()
 
         return PageData(data, total)

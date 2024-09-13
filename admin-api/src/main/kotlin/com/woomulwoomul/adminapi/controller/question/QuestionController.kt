@@ -25,4 +25,17 @@ class QuestionController(
 
         return "question/categories"
     }
+
+    @GetMapping("/questions")
+    fun getAllQuestions(@RequestParam(name = "page-from", required = false) pageFrom: Long?,
+                        @RequestParam(name = "page-size", required = false) pageSize: Long?,
+                        model: Model): String {
+        val pageOffsetRequest = PageOffsetRequest.of(pageFrom, pageSize)
+
+        val response = questionService.getAllQuestions(pageOffsetRequest)
+
+        ModelUtils.addPageDataAttribute(pageOffsetRequest, response, model)
+
+        return "question/questions"
+    }
 }
