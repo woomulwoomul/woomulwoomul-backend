@@ -109,12 +109,12 @@ class QuestionRepositoryTest(
                     .extracting("id", "text", "backgroundColor", "startDateTime", "endDateTime", "status", "createDateTime",
                         "updateDateTime")
                     .containsExactly(
-                        tuple(questions[2].id, questions[2].text, questions[2].backgroundColor,
-                            questions[2].startDateTime, questions[2].endDateTime, questions[2].status,
-                            questions[2].createDateTime, questions[2].updateDateTime),
-                        tuple(questions[3].id, questions[3].text, questions[3].backgroundColor,
-                            questions[3].startDateTime, questions[3].endDateTime, questions[3].status,
-                            questions[3].createDateTime, questions[3].updateDateTime)
+                        tuple(questions[1].id, questions[1].text, questions[1].backgroundColor,
+                            questions[1].startDateTime, questions[1].endDateTime, questions[1].status,
+                            questions[1].createDateTime, questions[1].updateDateTime),
+                        tuple(questions[0].id, questions[0].text, questions[0].backgroundColor,
+                            questions[0].startDateTime, questions[0].endDateTime, questions[0].status,
+                            questions[0].createDateTime, questions[0].updateDateTime)
                     )
             }
         )

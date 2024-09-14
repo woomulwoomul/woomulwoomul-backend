@@ -11,5 +11,7 @@ interface CategoryCustomRepository {
 
     fun findAll(pageOffsetRequest: PageOffsetRequest): PageData<CategoryEntity>
 
+    fun find(categoryId: Long): CategoryEntity?
+
     fun findByIds(ids: List<Long>): List<CategoryEntity>
 }

@@ -1,10 +1,15 @@
 package com.woomulwoomul.adminapi.service.question
 
+import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
+import com.woomulwoomul.core.common.constant.ExceptionCode.CATEGORY_NAME_SIZE_INVALID
+import com.woomulwoomul.core.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
 import com.woomulwoomul.core.common.request.PageOffsetRequest
+import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.domain.question.*
 import com.woomulwoomul.core.domain.user.*
-import org.assertj.core.api.Assertions
-import org.assertj.core.groups.Tuple
+import jakarta.validation.ConstraintViolationException
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
@@ -47,17 +52,112 @@ class QuestionServiceTest(
         // then
         assertAll(
             {
-                Assertions.assertThat(result.total).isEqualTo(categories.size.toLong())
+                assertThat(result.total).isEqualTo(categories.size.toLong())
             },
             {
-                Assertions.assertThat(result.data)
-                    .extracting("id", "name")
+                assertThat(result.data)
+                    .extracting("id", "name", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
-                        tuple(categories[2].id, categories[2].name),
-                        tuple(categories[1].id, categories[1].name),
+                        tuple(categories[2].id, categories[2].name, categories[2].status, categories[2].createDateTime,
+                            categories[2].updateDateTime),
+                        tuple(categories[1].id, categories[1].name, categories[1].status, categories[1].createDateTime,
+                            categories[1].updateDateTime),
                     )
             }
         )
+    }
+
+    @DisplayName("카테고리 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindCategory_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+
+        // when
+        val result = questionService.getCategory(category.id!!)
+
+        // then
+        assertThat(result)
+            .extracting("id", "name", "adminNickname", "status", "createDateTime", "updateDateTime")
+            .containsExactly(result.id, result.name, result.adminNickname, result.status, result.createDateTime,
+                result.updateDateTime)
+    }
+
+    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 조회를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingCategoryId_whenFindCategory_thenThrow() {
+        // given
+        val categoryId = Long.MAX_VALUE
+
+        // when & then
+        assertThatThrownBy { questionService.getCategory(categoryId) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
+    @DisplayName("카테고리 업데이트가 정상 작동한다")
+    @Test
+    fun givenValid_whenUpdateCategory_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+        val request = createValidCategoryUpdateServiceRequest("카테고리 수정")
+
+        // when
+        questionService.updateCategory(category.id!!, request)
+
+        // then
+        assertThat(categoryRepository.findById(category.id!!).orElseThrow { CustomException(CATEGORY_NOT_FOUND) })
+            .extracting("name")
+            .isEqualTo(request.categoryName)
+    }
+
+    @DisplayName("1자 미만인 카테고리명으로 카테고리 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenLesserThan1SizeCategoryName_whenUpdateCategory_thenThrow() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+        val request = createValidCategoryUpdateServiceRequest("")
+
+        // when & then
+        assertThatThrownBy { questionService.updateCategory(category.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("10자 초과인 카테고리명으로 카테고리 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan10SizeCategoryName_whenUpdateCategory_thenThrow() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+        val request = createValidCategoryUpdateServiceRequest("카".repeat(11))
+
+        // when & then
+        assertThatThrownBy { questionService.updateCategory(category.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingCategoryId_whenUpdateCategory_thenThrow() {
+        // given
+        val categoryId = Long.MAX_VALUE
+        val request = createValidCategoryUpdateServiceRequest("카테고리")
+
+        // when & then
+        assertThatThrownBy { questionService.updateCategory(categoryId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
     @DisplayName("전체 질문 조회가 정상 작동한다")
@@ -101,10 +201,10 @@ class QuestionServiceTest(
         // then
         assertAll(
             {
-                Assertions.assertThat(result.total).isEqualTo(questionCategories.size.toLong())
+                assertThat(result.total).isEqualTo(questionCategories.size.toLong())
             },
             {
-                Assertions.assertThat(result.data)
+                assertThat(result.data)
                     .extracting("id", "text", "backgroundColor", "userNickname", "categoryNames", "startDateTime",
                         "endDateTime", "status", "createDateTime", "updateDateTime")
                     .containsExactly(
@@ -117,6 +217,10 @@ class QuestionServiceTest(
                     )
             }
         )
+    }
+
+    private fun createValidCategoryUpdateServiceRequest(categoryName: String): CategoryUpdateServiceRequest {
+        return CategoryUpdateServiceRequest(categoryName)
     }
 
     private fun createAndSaveCategory(

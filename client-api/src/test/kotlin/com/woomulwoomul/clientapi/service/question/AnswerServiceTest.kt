@@ -96,10 +96,10 @@ class AnswerServiceTest(
         val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
 
-        val PageCursorRequest = PageCursorRequest.of(0, 1)
+        val pageCursorRequest = PageCursorRequest.of(0, 1)
 
         // when
-        val response = answerService.getAllAnswers(admin.id!!, user.id!!, PageCursorRequest)
+        val response = answerService.getAllAnswers(admin.id!!, user.id!!, pageCursorRequest)
 
         // then
         assertAll(
@@ -119,10 +119,10 @@ class AnswerServiceTest(
         val visitorUserId = 1L
         val user = createAndSaveUser("user","user@woomulwoomul.com")
 
-        val PageCursorRequest = PageCursorRequest.of(0, 1)
+        val pageCursorRequest = PageCursorRequest.of(0, 1)
 
         // when & then
-        assertThatThrownBy { answerService.getAllAnswers(visitorUserId, user.id!!, PageCursorRequest) }
+        assertThatThrownBy { answerService.getAllAnswers(visitorUserId, user.id!!, pageCursorRequest) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(USER_NOT_FOUND)
@@ -135,10 +135,10 @@ class AnswerServiceTest(
         val user = createAndSaveUser("user","user@woomulwoomul.com")
         val userId = 1L
 
-        val PageCursorRequest = PageCursorRequest.of(0, 1)
+        val pageCursorRequest = PageCursorRequest.of(0, 1)
 
         // when & then
-        assertThatThrownBy { answerService.getAllAnswers(user.id!!, userId, PageCursorRequest) }
+        assertThatThrownBy { answerService.getAllAnswers(user.id!!, userId, pageCursorRequest) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(USER_NOT_FOUND)

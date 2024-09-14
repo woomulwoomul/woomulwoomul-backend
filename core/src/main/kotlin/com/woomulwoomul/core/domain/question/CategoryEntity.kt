@@ -18,5 +18,14 @@ class CategoryEntity (
     val admin: UserEntity,
 
     @Column(nullable = false, length = 10)
-    val name: String,
-) : BasePermanentEntity()
+    var name: String,
+) : BasePermanentEntity() {
+
+    /**
+     * 카테고리 업데이트
+     * @param name 카티고리명
+     */
+    fun update(name: String) {
+        this.name = name
+    }
+}

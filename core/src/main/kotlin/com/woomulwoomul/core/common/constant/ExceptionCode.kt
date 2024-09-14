@@ -30,6 +30,7 @@ enum class ExceptionCode(
     CATEGORY_IDS_SIZE_INVALID(BAD_REQUEST, "질문 카테고리는 1개 ~ 3개 이내로 입력해 주세요."),
     ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0자 ~ 280자 이내로 입력해 주세요."),
     ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요."),
+    CATEGORY_NAME_SIZE_INVALID(BAD_REQUEST, "카테고리명은 1자 ~ 10자 이내로 입력해 주세요."),
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),

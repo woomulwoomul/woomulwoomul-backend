@@ -140,6 +140,49 @@ class CategoryRepositoryTest(
         )
     }
 
+    @DisplayName("카테고리 ID로 카테고리 조회를 하면 정상 작동한다")
+    @Test
+    fun givenValid_whenFindById_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리1")
+
+        // when
+        val foundCategory = categoryRepository.find(category.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundCategory)
+                    .extracting("id", "name", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(category.id, category.name, category.status, category.createDateTime,
+                        category.updateDateTime)
+            },
+            {
+                assertThat(foundCategory)
+                    .extracting("admin")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(adminRole.user.id, adminRole.user.nickname, adminRole.user.email,
+                        adminRole.user.imageUrl, adminRole.user.introduction, adminRole.user.status,
+                        adminRole.user.createDateTime, adminRole.user.updateDateTime)
+            }
+        )
+    }
+
+    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 조회를 하면 정상 작동한다")
+    @Test
+    fun givenNonExisting_whenFindById_thenReturn() {
+        // given
+        val categoryId = Long.MAX_VALUE
+
+        // when
+        val category = categoryRepository.find(categoryId)
+
+        // then
+        assertThat(category).isNull()
+    }
+
     @DisplayName("카테고리 ID들로 카테고리 조회를 하면 정상 작동한다")
     @Test
     fun givenValid_whenFindByIds_thenReturn() {

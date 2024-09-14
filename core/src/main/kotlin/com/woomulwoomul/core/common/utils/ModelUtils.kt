@@ -20,5 +20,9 @@ class ModelUtils {
             model.addAttribute("totalPage",
                 (response.total + pageOffsetRequest.size - 1) / pageOffsetRequest.size)
         }
+
+        fun addAttribute(response: Any, model: Model) {
+            model.addAttribute("response", response)
+        }
     }
 }

@@ -30,8 +30,7 @@ class CategoryRepositoryImpl(
             .where(
                 categoryEntity.status.eq(ACTIVE),
                 categoryEntity.id.loe(pageCursorRequest.from)
-            )
-            .orderBy(categoryEntity.id.desc())
+            ).orderBy(categoryEntity.id.desc())
             .limit(pageCursorRequest.size)
             .fetch()
 
@@ -42,9 +41,6 @@ class CategoryRepositoryImpl(
         val total = DatabaseUtils.count(queryFactory
             .select(categoryEntity.id.count())
             .from(categoryEntity)
-            .innerJoin(userEntity)
-            .on(userEntity.id.eq(categoryEntity.admin.id)
-                .and(userEntity.status.eq(ACTIVE)))
             .where(categoryEntity.status.eq(ACTIVE))
             .fetchFirst())
 
@@ -52,7 +48,7 @@ class CategoryRepositoryImpl(
 
         val data = queryFactory
             .selectFrom(categoryEntity)
-            .innerJoin(userEntity)
+            .leftJoin(userEntity)
             .on(userEntity.id.eq(categoryEntity.admin.id)
                 .and(userEntity.status.eq(ACTIVE)))
             .fetchJoin()
@@ -63,6 +59,19 @@ class CategoryRepositoryImpl(
             .fetch()
 
         return PageData(data, total)
+    }
+
+    override fun find(categoryId: Long): CategoryEntity? {
+        return queryFactory
+            .selectFrom(categoryEntity)
+            .leftJoin(userEntity)
+            .on(userEntity.id.eq(categoryEntity.admin.id)
+                .and(userEntity.status.eq(ACTIVE)))
+            .fetchJoin()
+            .where(
+                categoryEntity.status.eq(ACTIVE),
+                categoryEntity.id.eq(categoryId)
+            ).fetchFirst()
     }
 
     override fun findByIds(ids: List<Long>): List<CategoryEntity> {
