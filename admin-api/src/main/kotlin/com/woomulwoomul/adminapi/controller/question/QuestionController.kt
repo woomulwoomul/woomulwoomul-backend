@@ -46,7 +46,7 @@ class QuestionController(
                        @Valid request: CategoryUpdateRequest): String {
         questionService.updateCategory(categoryId, request.toServiceRequest())
 
-        return "/question/category-update"
+        return "redirect:/categories"
     }
 
     @GetMapping("/questions")

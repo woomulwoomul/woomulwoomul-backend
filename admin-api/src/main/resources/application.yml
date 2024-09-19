@@ -52,6 +52,11 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
 server:
   port: 8082
 

@@ -24,46 +24,45 @@
 <body>
     <div th:replace="~{fragments/header :: body}"></div>
 
-    <form th:action="@{/categories/{id}(id=${response.id})}" method="patch">
-        <input type="hidden" name="_method" value="patch" />
+    <form id="updateForm" th:action="@{/categories/{id}(id=${response.id})}" th:method="patch">
         <table>
             <tbody>
-            <tr>
-                <td>ID</td>
-                <td>
-                    <input type="text" th:value="${response.id}" readonly/>
-                </td>
-            </tr>
-            <tr>
-                <td>카테고리명</td>
-                <td>
-                    <input type="text" th:name="name" th:value="${response.name}" />
-                </td>
-            </tr>
-            <tr>
-                <td>닉네임</td>
-                <td>
-                    <input type="text" th:name="adminNickname" th:value="${response.adminNickname}" readonly/>
-                </td>
-            </tr>
-            <tr>
-                <td>상태</td>
-                <td>
-                    <input type="text" th:name="status" th:value="${response.status}" readonly/>
-                </td>
-            </tr>
-            <tr>
-                <td>생성일</td>
-                <td>
-                    <input type="text" th:value="${response.createDateTime}" readonly/>
-                </td>
-            </tr>
-            <tr>
-                <td>수정일</td>
-                <td>
-                    <input type="text" th:value="${response.updateDateTime}" readonly/>
-                </td>
-            </tr>
+                <tr>
+                    <td>ID</td>
+                    <td>
+                        <input type="text" th:value="${response.id}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>카테고리명</td>
+                    <td>
+                        <input type="text" th:name="categoryName" th:value="${response.name}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>닉네임</td>
+                    <td>
+                        <input type="text" th:name="adminNickname" th:value="${response.adminNickname}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>상태</td>
+                    <td>
+                        <input type="text" th:name="status" th:value="${response.status}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>생성일</td>
+                    <td>
+                        <input type="text" th:value="${response.createDateTime}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>수정일</td>
+                    <td>
+                        <input type="text" th:value="${response.updateDateTime}" readonly/>
+                    </td>
+                </tr>
             </tbody>
         </table>
         <div style="margin-top: 30px;">
