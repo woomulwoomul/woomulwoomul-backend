@@ -8,10 +8,14 @@ import org.assertj.core.api.Assertions.tuple
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
+import java.util.stream.Stream
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -218,6 +222,25 @@ class CategoryRepositoryTest(
             )
     }
 
+    @ParameterizedTest(name = "[{index}] 카테고리명으로 카테고리 존재 여부 조회를 하면 {0}를 반환한다")
+    @MethodSource("providerExists")
+    @DisplayName("카테고리명으로 카테고리 존재 여부 조회가 정상 작동한다")
+    fun givenProvider_whenExists_thenReturn(expected: Boolean) {
+        // given
+        val categoryName = if (expected) {
+            val adminRole = createAndSaveUserRole(Role.ADMIN)
+            createAndSaveCategory(adminRole.user, "카테고리").name
+        } else {
+            "없음"
+        }
+
+        // when
+        val result = categoryRepository.exists(categoryName)
+
+        // then
+        assertThat(result).isEqualTo(expected)
+    }
+
     private fun createAndSaveCategory(
         user: UserEntity,
         name: String = "카테고리명"
@@ -238,5 +261,15 @@ class CategoryRepositoryTest(
             ))
 
         return userRoleRepository.save(UserRoleEntity(user = user, role = role))
+    }
+
+    companion object {
+        @JvmStatic
+        fun providerExists(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(true),
+                Arguments.of(false)
+            )
+        }
     }
 }

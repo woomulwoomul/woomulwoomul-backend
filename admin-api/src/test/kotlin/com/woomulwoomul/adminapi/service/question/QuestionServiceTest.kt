@@ -1,8 +1,8 @@
 package com.woomulwoomul.adminapi.service.question
 
+import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
-import com.woomulwoomul.core.common.constant.ExceptionCode.CATEGORY_NAME_SIZE_INVALID
-import com.woomulwoomul.core.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
+import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.domain.question.*
@@ -95,6 +95,79 @@ class QuestionServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
+    @DisplayName("카테고리 생성이 정상 작동한다")
+    @Test
+    fun givenValid_whenCreateCategory_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val request = createValidCategoryCreateServiceRequest("카테고리")
+
+        // when
+        questionService.createCategory(adminRole.user.id!!, request)
+
+        // then
+        assertThat(categoryRepository.exists(request.categoryName)).isTrue()
+    }
+
+    @DisplayName("1자 미만인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
+    @Test
+    fun givenLesserThan1SizeCategoryName_whenCreateCategory_thenThrow() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val request = createValidCategoryCreateServiceRequest("")
+
+        // when & then
+        assertThatThrownBy { questionService.createCategory(adminRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("10자 초과인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan10SizeCategoryName_whenCreateCategory_thenThrow() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val request = createValidCategoryCreateServiceRequest("카".repeat(11))
+
+        // when & then
+        assertThatThrownBy { questionService.createCategory(adminRole.user.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("존재하지 않은 관리자로 카테고리 생성을 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingAdmin_whenCreateCategory_thenThrow() {
+        // given
+        val adminId = 1L
+        val request = createValidCategoryCreateServiceRequest("카테고리")
+
+        // when & then
+        assertThatThrownBy { questionService.createCategory(adminId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(ADMIN_NOT_FOUND)
+    }
+
+    @DisplayName("존재하는 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
+    @Test
+    fun givenExistingCategory_whenCreateCategory_thenThrow() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+        val request = createValidCategoryCreateServiceRequest(category.name)
+
+        // when & then
+        assertThatThrownBy { questionService.createCategory(adminRole.user.id!!, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(EXISTING_CATEGORY)
     }
 
     @DisplayName("카테고리 업데이트가 정상 작동한다")
@@ -217,6 +290,10 @@ class QuestionServiceTest(
                     )
             }
         )
+    }
+
+    private fun createValidCategoryCreateServiceRequest(categoryName: String): CategoryCreateServiceRequest {
+        return CategoryCreateServiceRequest(categoryName)
     }
 
     private fun createValidCategoryUpdateServiceRequest(categoryName: String): CategoryUpdateServiceRequest {

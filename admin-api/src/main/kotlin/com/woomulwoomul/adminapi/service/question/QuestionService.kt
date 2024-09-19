@@ -1,16 +1,18 @@
 package com.woomulwoomul.adminapi.service.question
 
+import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.response.CategoryFindResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllResponse
-import com.woomulwoomul.core.common.constant.ExceptionCode.CATEGORY_NOT_FOUND
+import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.domain.question.CategoryRepository
 import com.woomulwoomul.core.domain.question.QuestionCategoryRepository
 import com.woomulwoomul.core.domain.question.QuestionRepository
+import com.woomulwoomul.core.domain.user.UserRepository
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -23,6 +25,7 @@ class QuestionService(
     private val categoryRepository: CategoryRepository,
     private val questionRepository: QuestionRepository,
     private val questionCategoryRepository: QuestionCategoryRepository,
+    private val userRepository: UserRepository,
 ) {
 
     /**
@@ -45,6 +48,23 @@ class QuestionService(
         val category = categoryRepository.find(categoryId) ?: throw CustomException(CATEGORY_NOT_FOUND)
 
         return CategoryFindResponse(category)
+    }
+
+    /**
+     * 카테고리 생성
+     * @param userId 회원 ID
+     * @param request 카테고리 생성 요청
+     * @throws CATEGORY_NAME_SIZE_INVALID 400
+     * @throws ADMIN_NOT_FOUND 404
+     * @throws EXISTING_CATEGORY 409
+     */
+    @Transactional
+    fun createCategory(userId: Long, @Valid request: CategoryCreateServiceRequest) {
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(ADMIN_NOT_FOUND)
+
+        if (categoryRepository.exists(request.categoryName)) throw CustomException(EXISTING_CATEGORY)
+
+        categoryRepository.save(request.toCategoryEntity(user))
     }
 
 

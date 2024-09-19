@@ -24,7 +24,15 @@
 <body>
     <div th:replace="~{fragments/header :: body}"></div>
 
-    <h1>카테고리</h1>
+    <div style="margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center;">
+        <h1>카테고리</h1>
+    </div>
+
+    <div style="margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center;">
+        <a th:href="@{/categories/new}" class="btn btn-primary">
+            <button type="submit">생성</button>
+        </a>
+    </div>
 
     <table>
         <thead>
@@ -43,10 +51,12 @@
                 <td th:text="${category.id}">ID</td>
                 <td th:text="${category.name}">카테고리명</td>
                 <td th:text="${category.status}">상태</td>
-                <td th:text="${category.createDateTime}">생성일</td>
-                <td th:text="${category.updateDateTime}">수정일</td>
+                <td th:text="${#temporals.format(category.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
+                <td th:text="${#temporals.format(category.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
                 <td>
-                    <a th:href="@{/categories/{id}(id=${category.id})}" class="btn btn-primary">수정</a>
+                    <a th:href="@{/categories/{id}(id=${category.id})}" class="btn btn-primary">
+                        <button type="submit">수정</button>
+                    </a>
                 </td>
             </tr>
         </tbody>

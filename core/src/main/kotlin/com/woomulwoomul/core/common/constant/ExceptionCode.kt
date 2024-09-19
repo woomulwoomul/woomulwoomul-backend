@@ -64,6 +64,7 @@ enum class ExceptionCode(
      */
     USER_NOT_FOUND(NOT_FOUND, "존재하지 않는 회원입니다."),
     TESTER_NOT_FOUND(NOT_FOUND, "존재하지 않는 테스터입니다."),
+    ADMIN_NOT_FOUND(NOT_FOUND, "존재하지 않는 관리자입니다."),
     CATEGORY_NOT_FOUND(NOT_FOUND, "존재하지 않는 카테고리입니다."),
     ANSWER_NOT_FOUND(NOT_FOUND, "존재하지 않는 답변입니다."),
     QUESTION_NOT_FOUND(NOT_FOUND, "존재하지 않는 질문입니다."),
@@ -82,6 +83,7 @@ enum class ExceptionCode(
     UNAVAILABLE_NICKNAME(CONFLICT, "사용 불가능한 닉네임입니다."),
     EXISTING_NICKNAME(CONFLICT, "이미 사용중인 닉네임입니다."),
     EXISTING_ANSWER(CONFLICT, "이미 작성 완료한 질문입니다."),
+    EXISTING_CATEGORY(CONFLICT, "이미 존재하는 카테고리입니다."),
 
     /**
      * 413 Payload too large
