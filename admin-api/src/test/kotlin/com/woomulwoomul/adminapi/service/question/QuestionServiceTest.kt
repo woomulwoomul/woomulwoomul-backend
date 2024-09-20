@@ -5,6 +5,7 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceR
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
+import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.question.*
 import com.woomulwoomul.core.domain.user.*
 import jakarta.validation.ConstraintViolationException
@@ -182,7 +183,7 @@ class QuestionServiceTest(
         questionService.updateCategory(category.id!!, request)
 
         // then
-        assertThat(categoryRepository.findById(category.id!!).orElseThrow { CustomException(CATEGORY_NOT_FOUND) })
+        assertThat(category)
             .extracting("name")
             .isEqualTo(request.categoryName)
     }
@@ -228,6 +229,35 @@ class QuestionServiceTest(
 
         // when & then
         assertThatThrownBy { questionService.updateCategory(categoryId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
+    @DisplayName("카테고리 삭제가 정상 작동한다")
+    @Test
+    fun givenValid_whenDeleteCategory_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+
+        // when
+        questionService.deleteCategory(category.id!!)
+
+        // then
+        assertThat(category)
+            .extracting("status")
+            .isEqualTo(ADMIN_DEL)
+    }
+
+    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 삭제를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingCategoryId_whenDeleteCategory_thenThrow() {
+        // given
+        val categoryId = Long.MAX_VALUE
+
+        // when & then
+        assertThatThrownBy { questionService.deleteCategory(categoryId) }
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(CATEGORY_NOT_FOUND)

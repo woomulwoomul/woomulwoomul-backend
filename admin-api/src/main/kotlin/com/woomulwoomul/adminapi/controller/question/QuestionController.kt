@@ -10,6 +10,7 @@ import jakarta.validation.Valid
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -36,6 +37,11 @@ class QuestionController(
         return "question/categories"
     }
 
+    @GetMapping("/categories/new")
+    fun getCreateCategoryForm(): String {
+        return "question/category-create"
+    }
+
     @GetMapping("/categories/{categoryId}")
     fun getCategory(@PathVariable categoryId: Long, model: Model): String {
         val response = questionService.getCategory(categoryId)
@@ -43,11 +49,6 @@ class QuestionController(
         ModelUtils.addAttribute(response, model)
 
         return "question/category-update"
-    }
-
-    @GetMapping("/categories/new")
-    fun getCreateCategoryForm(): String {
-        return "question/category-create"
     }
 
     @PostMapping("/categories")
@@ -61,6 +62,13 @@ class QuestionController(
     fun updateCategory(@PathVariable categoryId: Long,
                        @Valid request: CategoryUpdateRequest): String {
         questionService.updateCategory(categoryId, request.toServiceRequest())
+
+        return "redirect:/categories"
+    }
+
+    @DeleteMapping("/categories/{categoryId}")
+    fun deleteCategory(@PathVariable categoryId: Long): String {
+        questionService.deleteCategory(categoryId)
 
         return "redirect:/categories"
     }

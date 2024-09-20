@@ -41,7 +41,6 @@ class CategoryRepositoryImpl(
         val total = DatabaseUtils.count(queryFactory
             .select(categoryEntity.id.count())
             .from(categoryEntity)
-            .where(categoryEntity.status.eq(ACTIVE))
             .fetchFirst())
 
         if (total == 0L) return PageData(emptyList(), total)
@@ -52,7 +51,6 @@ class CategoryRepositoryImpl(
             .on(userEntity.id.eq(categoryEntity.admin.id)
                 .and(userEntity.status.eq(ACTIVE)))
             .fetchJoin()
-            .where(categoryEntity.status.eq(ACTIVE))
             .offset(pageOffsetRequest.from)
             .limit(pageOffsetRequest.size)
             .orderBy(categoryEntity.id.desc())

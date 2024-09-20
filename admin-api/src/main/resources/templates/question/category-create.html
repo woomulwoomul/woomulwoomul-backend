@@ -24,7 +24,8 @@
 <body>
     <div th:replace="~{fragments/header :: body}"></div>
 
-    <form th:action="@{/categories}" th:method="post">
+    <form th:action="@{/categories}" th:method="post"
+          onsubmit="return confirm('카테고리를 생성하시겠습니까?');">
         <table>
             <tbody>
                 <tr>

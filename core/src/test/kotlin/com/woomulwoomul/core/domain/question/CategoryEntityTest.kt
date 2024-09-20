@@ -1,5 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.user.UserEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
@@ -21,6 +22,21 @@ class CategoryEntityTest {
         assertThat(category)
             .extracting("name")
             .isEqualTo(categoryName)
+    }
+
+    @DisplayName("카테고리 삭제가 정상 작동한다")
+    @Test
+    fun givenValid_whenDelete_thenReturn() {
+        // given
+        val category = createCategory()
+
+        // when
+        category.delete()
+
+        // then
+        assertThat(category)
+            .extracting("status")
+            .isEqualTo(ADMIN_DEL)
     }
 
     private fun createCategory(): CategoryEntity {

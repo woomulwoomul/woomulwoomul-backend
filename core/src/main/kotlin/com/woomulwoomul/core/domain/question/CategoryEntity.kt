@@ -1,6 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.domain.base.BasePermanentEntity
+import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.user.UserEntity
 import jakarta.persistence.*
 
@@ -27,5 +28,12 @@ class CategoryEntity (
      */
     fun update(name: String) {
         this.name = name
+    }
+
+    /**
+     * 카테고리 삭제
+     */
+    fun delete() {
+        this.status = ADMIN_DEL
     }
 }

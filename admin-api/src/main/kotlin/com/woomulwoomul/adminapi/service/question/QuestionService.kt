@@ -83,6 +83,16 @@ class QuestionService(
     }
 
     /**
+     * 카테고리 삭제
+     * @param categoryId 카테고리 ID
+     * @throws CATEGORY_NOT_FOUND 404
+     */
+    @Transactional
+    fun deleteCategory(categoryId: Long) {
+        categoryRepository.find(categoryId)?.delete() ?: throw CustomException(CATEGORY_NOT_FOUND)
+    }
+
+    /**
      * 질문 전체 조회
      * @param pageOffsetRequest 페이징 오프셋 요청
      * @return 질문 전체 응답
