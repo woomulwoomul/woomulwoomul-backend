@@ -1,10 +1,12 @@
 package com.woomulwoomul.core.domain.question.custom
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DatabaseUtils
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QCategoryEntity.categoryEntity
@@ -59,7 +61,7 @@ class CategoryRepositoryImpl(
         return PageData(data, total)
     }
 
-    override fun find(categoryId: Long): CategoryEntity? {
+    override fun find(categoryId: Long, statuses: List<ServiceStatus>): CategoryEntity? {
         return queryFactory
             .selectFrom(categoryEntity)
             .leftJoin(userEntity)
@@ -67,7 +69,7 @@ class CategoryRepositoryImpl(
                 .and(userEntity.status.eq(ACTIVE)))
             .fetchJoin()
             .where(
-                categoryEntity.status.eq(ACTIVE),
+                eqStatuses(statuses),
                 categoryEntity.id.eq(categoryId)
             ).fetchFirst()
     }
@@ -85,9 +87,11 @@ class CategoryRepositoryImpl(
         return queryFactory
             .selectOne()
             .from(categoryEntity)
-            .where(
-                categoryEntity.status.eq(ACTIVE),
-                categoryEntity.name.eq(categoryName)
-            ).fetchFirst() != null
+            .where(categoryEntity.name.eq(categoryName))
+            .fetchFirst() != null
+    }
+
+    private fun eqStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
+        return statuses.takeIf { it.isNotEmpty() }?.let { categoryEntity.status.`in`(it) }
     }
 }

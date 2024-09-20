@@ -38,11 +38,10 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
         request: WebRequest
     ): ResponseEntity<Any>? {
         val fieldError = ex.bindingResult.fieldErrors.firstOrNull() ?: throw CustomException(ExceptionCode.SERVER_ERROR)
-        val fieldErrorCode = fieldError.code ?: ""
 
-        val codePrefix = preFormatCode(fieldErrorCode)
-        val codeSuffix = ErrorField.code[fieldErrorCode.uppercase()]
-        val exceptionCode = ExceptionCode.valueOf(codePrefix + codeSuffix)
+        val exceptionCode = fieldError.code?.uppercase()
+            ?.let { ExceptionCode.valueOf(preFormatCode(fieldError.field) + ErrorField.code[it]) }
+            ?: throw CustomException(ExceptionCode.SERVER_ERROR)
 
         return ResponseEntity.status(exceptionCode.httpStatus)
             .body(ExceptionResponse(exceptionCode))
@@ -123,15 +122,9 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     private fun preFormatCode(code: String): String {
-        val lastDotIndex = code.lastIndexOf('.')
-        if (lastDotIndex == -1) return code
-
-        val lastCode = code.substring(lastDotIndex + 1)
-
-        return lastCode.fold(StringBuilder(lastCode.length + 5)) { acc, c ->
+        return code.fold(StringBuilder()) { acc, c ->
             if (c.isUpperCase() && acc.isNotEmpty()) acc.append('_')
             acc.append(c)
         }.toString().uppercase()
     }
-
 }

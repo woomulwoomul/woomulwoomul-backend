@@ -40,27 +40,35 @@
             </tr>
         </thead>
         <tbody>
-            <!--/*@thymesVar id="data" type="java.util.List<com.woomulwoomul.adminapi.service.question.response.QuestionFindAllResponse>"*/-->
             <tr th:each="question : ${data}">
                 <td th:text="${question.id}">ID</td>
                 <td th:text="${question.text}">내용</td>
                 <td th:text="${question.backgroundColor}">배경 색상</td>
-                <td th:text="${question.startDateTime}">시작일</td>
-                <td th:text="${question.endDateTime}">종료일</td>
-                <td th:text="${question.status}">상태</td>
-                <td th:text="${question.createDateTime}">생성일</td>
-                <td th:text="${question.updateDateTime}">수정일</td>
+                <td th:text="${#temporals.format(question.startDateTime, 'yyyy-MM-dd HH:mm:ss')}">시작일</td>
+                <td th:text="${#temporals.format(question.endDateTime, 'yyyy-MM-dd HH:mm:ss')}">종료일</td>
+                <td th:text="${question.status.text}">상태</td>
+                <td th:text="${#temporals.format(question.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
+                <td th:text="${#temporals.format(question.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
+                <td>
+                    <a th:href="@{/questions/{id}(id=${question.id})}" class="btn btn-primary">
+                        <button type="submit">수정</button>
+                    </a>
+                </td>
+                <td>
+                    <form th:action="@{/questions/{id}(id=${question.id})}" th:method="delete"
+                          onsubmit="return confirm('질문을 삭제하시겠습니까?');">
+                        <button type="submit" class="btn btn-primary">삭제</button>
+                    </form>
+                </td>
             </tr>
         </tbody>
     </table>
 
     <div>
         <ul>
-            <!--/*@thymesVar id="currentPage" type="java.lang.Long"*/-->
             <li th:if="${currentPage > 1}">
                 <a th:href="@{/categories(page-from=${currentPage - 1}, page-size=20)}">Previous</a>
             </li>
-            <!--/*@thymesVar id="totalPage" type="java.lang.Long"*/-->
             <li th:each="i : ${#numbers.sequence(1, totalPage)}">
                 <a th:href="@{/questions(page-from=${i}, page-size=20)}"
                    th:text="${i}"

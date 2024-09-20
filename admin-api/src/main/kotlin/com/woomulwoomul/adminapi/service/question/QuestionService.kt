@@ -5,11 +5,15 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceR
 import com.woomulwoomul.adminapi.service.question.response.CategoryFindResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllResponse
+import com.woomulwoomul.adminapi.service.question.response.QuestionFindResponse
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.PageData
+import com.woomulwoomul.core.domain.base.ServiceStatus
+import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.question.CategoryRepository
+import com.woomulwoomul.core.domain.question.QuestionCategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionCategoryRepository
 import com.woomulwoomul.core.domain.question.QuestionRepository
 import com.woomulwoomul.core.domain.user.UserRepository
@@ -45,7 +49,7 @@ class QuestionService(
      * @return 카테고리 조회 응답
      */
     fun getCategory(categoryId: Long): CategoryFindResponse {
-        val category = categoryRepository.find(categoryId) ?: throw CustomException(CATEGORY_NOT_FOUND)
+        val category = categoryRepository.find(categoryId, ServiceStatus.entries) ?: throw CustomException(CATEGORY_NOT_FOUND)
 
         return CategoryFindResponse(category)
     }
@@ -77,8 +81,9 @@ class QuestionService(
      */
     @Transactional
     fun updateCategory(categoryId: Long, @Valid request: CategoryUpdateServiceRequest) {
-        categoryRepository.find(categoryId)?.apply {
-            update(request.categoryName)
+        categoryRepository.find(categoryId, ServiceStatus.entries)?.apply {
+            updateName(request.categoryName)
+            updateStatus(ServiceStatus.valueOf(request.categoryStatus))
         } ?: throw CustomException(CATEGORY_NOT_FOUND)
     }
 
@@ -89,7 +94,8 @@ class QuestionService(
      */
     @Transactional
     fun deleteCategory(categoryId: Long) {
-        categoryRepository.find(categoryId)?.delete() ?: throw CustomException(CATEGORY_NOT_FOUND)
+        categoryRepository.find(categoryId, ServiceStatus.entries)?.updateStatus(ADMIN_DEL)
+            ?: throw CustomException(CATEGORY_NOT_FOUND)
     }
 
     /**
@@ -105,5 +111,24 @@ class QuestionService(
 
         return PageData(questions.data.map { QuestionFindAllResponse(it, questionCategoryMap[it.id ?: 0] ?: emptyList()) },
             questions.total)
+    }
+
+    /**
+     * 질문 조회
+     * @param questionId 질문 ID
+     * @throws QUESTION_NOT_FOUND 404
+     * @return 질문 조회 응답
+     */
+    fun getQuestion(questionId: Long): QuestionFindResponse {
+        val questionCategories = questionCategoryRepository.findByQuestionId(questionId, ServiceStatus.entries)
+            .takeIf { it.isNotEmpty() } ?: throw CustomException(QUESTION_NOT_FOUND)
+        val question = questionCategories.first().question
+
+        val availableCategories = categoryRepository.findAll()
+
+        return QuestionFindResponse(question,
+            question.user,
+            questionCategories.map(QuestionCategoryEntity::category),
+            availableCategories)
     }
 }

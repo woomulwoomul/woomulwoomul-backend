@@ -2,6 +2,7 @@ package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.request.PageOffsetRequest
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.tuple
@@ -144,15 +145,17 @@ class CategoryRepositoryTest(
         )
     }
 
-    @DisplayName("카테고리 ID로 카테고리 조회를 하면 정상 작동한다")
-    @Test
-    fun givenValid_whenFindById_thenReturn() {
+    @ParameterizedTest(name = "[{index}] 카테고리 ID로 {0} 상태인 카테고리를 {1} 상태 조회를 하면 정상 작동한다")
+    @MethodSource("providerFind")
+    @DisplayName("카테고리 ID로 특정 상태인 카테고리를 조회하면 정상 작동한다")
+    fun givenProvider_whenFind_thenReturn(status: ServiceStatus, statusesQuery: List<ServiceStatus>) {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
-        val category = createAndSaveCategory(adminRole.user, "카테고리1")
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+        category.updateStatus(status)
 
         // when
-        val foundCategory = categoryRepository.find(category.id!!)
+        val foundCategory = categoryRepository.find(category.id!!, statusesQuery)
 
         // then
         assertAll(
@@ -176,7 +179,7 @@ class CategoryRepositoryTest(
 
     @DisplayName("존재하지 않는 카테고리 ID로 카테고리 조회를 하면 정상 작동한다")
     @Test
-    fun givenNonExisting_whenFindById_thenReturn() {
+    fun givenNonExisting_whenFind_thenReturn() {
         // given
         val categoryId = Long.MAX_VALUE
 
@@ -269,6 +272,24 @@ class CategoryRepositoryTest(
             return Stream.of(
                 Arguments.of(true),
                 Arguments.of(false)
+            )
+        }
+
+        @JvmStatic
+        fun providerFind(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE)),
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE, ServiceStatus.USER_DEL)),
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE, ServiceStatus.USER_DEL, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL, ServiceStatus.ACTIVE)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL, ServiceStatus.ACTIVE, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL, ServiceStatus.ACTIVE)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL, ServiceStatus.USER_DEL)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL, ServiceStatus.ACTIVE, ServiceStatus.USER_DEL)),
             )
         }
     }

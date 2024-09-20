@@ -1,16 +1,21 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.stream.Stream
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -86,15 +91,17 @@ class QuestionCategoryRepositoryTest(
         )
     }
 
-    @DisplayName("질문 ID로 질문 카테고리 조회를 하면 정상 작동한다")
-    @Test
-    fun givenValid_whenFindByQuestionId_thenReturn() {
+    @ParameterizedTest(name = "[{index}] 질문 ID로 {0} 상태인 질문을 {1} 상태 조회를 하면 정상 작동한다")
+    @MethodSource("providerFindByQuestionId")
+    @DisplayName("질문 ID로 특정 상태인 질문을 조회하면 정상 작동한다")
+    fun givenProvider_whenFindByQuestionId_thenReturn(status: ServiceStatus, statusesQuery: List<ServiceStatus>) {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문", backgroundColor = "000001")
+        questionCategory.question.updateStatus(status)
 
         // when
-        val foundQuestionCategories = questionCategoryRepository.findByQuestionId(questionCategory.question.id!!)
+        val foundQuestionCategories = questionCategoryRepository.findByQuestionId(questionCategory.question.id!!, statusesQuery)
 
         // then
         assertAll(
@@ -233,5 +240,25 @@ class QuestionCategoryRepositoryTest(
         val category = categoryRepository.save(CategoryEntity(name = "카테고리명", admin = user))
 
         return questionCategoryRepository.save(QuestionCategoryEntity(question = question, category = category))
+    }
+
+    companion object {
+        @JvmStatic
+        fun providerFindByQuestionId(): Stream<Arguments> {
+            return Stream.of(
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE)),
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE, ServiceStatus.USER_DEL)),
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.ACTIVE, listOf(ServiceStatus.ACTIVE, ServiceStatus.USER_DEL, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL, ServiceStatus.ACTIVE)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.USER_DEL, listOf(ServiceStatus.USER_DEL, ServiceStatus.ACTIVE, ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL, ServiceStatus.ACTIVE)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL, ServiceStatus.USER_DEL)),
+                Arguments.of(ServiceStatus.ADMIN_DEL, listOf(ServiceStatus.ADMIN_DEL, ServiceStatus.ACTIVE, ServiceStatus.USER_DEL)),
+            )
+        }
     }
 }

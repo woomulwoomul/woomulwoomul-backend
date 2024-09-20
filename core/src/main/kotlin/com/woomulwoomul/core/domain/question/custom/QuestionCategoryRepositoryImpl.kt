@@ -1,6 +1,8 @@
 package com.woomulwoomul.core.domain.question.custom
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.question.QCategoryEntity.categoryEntity
 import com.woomulwoomul.core.domain.question.QQuestionCategoryEntity.questionCategoryEntity
@@ -40,13 +42,13 @@ class QuestionCategoryRepositoryImpl(
             .fetch()
     }
 
-    override fun findByQuestionId(questionId: Long): List<QuestionCategoryEntity> {
+    override fun findByQuestionId(questionId: Long, statuses: List<ServiceStatus>): List<QuestionCategoryEntity> {
         return queryFactory
             .select(questionCategoryEntity)
             .from(questionCategoryEntity)
             .innerJoin(questionEntity)
             .on(questionEntity.id.eq(questionCategoryEntity.question.id)
-                .and(questionEntity.status.eq(ACTIVE))
+                .and(eqStatuses(statuses))
                 .and(questionEntity.id.eq(questionId)))
             .fetchJoin()
             .innerJoin(categoryEntity)
@@ -59,6 +61,10 @@ class QuestionCategoryRepositoryImpl(
             .where(questionCategoryEntity.status.eq(ACTIVE))
             .orderBy(categoryEntity.id.asc())
             .fetch()
+    }
+
+    private fun eqStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
+        return statuses.takeIf { it.isNotEmpty() }?.let { questionEntity.status.`in`(statuses) }
     }
 
     override fun findAdmin(now: LocalDateTime): List<QuestionCategoryEntity> {

@@ -85,4 +85,13 @@ class QuestionController(
 
         return "question/questions"
     }
+
+    @GetMapping("/questions/{questionId}")
+    fun getQuestion(@PathVariable questionId: Long, model: Model): String {
+        val response = questionService.getQuestion(questionId)
+
+        ModelUtils.addAttribute(response, model)
+
+        return "question/question-update"
+    }
 }

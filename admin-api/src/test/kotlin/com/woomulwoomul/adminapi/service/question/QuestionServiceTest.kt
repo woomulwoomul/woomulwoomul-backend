@@ -5,6 +5,7 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceR
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
+import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.question.*
 import com.woomulwoomul.core.domain.user.*
@@ -177,7 +178,7 @@ class QuestionServiceTest(
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
-        val request = createValidCategoryUpdateServiceRequest("카테고리 수정")
+        val request = createValidCategoryUpdateServiceRequest()
 
         // when
         questionService.updateCategory(category.id!!, request)
@@ -218,6 +219,22 @@ class QuestionServiceTest(
             .message()
             .asString()
             .contains(CATEGORY_NAME_SIZE_INVALID.message)
+    }
+
+    @DisplayName("잘못된 상태 포맷으로 카테고리 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenPatternStatus_whenUpdateCategory_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+        val request = createValidCategoryUpdateServiceRequest("카테고리", "WRONG_STATUS")
+
+        // when
+        assertThatThrownBy { questionService.updateCategory(category.id!!, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_STATUS_PATTERN_INVALID.message)
     }
 
     @DisplayName("존재하지 않는 카테고리 ID로 카테고리 업데이트를 하면 예외가 발생한다")
@@ -322,12 +339,63 @@ class QuestionServiceTest(
         )
     }
 
+    @DisplayName("질문 조회가 정상 작동한다")
+    @Test
+    fun givenValid_whenFindQuestion_thenReturn() {
+        // given
+        val now = LocalDateTime.now()
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val questionCategory = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문1",
+            "000001",
+            now.withHour(0).withMinute(0).withSecond(0),
+            now.withHour(23).withMinute(59).withSecond(59),
+            "카테고리1"
+        )
+
+        val categories = listOf(
+            questionCategory.category,
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3")
+        )
+
+        // when
+        val result = questionService.getQuestion(questionCategory.question.id!!)
+
+        // then
+        assertThat(result)
+            .extracting("id", "text", "backgroundColor", "userNickname", "categoryNames", "startDateTime",
+                "endDateTime", "status", "createDateTime", "updateDateTime", "availableCategoryNames")
+            .containsExactly(questionCategory.question.id, questionCategory.question.text,
+                questionCategory.question.backgroundColor, questionCategory.question.user.nickname,
+                listOf(questionCategory.category.name), questionCategory.question.startDateTime,
+                questionCategory.question.endDateTime, questionCategory.question.status,
+                questionCategory.question.createDateTime, questionCategory.question.updateDateTime,
+                categories.map(CategoryEntity::name))
+    }
+
+    @DisplayName("존재하지 않는 질문 ID로 질문 조회를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingQuestionId_whenFindQuestion_thenThrow() {
+        // given
+        val questionId = Long.MAX_VALUE
+
+        // when & then
+        assertThatThrownBy { questionService.getQuestion(questionId) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(QUESTION_NOT_FOUND)
+    }
+
     private fun createValidCategoryCreateServiceRequest(categoryName: String): CategoryCreateServiceRequest {
         return CategoryCreateServiceRequest(categoryName)
     }
 
-    private fun createValidCategoryUpdateServiceRequest(categoryName: String): CategoryUpdateServiceRequest {
-        return CategoryUpdateServiceRequest(categoryName)
+    private fun createValidCategoryUpdateServiceRequest(categoryName: String = "카테고리 수정",
+                                                        categoryStatus: String = ACTIVE.toString())
+    : CategoryUpdateServiceRequest {
+        return CategoryUpdateServiceRequest(categoryName, categoryStatus)
     }
 
     private fun createAndSaveCategory(

@@ -1,6 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.domain.base.BasePermanentEntity
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
 import jakarta.persistence.*
 import java.time.LocalDateTime
@@ -25,4 +26,13 @@ class QuestionEntity(
 
     val startDateTime: LocalDateTime? = null,
     val endDateTime: LocalDateTime? = null,
-) : BasePermanentEntity()
+) : BasePermanentEntity() {
+
+    /**
+     * 질문 상태 업데이트
+     * @param status 상태
+     */
+    fun updateStatus(status: ServiceStatus) {
+        this.status = status
+    }
+}

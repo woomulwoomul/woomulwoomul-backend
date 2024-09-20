@@ -1,6 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.domain.base.BasePermanentEntity
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.user.UserEntity
 import jakarta.persistence.*
@@ -23,17 +24,18 @@ class CategoryEntity (
 ) : BasePermanentEntity() {
 
     /**
-     * 카테고리 업데이트
+     * 카테고리명 업데이트
      * @param name 카티고리명
      */
-    fun update(name: String) {
+    fun updateName(name: String) {
         this.name = name
     }
 
     /**
-     * 카테고리 삭제
+     * 카테고리 상태 업데이트
+     * @param status 상태
      */
-    fun delete() {
-        this.status = ADMIN_DEL
+    fun updateStatus(status: ServiceStatus) {
+        this.status = status
     }
 }

@@ -45,11 +45,10 @@
             </tr>
         </thead>
         <tbody>
-            <!--/*@thymesVar id="data" type="java.util.List<com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse>"*/-->
             <tr th:each="category : ${data}">
                 <td th:text="${category.id}">ID</td>
                 <td th:text="${category.name}">카테고리명</td>
-                <td th:text="${category.status}">상태</td>
+                <td th:text="${category.status.text}">상태</td>
                 <td th:text="${#temporals.format(category.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
                 <td th:text="${#temporals.format(category.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
                 <td>
@@ -69,11 +68,9 @@
 
     <div>
         <ul>
-            <!--/*@thymesVar id="currentPage" type="java.lang.Long"*/-->
             <li th:if="${currentPage > 1}">
                 <a th:href="@{/categories(page-from=${currentPage - 1}, page-size=20)}">Previous</a>
             </li>
-            <!--/*@thymesVar id="totalPage" type="java.lang.Long"*/-->
             <li th:each="i : ${#numbers.sequence(1, totalPage)}">
                 <a th:href="@{/categories(page-from=${i}, page-size=20)}"
                    th:text="${i}"

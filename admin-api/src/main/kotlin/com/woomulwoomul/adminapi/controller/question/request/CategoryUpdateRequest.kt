@@ -7,9 +7,12 @@ data class CategoryUpdateRequest(
 
     @field:NotBlank
     val categoryName: String?,
+
+    @field:NotBlank
+    val categoryStatus: String?,
 ) {
 
     fun toServiceRequest(): CategoryUpdateServiceRequest {
-        return CategoryUpdateServiceRequest(categoryName ?: "")
+        return CategoryUpdateServiceRequest(categoryName ?: "", categoryStatus ?: "")
     }
 }
