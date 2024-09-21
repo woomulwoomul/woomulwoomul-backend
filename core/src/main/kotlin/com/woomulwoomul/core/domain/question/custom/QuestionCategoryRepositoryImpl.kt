@@ -48,7 +48,7 @@ class QuestionCategoryRepositoryImpl(
             .from(questionCategoryEntity)
             .innerJoin(questionEntity)
             .on(questionEntity.id.eq(questionCategoryEntity.question.id)
-                .and(eqStatuses(statuses))
+                .and(inStatuses(statuses))
                 .and(questionEntity.id.eq(questionId)))
             .fetchJoin()
             .innerJoin(categoryEntity)
@@ -61,10 +61,6 @@ class QuestionCategoryRepositoryImpl(
             .where(questionCategoryEntity.status.eq(ACTIVE))
             .orderBy(categoryEntity.id.asc())
             .fetch()
-    }
-
-    private fun eqStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
-        return statuses.takeIf { it.isNotEmpty() }?.let { questionEntity.status.`in`(statuses) }
     }
 
     override fun findAdmin(now: LocalDateTime): List<QuestionCategoryEntity> {
@@ -91,5 +87,9 @@ class QuestionCategoryRepositoryImpl(
             .where(questionCategoryEntity.status.eq(ACTIVE))
             .orderBy(categoryEntity.id.asc())
             .fetch()
+    }
+
+    private fun inStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
+        return statuses.takeIf { it.isNotEmpty() }?.let { questionEntity.status.`in`(statuses) }
     }
 }

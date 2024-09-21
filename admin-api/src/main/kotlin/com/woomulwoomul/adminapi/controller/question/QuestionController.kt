@@ -122,4 +122,10 @@ class QuestionController(
         return "redirect:/questions"
     }
 
+    @DeleteMapping("/questions/{questionId}")
+    fun deleteQuestion(@PathVariable questionId: Long): String {
+        questionService.deleteQuestion(questionId)
+
+        return "redirect:/questions"
+    }
 }

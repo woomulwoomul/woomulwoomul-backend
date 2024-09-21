@@ -200,4 +200,15 @@ class QuestionService(
         questionCategoryMap.values.filter { it.category.name !in request.categoryNames }
             .forEach { it.updateStatus(ADMIN_DEL) }
     }
+
+    /**
+     * 질문 삭제
+     * @param questionId 질문 ID
+     * @throws QUESTION_NOT_FOUND 404
+     */
+    @Transactional
+    fun deleteQuestion(questionId: Long) {
+        questionRepository.find(questionId, ServiceStatus.entries)?.updateStatus(ADMIN_DEL)
+            ?: throw CustomException(QUESTION_NOT_FOUND)
+    }
 }

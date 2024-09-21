@@ -69,7 +69,7 @@ class CategoryRepositoryImpl(
                 .and(userEntity.status.eq(ACTIVE)))
             .fetchJoin()
             .where(
-                eqStatuses(statuses),
+                inStatuses(statuses),
                 categoryEntity.id.eq(categoryId)
             ).fetchFirst()
     }
@@ -100,7 +100,7 @@ class CategoryRepositoryImpl(
             .fetchFirst() != null
     }
 
-    private fun eqStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
+    private fun inStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
         return statuses.takeIf { it.isNotEmpty() }?.let { categoryEntity.status.`in`(it) }
     }
 }

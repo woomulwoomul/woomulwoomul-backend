@@ -1,10 +1,12 @@
 package com.woomulwoomul.core.domain.question.custom
 
+import com.querydsl.core.types.dsl.BooleanExpression
 import com.querydsl.core.types.dsl.Expressions
 import com.querydsl.jpa.impl.JPAQueryFactory
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.common.utils.DatabaseUtils
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.question.QQuestionEntity.questionEntity
 import com.woomulwoomul.core.domain.question.QuestionEntity
@@ -78,5 +80,18 @@ class QuestionRepositoryImpl(
             .fetch()
 
         return PageData(data, total)
+    }
+
+    override fun find(questionId: Long, statuses: List<ServiceStatus>): QuestionEntity? {
+        return queryFactory
+            .selectFrom(questionEntity)
+            .where(
+                inStatuses(statuses),
+                questionEntity.id.eq(questionId)
+            ).fetchFirst()
+    }
+
+    private fun inStatuses(statuses: List<ServiceStatus>): BooleanExpression? {
+        return statuses.takeIf { it.isNotEmpty() }?.let { questionEntity.status.`in`(it) }
     }
 }

@@ -647,6 +647,43 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
+    @DisplayName("질문 삭제가 정상 동작한다")
+    @Test
+    fun givenValid_whenDeleteQuestion_thenReturn() {
+        // given
+        val now = LocalDateTime.now()
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val questionCategory = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문",
+            "000000",
+            now.withHour(0).withMinute(0).withSecond(0),
+            now.withHour(23).withMinute(59).withSecond(59),
+            "카테고리"
+        )
+
+        // when
+        questionService.deleteQuestion(questionCategory.question.id!!)
+
+        // then
+        assertThat(questionCategory.question)
+            .extracting("status")
+            .isEqualTo(ADMIN_DEL)
+    }
+
+    @DisplayName("존재하지 않은 질문 ID로 질문 삭제를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingQuestionId_whenDeleteQuestion_thenThrow() {
+        // given
+        val questionId = Long.MAX_VALUE
+
+        // when & then
+        assertThatThrownBy { questionService.deleteQuestion(questionId) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(QUESTION_NOT_FOUND)
+    }
+
     private fun createValidQuestionCreateServiceRequest(categoryNames: List<String>)
             : QuestionCreateServiceRequest {
         return QuestionCreateServiceRequest(

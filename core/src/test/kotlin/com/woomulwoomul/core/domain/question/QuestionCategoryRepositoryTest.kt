@@ -91,9 +91,9 @@ class QuestionCategoryRepositoryTest(
         )
     }
 
-    @ParameterizedTest(name = "[{index}] 질문 ID로 {0} 상태인 질문을 {1} 상태 조회를 하면 정상 작동한다")
+    @ParameterizedTest(name = "[{index}] 질문 ID로 {0} 상태인 질문 카테고리를 {1} 상태 조회를 하면 정상 작동한다")
     @MethodSource("providerFindByQuestionId")
-    @DisplayName("질문 ID로 특정 상태인 질문을 조회하면 정상 작동한다")
+    @DisplayName("질문 ID로 특정 상태인 질문 카테고리를 조회하면 정상 작동한다")
     fun givenProvider_whenFindByQuestionId_thenReturn(status: ServiceStatus, statusesQuery: List<ServiceStatus>) {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
