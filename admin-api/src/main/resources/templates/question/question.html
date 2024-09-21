@@ -61,11 +61,11 @@
         <tr>
             <td>카테고리</td>
             <td>
-                <label th:each="categoryName : ${response.availableCategoryNames}">
+                <label th:each="availableCategoryName : ${response.availableCategoryNames}">
                     <input type="checkbox" th:name="categoryNames"
-                           th:value="${categoryName}"
-                           th:checked="${response.categoryNames.contains(categoryName)}" />
-                    <span th:text="${categoryName}"></span>
+                           th:value="${availableCategoryName}"
+                           th:checked="${response.categoryNames.contains(availableCategoryName)}" />
+                    <span th:text="${availableCategoryName}"></span>
                 </label>
             </td>
         </tr>

@@ -2,6 +2,7 @@ package com.woomulwoomul.adminapi.controller.question
 
 import com.woomulwoomul.adminapi.controller.question.request.CategoryCreateRequest
 import com.woomulwoomul.adminapi.controller.question.request.CategoryUpdateRequest
+import com.woomulwoomul.adminapi.controller.question.request.QuestionCreateRequest
 import com.woomulwoomul.adminapi.controller.question.request.QuestionUpdateRequest
 import com.woomulwoomul.adminapi.service.question.QuestionService
 import com.woomulwoomul.core.common.request.PageOffsetRequest
@@ -94,6 +95,22 @@ class QuestionController(
         ModelUtils.addAttribute(response, model)
 
         return "question/question"
+    }
+
+    @GetMapping("/questions/new")
+    fun getCreateQuestionForm(model: Model): String {
+        val response = questionService.getAllCategoryNames()
+
+        ModelUtils.addAttribute(response, model)
+
+        return "question/question-new"
+    }
+
+    @PostMapping("/questions")
+    fun createQuestion(principal: Principal, @Valid request: QuestionCreateRequest): String {
+        questionService.createQuestion(UserUtils.getUserId(principal), request.toServiceRequest())
+
+        return "redirect:/questions"
     }
 
     @PatchMapping("/questions/{questionId}")

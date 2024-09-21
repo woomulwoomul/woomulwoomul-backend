@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>우물우물 Admin</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: body}"></div>
+
+<form th:action="@{/questions}" th:method="post"
+      onsubmit="return confirm('질문을 생성하시겠습니까?');">
+    <table>
+        <tbody>
+        <tr>
+            <td>내용</td>
+            <td>
+                <input type="text"  th:name="questionText"/>
+            </td>
+        </tr>
+        <tr>
+            <td>배경 색상</td>
+            <td>
+                <input type="text"  th:name="questionBackgroundColor"/>
+            </td>
+        </tr>
+        <tr>
+            <td>카테고리</td>
+            <td>
+                <label th:each="availableCategoryName : ${response}">
+                    <input type="checkbox" th:name="categoryNames" th:value="${availableCategoryName}" />
+                    <span th:text="${availableCategoryName}"></span>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>시작일</td>
+            <td>
+                <input type="text"  th:name="questionStartDateTime"/>
+            </td>
+        </tr>
+        <tr>
+            <td>종료일</td>
+            <td>
+                <input type="text"  th:name="questionEndDateTime"/>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="margin-top: 30px;">
+        <button type="submit">생성</button>
+    </div>
+</form>
+</body>
+</html>

@@ -2,6 +2,7 @@ package com.woomulwoomul.adminapi.service.question
 
 import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
+import com.woomulwoomul.adminapi.service.question.request.QuestionCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
@@ -109,10 +110,10 @@ class QuestionServiceTest(
         val request = createValidCategoryCreateServiceRequest("카테고리")
 
         // when
-        questionService.createCategory(adminRole.user.id!!, request)
+        val categoryId = questionService.createCategory(adminRole.user.id!!, request)
 
         // then
-        assertThat(categoryRepository.exists(request.categoryName)).isTrue()
+        assertThat(categoryRepository.existsById(categoryId)).isTrue()
     }
 
     @DisplayName("1자 미만인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
@@ -390,6 +391,70 @@ class QuestionServiceTest(
             .isEqualTo(QUESTION_NOT_FOUND)
     }
 
+    @DisplayName("질문 생성이 정상 작동한다")
+    @Test
+    fun givenValid_whenCreateQuestion_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2")
+        )
+
+        val request = createValidQuestionCreateServiceRequest(categories.map(CategoryEntity::name))
+
+        // when
+        val questionId = questionService.createQuestion(adminRole.user.id!!, request)
+
+        // then
+        val questionCategories = questionCategoryRepository.findByQuestionId(questionId)
+        val question = questionCategories.first().question
+
+        assertAll(
+            {
+                assertThat(question)
+                    .extracting("text", "backgroundColor", "startDateTime", "endDateTime")
+                    .containsExactly(request.questionText, request.questionBackgroundColor,
+                        request.questionStartDateTime, request.questionEndDateTime)
+            }, {
+                assertThat(questionCategories)
+                    .extracting("category")
+                    .extracting("name")
+                    .containsExactlyInAnyOrder(categories[0].name, categories[1].name)
+            }
+        )
+    }
+
+    @DisplayName("존재하지 않은 회원 ID로 질문 생성을 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingUserId_whenCreateQuestion_thenReturn() {
+        // given
+        val userId = Long.MAX_VALUE
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리"))
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(userId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(USER_NOT_FOUND)
+    }
+
+    @DisplayName("존재하지 않은 카테고리명으로 질문 생성을 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingCategoryName_whenCreateQuestion_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리 없음"))
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(adminRole.user.id!!, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
     @DisplayName("질문 업데이트가 정상 작동한다")
     @Test
     fun givenValid_whenUpdateQuestion_thenReturn() {
@@ -580,6 +645,17 @@ class QuestionServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
+    private fun createValidQuestionCreateServiceRequest(categoryNames: List<String>)
+            : QuestionCreateServiceRequest {
+        return QuestionCreateServiceRequest(
+            "질문",
+            "0F0F0F",
+            categoryNames,
+            null,
+            null
+        )
     }
 
     private fun createValidQuestionUpdateServiceRequest(categoryNames: List<String>): QuestionUpdateServiceRequest {

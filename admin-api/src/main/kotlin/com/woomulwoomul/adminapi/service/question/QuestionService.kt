@@ -2,6 +2,7 @@ package com.woomulwoomul.adminapi.service.question
 
 import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
+import com.woomulwoomul.adminapi.service.question.request.QuestionCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.response.CategoryFindResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse
@@ -30,6 +31,14 @@ class QuestionService(
     private val questionCategoryRepository: QuestionCategoryRepository,
     private val userRepository: UserRepository,
 ) {
+
+    /**
+     * 카테고리명 전체 조회
+     * @return 카테고리명 전체 조회 응답
+     */
+    fun getAllCategoryNames(): List<String> {
+        return categoryRepository.findAll().map(CategoryEntity::name)
+    }
 
     /**
      * 카테고리 전체 조회
@@ -62,12 +71,12 @@ class QuestionService(
      * @throws EXISTING_CATEGORY 409
      */
     @Transactional
-    fun createCategory(userId: Long, @Valid request: CategoryCreateServiceRequest) {
+    fun createCategory(userId: Long, @Valid request: CategoryCreateServiceRequest): Long {
         val user = userRepository.findByUserId(userId) ?: throw CustomException(ADMIN_NOT_FOUND)
 
         if (categoryRepository.exists(request.categoryName)) throw CustomException(EXISTING_CATEGORY)
 
-        categoryRepository.save(request.toCategoryEntity(user))
+        return categoryRepository.save(request.toCategoryEntity(user)).id ?: 0
     }
 
 
@@ -129,6 +138,27 @@ class QuestionService(
             question.user,
             questionCategories.map(QuestionCategoryEntity::category),
             availableCategories)
+    }
+
+    /**
+     * 질문 생성
+     * @param userId 회원 ID
+     * @param request 질문 생성 요청
+     * @throws USER_NOT_FOUND 404
+     * @throws CATEGORY_NOT_FOUND 404
+     */
+    @Transactional
+    fun createQuestion(userId: Long, @Valid request: QuestionCreateServiceRequest): Long {
+        val user = userRepository.findByUserId(userId) ?: throw CustomException(USER_NOT_FOUND)
+
+        val question = questionRepository.save(request.toQuestionEntity(user))
+
+        request.categoryNames.forEach {
+            val category = categoryRepository.find(it) ?: throw CustomException(CATEGORY_NOT_FOUND)
+            questionCategoryRepository.save(request.toQuestionCategoryEntity(question, category))
+        }
+
+        return question.id ?: 0
     }
 
     /**
