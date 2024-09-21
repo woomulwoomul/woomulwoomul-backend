@@ -4,10 +4,34 @@ import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.LocalDateTime
 
 class QuestionEntityTest {
+
+    @DisplayName("질문 업데이트가 정상 작동한다")
+    @Test
+    fun givenValid_whenUpdate_thenReturn() {
+        // given
+        val question = createQuestion()
+
+        val now = LocalDateTime.now()
+        val text = "질문 업데이트"
+        val backgroundColor = "XXXXXX"
+        val status = ServiceStatus.ACTIVE
+
+        // when
+        question.update(text, backgroundColor, now, now, status)
+
+        // then
+        assertThat(question)
+            .extracting("id", "text", "backgroundColor", "startDateTime", "endDateTime", "status", "createDateTime",
+                "updateDateTime")
+            .containsExactly(question.id!!, text, backgroundColor, now, now, status, question.createDateTime,
+                question.updateDateTime)
+    }
 
     @ParameterizedTest(name = "[{index}] {0} 상태로 질문 업데이트가 정상 작동한다")
     @EnumSource(ServiceStatus::class)

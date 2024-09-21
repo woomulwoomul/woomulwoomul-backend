@@ -20,13 +20,35 @@ class QuestionEntity(
     val user: UserEntity,
 
     @Column(nullable = false, length = 60)
-    val text: String,
+    var text: String,
     @Column(nullable = false, length = 6)
-    val backgroundColor: String,
+    var backgroundColor: String,
 
-    val startDateTime: LocalDateTime? = null,
-    val endDateTime: LocalDateTime? = null,
+    var startDateTime: LocalDateTime? = null,
+    var endDateTime: LocalDateTime? = null,
 ) : BasePermanentEntity() {
+
+    /**
+     * 질문 업데이트
+     * @param text 내용
+     * @param backgroundColor 배경 색상
+     * @param startDateTime 시작일
+     * @param endDateTime 종료일
+     * @param status 상태
+     */
+    fun update(
+        text: String,
+        backgroundColor: String,
+        startDateTime: LocalDateTime?,
+        endDateTime: LocalDateTime?,
+        status: ServiceStatus
+    ) {
+        this.text = text
+        this.backgroundColor = backgroundColor
+        this.startDateTime = startDateTime
+        this.endDateTime = endDateTime
+        this.status = status
+    }
 
     /**
      * 질문 상태 업데이트

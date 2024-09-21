@@ -83,9 +83,18 @@ class CategoryRepositoryImpl(
             ).fetch()
     }
 
+    override fun find(categoryName: String): CategoryEntity? {
+        return queryFactory
+            .selectFrom(categoryEntity)
+            .where(
+                categoryEntity.status.eq(ACTIVE),
+                categoryEntity.name.eq(categoryName)
+            ).fetchFirst()
+    }
+
     override fun exists(categoryName: String): Boolean {
         return queryFactory
-            .selectOne()
+            .select(categoryEntity.id)
             .from(categoryEntity)
             .where(categoryEntity.name.eq(categoryName))
             .fetchFirst() != null

@@ -17,10 +17,12 @@ enum class ExceptionCode(
     NICKNAME_FIELD_REQUIRED(BAD_REQUEST, "회원 닉네임은 필수 입력입니다."),
     USER_IMAGE_URL_FIELD_REQUIRED(BAD_REQUEST, "회원 이미지 URL은 필수 입력입니다."),
     QUESTION_TEXT_FIELD_REQUIRED(BAD_REQUEST, "질문은 필수 입력입니다."),
+    QUESTION_STATUS_FIELD_REQUIRED(BAD_REQUEST, "질문 상태는 필수 입력입니다."),
     QUESTION_BACKGROUND_COLOR_FIELD_REQUIRED(BAD_REQUEST, "질문 배경 색상은 필수 입력입니다."),
     CATEGORY_IDS_FIELD_REQUIRED(BAD_REQUEST, "카테고리 ID는 필수 입력입니다."),
     CATEGORY_NAME_FIELD_REQUIRED(BAD_REQUEST, "카테고리명은 필수 입력입니다."),
     CATEGORY_STATUS_FIELD_REQUIRED(BAD_REQUEST, "카테고리 상태는 필수 입력입니다."),
+    CATEGORY_NAMES_FIELD_REQUIRED(BAD_REQUEST, "1개 이상의 카테고리는 필수입니다."),
 
     // @Size, @ByteSize
     USER_NICKNAME_SIZE_INVALID(BAD_REQUEST, "닉네임은 2자 ~ 10자 이내로 입력해 주세요."),
@@ -33,12 +35,14 @@ enum class ExceptionCode(
     ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0자 ~ 280자 이내로 입력해 주세요."),
     ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요."),
     CATEGORY_NAME_SIZE_INVALID(BAD_REQUEST, "카테고리명은 1자 ~ 10자 이내로 입력해 주세요."),
+    CATEGORY_NAMES_SIZE_INVALID(BAD_REQUEST, "카테고리는 1개 ~ 3개 이내로 입력해 주세요."),
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),
     REPORT_TYPE_INVALID(BAD_REQUEST, "신고 타입은 'MISSION'/'MISSION_MEMBER'/'FEED' 중 하나만 사용할 수 있어요."),
     NICKNAME_PATTERN_INVALID(BAD_REQUEST, "닉네임은 한글/영어/숫자/언더바(_)만 사용할 수 있어요."),
     CATEGORY_STATUS_PATTERN_INVALID(BAD_REQUEST, "카테고리 상태는 'ACTIVE' 또는 'ADMIN_DEL'만 가능합니다."),
+    QUESTION_STATUS_PATTERN_INVALID(BAD_REQUEST, "질문 상태는 'ACTIVE', 'USER_DEL', 또는 'ADMIN_DEL'만 가능합니다."),
 
     // @Positive, @PositiveOrZero
 

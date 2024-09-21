@@ -17,5 +17,7 @@ interface CategoryCustomRepository {
 
     fun findByIds(ids: List<Long>): List<CategoryEntity>
 
+    fun find(categoryName: String): CategoryEntity?
+
     fun exists(categoryName: String): Boolean
 }

@@ -2,9 +2,11 @@ package com.woomulwoomul.adminapi.service.question
 
 import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
+import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
 import com.woomulwoomul.core.domain.question.*
@@ -347,8 +349,8 @@ class QuestionServiceTest(
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
-            "질문1",
-            "000001",
+            "질문",
+            "000000",
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59),
             "카테고리1"
@@ -386,6 +388,209 @@ class QuestionServiceTest(
             .isInstanceOf(CustomException::class.java)
             .extracting("exceptionCode")
             .isEqualTo(QUESTION_NOT_FOUND)
+    }
+
+    @DisplayName("질문 업데이트가 정상 작동한다")
+    @Test
+    fun givenValid_whenUpdateQuestion_thenReturn() {
+        // given
+        val now = LocalDateTime.now()
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val questionCategory = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문",
+            "000000",
+            now.withHour(0).withMinute(0).withSecond(0),
+            now.withHour(23).withMinute(59).withSecond(59),
+            "카테고리1"
+        )
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3")
+        )
+
+        val request = createValidQuestionUpdateServiceRequest(categories.map(CategoryEntity::name))
+
+        // when
+        questionService.updateQuestion(questionCategory.question.id!!, request)
+
+        // then
+        val questionCategories = questionCategoryRepository.findByQuestionId(questionCategory.question.id!!)
+        val question = questionCategories.first().question
+
+        assertAll(
+            {
+                assertThat(question)
+                    .extracting("text", "backgroundColor", "startDateTime", "endDateTime", "status")
+                    .containsExactly(request.questionText, request.questionBackgroundColor,
+                        request.questionStartDateTime, request.questionEndDateTime,
+                        ServiceStatus.valueOf(request.questionStatus))
+            }, {
+                assertThat(questionCategories)
+                    .extracting("category")
+                    .extracting("name")
+                    .containsExactlyInAnyOrder(categories[0].name, categories[1].name)
+            }
+        )
+    }
+
+    @DisplayName("내용이 1자 미만일 경우 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenLesserThan1SizeQuestionText_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
+        request.questionText = ""
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
+    }
+
+    @DisplayName("내용이 60자 초과일 경우 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan60SizeQuestionText_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
+        request.questionText = "가".repeat(61)
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
+    }
+
+    @DisplayName("배경 색상이 6자 미만일 경우 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenLesserThan6SizeQuestionBackgroundColor_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
+        request.questionBackgroundColor = "0F0F0"
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
+    }
+
+    @DisplayName("배경 색상이 6자 초과일 경우 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan6SizeQuestionBackgroundColor_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
+        request.questionBackgroundColor = "0F0F0FF"
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
+    }
+
+    @DisplayName("카테고리가 1개 미만일 경우 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenLesserThan1SizeCategoryNames_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(emptyList())
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAMES_SIZE_INVALID.message)
+    }
+
+    @DisplayName("카테고리가 3개 초과일 경우 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenGreaterThan3SizeCategoryNames_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리1", "카테고리2", "카테고리3", "카테고리4"))
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAMES_SIZE_INVALID.message)
+    }
+
+    @DisplayName("잘못된 포맷인 질문 상태로 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenPatternQuestionStatus_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = 1L
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
+        request.questionStatus = "WRONG"
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_STATUS_PATTERN_INVALID.message)
+    }
+
+    @DisplayName("존재하지 않은 질문 ID로 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingQuestionId_whenUpdateQuestion_thenThrow() {
+        // given
+        val questionId = Long.MAX_VALUE
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(QUESTION_NOT_FOUND)
+    }
+
+    @DisplayName("존재하지 않은 카테고리 ID로 질문 업데이트를 하면 예외가 발생한다")
+    @Test
+    fun givenNonExistingCategoryId_whenUpdateQuestion_thenThrow() {
+        // given
+        val now = LocalDateTime.now()
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val questionCategory = createAndSaveQuestionCategory(
+            adminRole.user,
+            "질문",
+            "000000",
+            now.withHour(0).withMinute(0).withSecond(0),
+            now.withHour(23).withMinute(59).withSecond(59),
+            "카테고리"
+        )
+
+        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리 없음"))
+
+        // when & then
+        assertThatThrownBy { questionService.updateQuestion(questionCategory.question.id!!, request) }
+            .isInstanceOf(CustomException::class.java)
+            .extracting("exceptionCode")
+            .isEqualTo(CATEGORY_NOT_FOUND)
+    }
+
+    private fun createValidQuestionUpdateServiceRequest(categoryNames: List<String>): QuestionUpdateServiceRequest {
+        return QuestionUpdateServiceRequest(
+            "질문 업데이트",
+            "XXXXXX",
+            categoryNames,
+            null,
+            null,
+            ACTIVE.toString()
+        )
     }
 
     private fun createValidCategoryCreateServiceRequest(categoryName: String): CategoryCreateServiceRequest {

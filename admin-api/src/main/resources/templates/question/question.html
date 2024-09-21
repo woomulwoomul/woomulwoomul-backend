@@ -61,7 +61,12 @@
         <tr>
             <td>카테고리</td>
             <td>
-                <input type="text" th:name="categoryNames" th:value="${response.categoryNames}" />
+                <label th:each="categoryName : ${response.availableCategoryNames}">
+                    <input type="checkbox" th:name="categoryNames"
+                           th:value="${categoryName}"
+                           th:checked="${response.categoryNames.contains(categoryName)}" />
+                    <span th:text="${categoryName}"></span>
+                </label>
             </td>
         </tr>
         <tr>
@@ -80,7 +85,7 @@
         <tr>
             <td>상태</td>
             <td>
-                <select th:name="categoryStatus" class="form-select">
+                <select th:name="questionStatus" class="form-select">
                     <option th:each="status : ${response.availableStatus}"
                             th:value="${status.name()}"
                             th:selected="${response.status == status}">

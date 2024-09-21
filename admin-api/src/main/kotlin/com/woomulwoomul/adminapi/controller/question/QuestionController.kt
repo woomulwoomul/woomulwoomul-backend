@@ -2,6 +2,7 @@ package com.woomulwoomul.adminapi.controller.question
 
 import com.woomulwoomul.adminapi.controller.question.request.CategoryCreateRequest
 import com.woomulwoomul.adminapi.controller.question.request.CategoryUpdateRequest
+import com.woomulwoomul.adminapi.controller.question.request.QuestionUpdateRequest
 import com.woomulwoomul.adminapi.service.question.QuestionService
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.utils.ModelUtils
@@ -39,7 +40,7 @@ class QuestionController(
 
     @GetMapping("/categories/new")
     fun getCreateCategoryForm(): String {
-        return "question/category-create"
+        return "question/category-new"
     }
 
     @GetMapping("/categories/{categoryId}")
@@ -48,7 +49,7 @@ class QuestionController(
 
         ModelUtils.addAttribute(response, model)
 
-        return "question/category-update"
+        return "question/category"
     }
 
     @PostMapping("/categories")
@@ -92,6 +93,16 @@ class QuestionController(
 
         ModelUtils.addAttribute(response, model)
 
-        return "question/question-update"
+        return "question/question"
     }
+
+    @PatchMapping("/questions/{questionId}")
+    fun updateQuestion(@PathVariable questionId: Long,
+                       @Valid request: QuestionUpdateRequest
+    ): String {
+        questionService.updateQuestion(questionId, request.toServiceRequest())
+
+        return "redirect:/questions"
+    }
+
 }

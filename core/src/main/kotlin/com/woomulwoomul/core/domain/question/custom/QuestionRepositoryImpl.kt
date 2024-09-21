@@ -61,7 +61,6 @@ class QuestionRepositoryImpl(
             .on(userEntity.id.eq(questionEntity.user.id)
                 .and(userEntity.status.eq(ACTIVE)))
             .fetchJoin()
-            .where(questionEntity.status.eq(ACTIVE))
             .fetchFirst())
 
         if (total == 0L) return PageData(emptyList(), total)
@@ -73,7 +72,6 @@ class QuestionRepositoryImpl(
             .on(userEntity.id.eq(questionEntity.user.id)
                 .and(userEntity.status.eq(ACTIVE)))
             .fetchJoin()
-            .where(questionEntity.status.eq(ACTIVE))
             .offset(pageOffsetRequest.from)
             .limit(pageOffsetRequest.size)
             .orderBy(questionEntity.id.desc())

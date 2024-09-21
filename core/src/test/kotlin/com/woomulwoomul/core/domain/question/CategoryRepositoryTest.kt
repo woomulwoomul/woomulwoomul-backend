@@ -225,10 +225,27 @@ class CategoryRepositoryTest(
             )
     }
 
+    @DisplayName("카테고리명으로 카테고리 조회를 하면 정상 작동한다")
+    @Test
+    fun givenValid_whenFind_thenReturn() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val category = createAndSaveCategory(adminRole.user, "카테고리")
+
+        // when
+        val foundCategory = categoryRepository.find(category.name)
+
+        // then
+        assertThat(foundCategory)
+            .extracting("id", "name", "status", "createDateTime", "updateDateTime")
+            .containsExactly(category.id, category.name, category.status, category.createDateTime,
+                category.updateDateTime)
+    }
+
     @ParameterizedTest(name = "[{index}] 카테고리명으로 카테고리 존재 여부 조회를 하면 {0}를 반환한다")
     @MethodSource("providerExists")
     @DisplayName("카테고리명으로 카테고리 존재 여부 조회가 정상 작동한다")
-    fun givenProvider_whenExists_thenReturn(expected: Boolean) {
+    fun givenProviderCategoryName_whenExists_thenReturn(expected: Boolean) {
         // given
         val categoryName = if (expected) {
             val adminRole = createAndSaveUserRole(Role.ADMIN)

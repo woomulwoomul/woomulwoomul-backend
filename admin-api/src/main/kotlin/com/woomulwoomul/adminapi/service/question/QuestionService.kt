@@ -2,6 +2,7 @@ package com.woomulwoomul.adminapi.service.question
 
 import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
+import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.response.CategoryFindResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse
 import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllResponse
@@ -11,11 +12,9 @@ import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.PageData
 import com.woomulwoomul.core.domain.base.ServiceStatus
+import com.woomulwoomul.core.domain.base.ServiceStatus.ACTIVE
 import com.woomulwoomul.core.domain.base.ServiceStatus.ADMIN_DEL
-import com.woomulwoomul.core.domain.question.CategoryRepository
-import com.woomulwoomul.core.domain.question.QuestionCategoryEntity
-import com.woomulwoomul.core.domain.question.QuestionCategoryRepository
-import com.woomulwoomul.core.domain.question.QuestionRepository
+import com.woomulwoomul.core.domain.question.*
 import com.woomulwoomul.core.domain.user.UserRepository
 import jakarta.validation.Valid
 import org.springframework.stereotype.Service
@@ -130,5 +129,45 @@ class QuestionService(
             question.user,
             questionCategories.map(QuestionCategoryEntity::category),
             availableCategories)
+    }
+
+    /**
+     * 질문 업데이트
+     * @param questionId 질문 ID
+     * @param request 질문 업데이트 요청
+     * @throws QUESTION_NOT_FOUND 404
+     * @throws CATEGORY_NOT_FOUND 404
+     */
+    @Transactional
+    fun updateQuestion(questionId: Long, @Valid request: QuestionUpdateServiceRequest) {
+        val questionCategories = questionCategoryRepository.findByQuestionId(questionId, ServiceStatus.entries)
+            .takeIf { it.isNotEmpty() } ?: throw CustomException(QUESTION_NOT_FOUND)
+
+        val question = questionCategories.first().question
+        question.update(
+            request.questionText,
+            request.questionBackgroundColor,
+            request.questionStartDateTime,
+            request.questionEndDateTime,
+            ServiceStatus.valueOf(request.questionStatus)
+        )
+
+        val questionCategoryMap = questionCategories.associateBy { it.category.name }
+
+        // 질문 카테고리 생성 및 활성화
+        request.categoryNames.forEach { categoryName ->
+            val questionCategory = questionCategoryMap[categoryName]
+            if (questionCategory != null) {
+                questionCategory.updateStatus(ACTIVE)
+            } else {
+                val category = categoryRepository.find(categoryName)
+                    ?: throw CustomException(CATEGORY_NOT_FOUND)
+                questionCategoryRepository.save(request.toQuestionCategoryEntity(question, category))
+            }
+        }
+
+        // 질문 카테고리 삭제
+        questionCategoryMap.values.filter { it.category.name !in request.categoryNames }
+            .forEach { it.updateStatus(ADMIN_DEL) }
     }
 }
