@@ -16,7 +16,7 @@ CREATE TABLE users
 (
     user_id                     BIGINT AUTO_INCREMENT PRIMARY KEY,
     nickname                    VARCHAR(10)                 NOT NULL,
-    email                       VARCHAR(100),
+    email                       VARCHAR(100)                NOT NULL,
     image_url                   VARCHAR(500)                NOT NULL,
     introduction                VARCHAR(60),
     status                      VARCHAR(10)                 NOT NULL,

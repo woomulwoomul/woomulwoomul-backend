@@ -14,7 +14,7 @@ class UserEntity(
 
     @Column(nullable = false, length = 30, unique = true)
     var nickname: String,
-    @Column(length = 100)
+    @Column(nullable = false, length = 100)
     val email: String,
     @Column(nullable = false, length = 500)
     var imageUrl: String,
