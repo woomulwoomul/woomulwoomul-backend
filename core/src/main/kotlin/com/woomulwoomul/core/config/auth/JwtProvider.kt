@@ -16,7 +16,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Component
@@ -49,9 +48,12 @@ class JwtProvider(
      * @return HTTP 헤더
      */
     fun createTokenHeaders(userId: Long): HttpHeaders {
-        val userDetails = getUserDetails(userId)
+        val userAndUserRoles = getUserAndUserRoles(userId)
+        val userDetails = getUserDetails(userAndUserRoles.first, userAndUserRoles.second)
         val time = System.currentTimeMillis()
         val authorities = userDetails.authorities.map { it.authority }
+
+        logUserLogin(userAndUserRoles.first)
 
         val headers = HttpHeaders()
 
@@ -85,9 +87,12 @@ class JwtProvider(
      * @return HTTP 헤더
      */
     fun createTokenCookies(userId: Long): Array<Cookie> {
-        val userDetails = getUserDetails(userId)
+        val userAndUserRoles = getUserAndUserRoles(userId)
+        val userDetails = getUserDetails(userAndUserRoles.first, userAndUserRoles.second)
         val time = System.currentTimeMillis()
         val authorities = userDetails.authorities.map { it.authority }
+
+        logUserLogin(userAndUserRoles.first)
 
         val accessTokenCookie = generateToken(userDetails, time, accessTokenTime, authorities)
             .sign(secret)
@@ -127,9 +132,11 @@ class JwtProvider(
         return jwt.fold(
             { throw CustomException(TOKEN_UNAUTHENTICATED) },
             {
-                val user = getUserDetails(it.subject()
+                val userAndUserRoles = getUserAndUserRoles(it.subject()
                     .getOrElse { throw CustomException(TOKEN_UNAUTHORIZED) }
                     .toLong())
+
+                val user = getUserDetails(userAndUserRoles.first, userAndUserRoles.second)
 
                 SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
                     user.username,
@@ -150,9 +157,11 @@ class JwtProvider(
         return when (val jwt = verifySignature<JWSHMAC256Algorithm>(token.removePrefix(TOKEN_PREFIX), secret)) {
             is Either.Left -> false
             is Either.Right -> {
-                val user = getUserDetails(jwt.value.subject()
+                val userAndUserRoles = getUserAndUserRoles(jwt.value.subject()
                     .getOrElse { throw CustomException(TOKEN_UNAUTHORIZED) }
                     .toLong())
+
+                val user = getUserDetails(userAndUserRoles.first, userAndUserRoles.second)
 
                 SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
                     user.username,
@@ -203,23 +212,14 @@ class JwtProvider(
 
     /**
      * 회원 정보 조회
-     * @param userId 회원 식별자
-     * @throws USER_NOT_FOUND 404
+     * @param user 회원
+     * @param userRoles 회원 권한
      * @return 회원 정보
      */
-    private fun getUserDetails (userId: Long): User {
-        val userRoles = userRoleRepository.findAllFetchUser(userId)
-
-        val user = userRoles.stream()
-            .findFirst()
-            .orElseThrow{ CustomException(USER_NOT_FOUND) }
-            .user
-
+    private fun getUserDetails (user: UserEntity, userRoles: List<UserRoleEntity>): User {
         val grantedAuthorities = userRoles.stream()
             .map { SimpleGrantedAuthority(it.role.name) }
             .toList()
-
-        logUserLogin(user)
 
         return User(user.id.toString(), "", grantedAuthorities)
     }
@@ -230,5 +230,22 @@ class JwtProvider(
      */
     private fun logUserLogin(user: UserEntity) {
         userLoginRepository.save(UserLoginEntity(user = user))
+    }
+
+    /**
+     * 회원 및 회원 권한 조회
+     * @param userId 회원 ID
+     * @throws USER_NOT_FOUND 404
+     * @return 회원 및 회원 권한
+     */
+    private fun getUserAndUserRoles(userId: Long): Pair<UserEntity, List<UserRoleEntity>> {
+        val userRoles = userRoleRepository.findAllFetchUser(userId)
+
+        val user = userRoles.stream()
+            .findFirst()
+            .orElseThrow{ CustomException(USER_NOT_FOUND) }
+            .user
+
+        return Pair(user, userRoles)
     }
 }
