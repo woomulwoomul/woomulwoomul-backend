@@ -75,7 +75,7 @@
     <div>
         <ul>
             <li th:if="${currentPage > 1}">
-                <a th:href="@{/categories(page-from=${currentPage - 1}, page-size=20)}">Previous</a>
+                <a th:href="@{/questions(page-from=${currentPage - 1}, page-size=20)}">Previous</a>
             </li>
             <li th:each="i : ${#numbers.sequence(1, totalPage)}">
                 <a th:href="@{/questions(page-from=${i}, page-size=20)}"
@@ -83,7 +83,7 @@
                    th:classappend="${i == currentPage} ? 'active' : ''"></a>
             </li>
             <li th:if="${currentPage < totalPage}">
-                <a th:href="@{/categories(page-from=${currentPage + 1}, page-size=20)}">Next</a>
+                <a th:href="@{/questions(page-from=${currentPage + 1}, page-size=20)}">Next</a>
             </li>
         </ul>
     </div>

@@ -14,5 +14,5 @@ abstract class BasePermanentEntity(
     var status: ServiceStatus = ServiceStatus.ACTIVE,
 
     createDateTime: LocalDateTime? = null,
-    updateDateTime: LocalDateTime? = null,
-    ) : BaseEntity(createDateTime, updateDateTime)
+    updateDateTime: LocalDateTime? = null
+) : BaseTimeEntity(createDateTime, updateDateTime)

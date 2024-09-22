@@ -6,8 +6,7 @@ import com.woomulwoomul.core.common.constant.CustomCookies
 import com.woomulwoomul.core.common.constant.CustomHttpHeaders
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.response.CustomException
-import com.woomulwoomul.core.domain.user.Role
-import com.woomulwoomul.core.domain.user.UserRoleRepository
+import com.woomulwoomul.core.domain.user.*
 import io.github.nefilim.kjwt.*
 import jakarta.servlet.http.Cookie
 import org.springframework.beans.factory.annotation.Value
@@ -17,6 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Component
@@ -34,6 +34,7 @@ class JwtProvider(
     private var refreshTokenTime: Long,
 
     private val userRoleRepository: UserRoleRepository,
+    private val userLoginRepository: UserLoginRepository,
 ) {
 
     companion object {
@@ -218,6 +219,16 @@ class JwtProvider(
             .map { SimpleGrantedAuthority(it.role.name) }
             .toList()
 
+        logUserLogin(user)
+
         return User(user.id.toString(), "", grantedAuthorities)
+    }
+
+    /**
+     * 회원 르고인 로깅
+     * @param user 회원
+     */
+    private fun logUserLogin(user: UserEntity) {
+        userLoginRepository.save(UserLoginEntity(user = user))
     }
 }

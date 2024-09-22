@@ -15,4 +15,4 @@ abstract class BaseNotificationEntity(
 
     createDateTime: LocalDateTime? = null,
     updateDateTime: LocalDateTime? = null,
-) : BaseEntity(createDateTime, updateDateTime)
+) : BaseTimeEntity(createDateTime, updateDateTime)

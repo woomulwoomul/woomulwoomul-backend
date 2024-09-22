@@ -7,31 +7,30 @@ DROP TABLE IF EXISTS question;
 DROP TABLE IF EXISTS follow;
 DROP TABLE IF EXISTS user_visit;
 DROP TABLE IF EXISTS user_provider;
+DROP TABLE IF EXISTS user_login;
 DROP TABLE IF EXISTS user_role;
-DROP TABLE IF EXISTS withdraw_user;
+DROP TABLE IF EXISTS user_withdraw;
 DROP TABLE IF EXISTS users;
 
 CREATE TABLE users
 (
     user_id                     BIGINT AUTO_INCREMENT PRIMARY KEY,
     nickname                    VARCHAR(10)                 NOT NULL,
-    email                       VARCHAR(100)                NOT NULL,
+    email                       VARCHAR(100),
     image_url                   VARCHAR(500)                NOT NULL,
     introduction                VARCHAR(60),
     status                      VARCHAR(10)                 NOT NULL,
     create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
-    CONSTRAINT uq_user_nickname UNIQUE (nickname),
-    CONSTRAINT uq_user_email UNIQUE (email)
+    CONSTRAINT uq_user_nickname UNIQUE (nickname)
 );
 
-CREATE TABLE withdraw_user
+CREATE TABLE user_withdraw
 (
-    withdraw_user_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    user_withdraw_id            BIGINT AUTO_INCREMENT PRIMARY KEY,
     create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
-    update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
-    CONSTRAINT fk_withdraw_user_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+    CONSTRAINT fk_user_withdraw_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE user_role
@@ -43,6 +42,14 @@ CREATE TABLE user_role
     update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
     user_id                     BIGINT                      NOT NULL,
     CONSTRAINT fk_user_role_user FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
+
+CREATE TABLE user_login
+(
+    user_login_id               BIGINT AUTO_INCREMENT PRIMARY KEY,
+    create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
+    user_id                     BIGINT                      NOT NULL,
+    CONSTRAINT fk_user_login_user FOREIGN KEY (user_id) REFERENCES users(user_id)
 );
 
 CREATE TABLE user_provider
