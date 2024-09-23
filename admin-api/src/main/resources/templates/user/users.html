@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>우물우물 Admin</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: body}"></div>
+
+<div style="margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center;">
+    <h1>회원</h1>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>닉네임</th>
+        <th>이메일</th>
+        <th>프로필 이미지</th>
+        <th>마지막 로그인일</th>
+        <th>상태</th>
+        <th>생성일</th>
+        <th>수정일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${data}">
+        <td th:text="${user.id}">ID</td>
+        <td th:text="${user.nickname}">닉네임</td>
+        <td th:text="${user.email}">이메일</td>
+        <td style="text-align: center">
+            <img th:src="@{${user.imageUrl}}" th:alt="'프로필 이미지'" width="50" height="65"/>
+        </td>
+        <td th:text="${#temporals.format(user.lastLoginDateTime, 'yyyy-MM-dd HH:mm:ss')}">마지막 로그인일</td>
+        <td th:text="${user.status.text}">상태</td>
+        <td th:text="${#temporals.format(user.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
+        <td th:text="${#temporals.format(user.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <ul>
+        <li th:if="${currentPage > 1}">
+            <a th:href="@{/users(page-from=${currentPage - 1}, page-size=20)}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, totalPage)}">
+            <a th:href="@{/users(page-from=${i}, page-size=20)}"
+               th:text="${i}"
+               th:classappend="${i == currentPage} ? 'active' : ''"></a>
+        </li>
+        <li th:if="${currentPage < totalPage}">
+            <a th:href="@{/users(page-from=${currentPage + 1}, page-size=20)}">Next</a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>
