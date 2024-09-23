@@ -37,7 +37,7 @@ class DateTimeUtils {
          * @return LocalDateTime 날짜
          */
         fun toLocalDateTime(strDateTime: String?): LocalDateTime? {
-            strDateTime?.takeIf { it.isNotBlank() }?.let {
+            return strDateTime?.takeIf { it.isNotBlank() }?.let {
                 try {
                     LocalDateTime.parse(it, DATE_TIME_FORMATTER)
                 } catch (e: DateTimeParseException) {
