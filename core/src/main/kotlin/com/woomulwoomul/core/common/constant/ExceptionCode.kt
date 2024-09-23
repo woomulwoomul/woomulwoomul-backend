@@ -39,6 +39,7 @@ enum class ExceptionCode(
 
     // @Pattern, @Email
     EMAIL_FORMAT_INVALID(BAD_REQUEST, "올바른 이메일 형식을 입력해 주세요."),
+    DATE_TIME_FORMAT_INVALID(BAD_REQUEST, "올바른 날짜 형식(yyyy-MM-dd HH:mm:ss)을 입력해 주세요."),
     REPORT_TYPE_INVALID(BAD_REQUEST, "신고 타입은 'MISSION'/'MISSION_MEMBER'/'FEED' 중 하나만 사용할 수 있어요."),
     NICKNAME_PATTERN_INVALID(BAD_REQUEST, "닉네임은 한글/영어/숫자/언더바(_)만 사용할 수 있어요."),
     CATEGORY_STATUS_PATTERN_INVALID(BAD_REQUEST, "카테고리 상태는 'ACTIVE' 또는 'ADMIN_DEL'만 가능합니다."),
