@@ -1,6 +1,5 @@
 package com.woomulwoomul.core.common.utils
 
-import com.woomulwoomul.core.common.constant.ExceptionCode
 import com.woomulwoomul.core.common.constant.ExceptionCode.DATE_TIME_FORMAT_INVALID
 import com.woomulwoomul.core.common.response.CustomException
 import java.time.Duration
@@ -11,6 +10,8 @@ import java.time.format.DateTimeParseException
 class DateTimeUtils {
 
     companion object {
+
+        private val DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         /**
          * 시간 차이 계산
@@ -32,13 +33,16 @@ class DateTimeUtils {
         /**
          * LocalDateTime 변환
          * @param strDateTime String 날짜
+         * @throws DATE_TIME_FORMAT_INVALID 400
          * @return LocalDateTime 날짜
          */
-        fun toLocalDateTime(strDateTime: String): LocalDateTime {
-            return try {
-                LocalDateTime.parse(strDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-            } catch (e: DateTimeParseException) {
-                throw CustomException(DATE_TIME_FORMAT_INVALID, e.cause)
+        fun toLocalDateTime(strDateTime: String?): LocalDateTime? {
+            strDateTime?.takeIf { it.isNotBlank() }?.let {
+                try {
+                    LocalDateTime.parse(it, DATE_TIME_FORMATTER)
+                } catch (e: DateTimeParseException) {
+                    throw CustomException(DATE_TIME_FORMAT_INVALID, e)
+                }
             }
         }
     }
