@@ -54,7 +54,7 @@ class QuestionServiceTest(
 
         // then
         assertThat(result)
-            .extracting("availableCategoryNames", "availableBackgroundColor")
+            .extracting("availableCategoryNames", "availableBackgroundColors")
             .containsExactly(categories.map(CategoryEntity::name), BackgroundColor.entries)
     }
 
