@@ -1,6 +1,7 @@
 package com.woomulwoomul.clientapi.service.question.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionAnswerEntity
 import java.time.LocalDateTime
@@ -16,9 +17,9 @@ data class AnswerUpdateResponse(
 
     val questionId: Long,
     val questionText: String,
-    val questionBackgroundColor: String,
+    val questionBackgroundColor: BackgroundColor,
 
-    val categories: List<com.woomulwoomul.clientapi.service.question.response.AnswerUpdateCategoryResponse>,
+    val categories: List<AnswerUpdateCategoryResponse>,
 ) {
 
     constructor(
@@ -36,7 +37,7 @@ data class AnswerUpdateResponse(
         questionAnswer.question.id!!,
         questionAnswer.question.text,
         questionAnswer.question.backgroundColor,
-        categories.map { com.woomulwoomul.clientapi.service.question.response.AnswerUpdateCategoryResponse(it) }
+        categories.map { AnswerUpdateCategoryResponse(it) }
     )
 }
 

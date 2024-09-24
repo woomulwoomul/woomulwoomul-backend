@@ -1,5 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.common.converter.BackgroundColorConverter
 import com.woomulwoomul.core.domain.base.BasePermanentEntity
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
@@ -21,8 +23,10 @@ class QuestionEntity(
 
     @Column(nullable = false, length = 60)
     var text: String,
+
+    @Convert(converter = BackgroundColorConverter::class)
     @Column(nullable = false, length = 6)
-    var backgroundColor: String,
+    var backgroundColor: BackgroundColor,
 
     var startDateTime: LocalDateTime? = null,
     var endDateTime: LocalDateTime? = null,
@@ -38,7 +42,7 @@ class QuestionEntity(
      */
     fun update(
         text: String,
-        backgroundColor: String,
+        backgroundColor: BackgroundColor,
         startDateTime: LocalDateTime?,
         endDateTime: LocalDateTime?,
         status: ServiceStatus

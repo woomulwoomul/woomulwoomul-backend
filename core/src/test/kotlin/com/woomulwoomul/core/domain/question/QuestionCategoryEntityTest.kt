@@ -1,5 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
 import org.assertj.core.api.Assertions.assertThat
@@ -30,7 +31,7 @@ class QuestionCategoryEntityTest {
             "admin@woomulwoomul.com",
             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
         )
-        val question = QuestionEntity(1L, admin, "질문", "000000")
+        val question = QuestionEntity(1L, admin, "질문", BackgroundColor.WHITE)
         val category = CategoryEntity(1L, admin, "카테고리")
 
         return QuestionCategoryEntity(1L, question, category)

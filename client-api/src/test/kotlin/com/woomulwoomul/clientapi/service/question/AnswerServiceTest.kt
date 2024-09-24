@@ -3,6 +3,7 @@ package com.woomulwoomul.clientapi.service.question
 import com.woomulwoomul.clientapi.service.question.request.AnswerCreateServiceRequest
 import com.woomulwoomul.clientapi.service.question.request.AnswerUpdateServiceRequest
 import com.woomulwoomul.clientapi.service.question.response.AnswerFindAllCategoryResponse
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
@@ -769,7 +770,7 @@ class AnswerServiceTest(
 
     private fun createAndSaveQuestion(categories: List<CategoryEntity>, user: UserEntity, text: String): QuestionEntity {
         val question = questionRepository.save(
-            QuestionEntity(user = user, text = text, backgroundColor = "0F0F0F")
+            QuestionEntity(user = user, text = text, backgroundColor = BackgroundColor.WHITE)
         )
 
         questionCategoryRepository.saveAll(

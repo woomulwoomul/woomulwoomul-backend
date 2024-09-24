@@ -32,8 +32,8 @@ include::{snippets}/question/create-user-question/response-fields.adoc[]
 ----
 ----
 {
-  "code" : "QUESTION_BACKGROUND_COLOR_SIZE_INVALID",
-  "message" : "질문 배경 색상은 6자만 가능합니다."
+  "code" : "QUESTION_BACKGROUND_COLOR_PATTERN_INVALID",
+  "message" : "질문 배경 색상은 'FFACA8', 'FFA34F', 'FFC34F', 'C5FFAA', '1AE7D8', '4FB5FF', '868BFF', 'C58AFF', 'FF9CE3', 'FFFFFF' 중 하나만 가능합니다."
 }
 ----
 ----

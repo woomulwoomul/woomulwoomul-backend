@@ -99,7 +99,7 @@ class QuestionController(
 
     @GetMapping("/questions/new")
     fun getCreateQuestionForm(model: Model): String {
-        val response = questionService.getAllCategoryNames()
+        val response = questionService.getCreateQuestionForm()
 
         ModelUtils.addAttribute(response, model)
 

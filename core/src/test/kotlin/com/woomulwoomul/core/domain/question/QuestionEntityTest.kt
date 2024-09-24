@@ -1,5 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
 import org.assertj.core.api.Assertions.assertThat
@@ -19,7 +20,7 @@ class QuestionEntityTest {
 
         val now = LocalDateTime.now()
         val text = "질문 업데이트"
-        val backgroundColor = "XXXXXX"
+        val backgroundColor = BackgroundColor.WHITE
         val status = ServiceStatus.ACTIVE
 
         // when
@@ -55,6 +56,6 @@ class QuestionEntityTest {
             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"
         )
 
-        return QuestionEntity(1L, admin, "질문", "00000")
+        return QuestionEntity(1L, admin, "질문", BackgroundColor.WHITE)
     }
 }

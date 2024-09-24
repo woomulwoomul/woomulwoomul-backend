@@ -1,5 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.*
@@ -32,7 +33,7 @@ class QuestionRepositoryTest(
     fun givenValid_whenFindRandomQuestionId_thenReturn() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
-        val question = createAndSaveQuestion(adminRole.user, "질문", backgroundColor = "000000")
+        val question = createAndSaveQuestion(adminRole.user, "질문")
 
         // when
         val questionId = questionRepository.findRandomAdminQuestionId()
@@ -50,7 +51,7 @@ class QuestionRepositoryTest(
         val question = createAndSaveQuestion(
             adminRole.user,
             "질문",
-            "000000",
+            BackgroundColor.WHITE,
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59)
         )
@@ -72,28 +73,28 @@ class QuestionRepositoryTest(
             createAndSaveQuestion(
                 adminRole.user,
                 "질문1",
-                "000001",
+                BackgroundColor.entries[0],
                 now.withHour(0).withMinute(0).withSecond(0),
                 now.withHour(23).withMinute(59).withSecond(59)
             ),
             createAndSaveQuestion(
                 adminRole.user,
                 "질문2",
-                "000002",
+                BackgroundColor.entries[1],
                 now.withHour(0).withMinute(0).withSecond(0),
                 now.withHour(23).withMinute(59).withSecond(59)
             ),
             createAndSaveQuestion(
                 adminRole.user,
                 "질문3",
-                "000003",
+                BackgroundColor.entries[2],
                 now.withHour(0).withMinute(0).withSecond(0),
                 now.withHour(23).withMinute(59).withSecond(59)
             ),
             createAndSaveQuestion(
                 adminRole.user,
                 "질문4",
-                "000004",
+                BackgroundColor.entries[3],
                 now.withHour(0).withMinute(0).withSecond(0),
                 now.withHour(23).withMinute(59).withSecond(59)
             )
@@ -153,7 +154,7 @@ class QuestionRepositoryTest(
         val question = createAndSaveQuestion(
             adminRole.user,
             "질문",
-            "0F0F0F",
+            BackgroundColor.WHITE,
             null,
             null
         )
@@ -199,7 +200,7 @@ class QuestionRepositoryTest(
     private fun createAndSaveQuestion(
         user: UserEntity,
         text: String = "질문",
-        backgroundColor: String = "0F0F0F",
+        backgroundColor: BackgroundColor = BackgroundColor.WHITE,
         startDateTime: LocalDateTime? = null,
         endDateTime: LocalDateTime? = null,
     ): QuestionEntity {

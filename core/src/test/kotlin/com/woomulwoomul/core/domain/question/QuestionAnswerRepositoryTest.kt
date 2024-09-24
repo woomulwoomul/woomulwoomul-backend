@@ -1,7 +1,8 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.request.PageCursorRequest
-import com.woomulwoomul.core.domain.base.DetailServiceStatus.*
+import com.woomulwoomul.core.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.core.domain.user.UserEntity
 import com.woomulwoomul.core.domain.user.UserRepository
 import org.assertj.core.api.Assertions.assertThat
@@ -432,7 +433,7 @@ class QuestionAnswerRepositoryTest(
 
     private fun createAndSaveQuestion(categories: List<CategoryEntity>, user: UserEntity, text: String): QuestionEntity {
         val question = questionRepository.save(
-            QuestionEntity(user = user, text = text, backgroundColor = "0F0F0F")
+            QuestionEntity(user = user, text = text, backgroundColor = BackgroundColor.WHITE)
         )
 
         questionCategoryRepository.saveAll(

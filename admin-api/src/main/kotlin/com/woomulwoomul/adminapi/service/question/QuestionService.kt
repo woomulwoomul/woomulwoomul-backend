@@ -4,10 +4,8 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceR
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
-import com.woomulwoomul.adminapi.service.question.response.CategoryFindResponse
-import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllCategoryResponse
-import com.woomulwoomul.adminapi.service.question.response.QuestionFindAllResponse
-import com.woomulwoomul.adminapi.service.question.response.QuestionFindResponse
+import com.woomulwoomul.adminapi.service.question.response.*
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
@@ -33,11 +31,12 @@ class QuestionService(
 ) {
 
     /**
-     * 카테고리명 전체 조회
-     * @return 카테고리명 전체 조회 응답
+     * 질문 생성 폼 조회
+     * @return 질문 생성 폼 응답
      */
-    fun getAllCategoryNames(): List<String> {
-        return categoryRepository.findAll().map(CategoryEntity::name)
+    fun getCreateQuestionForm(): QuestionCreateResponse {
+        val categories = categoryRepository.findAll()
+        return QuestionCreateResponse(categories)
     }
 
     /**
@@ -45,9 +44,9 @@ class QuestionService(
      * @param pageOffsetRequest 페이징 오프셋 요청
      * @return 카테고리 전체 조회 응답
      */
-    fun getAllCategories(pageOffsetRequest: PageOffsetRequest): PageData<QuestionFindAllCategoryResponse> {
+    fun getAllCategories(pageOffsetRequest: PageOffsetRequest): PageData<CategoryFindAllResponse> {
         val categories = categoryRepository.findAll(pageOffsetRequest)
-        return PageData(categories.data.map { QuestionFindAllCategoryResponse(it) }, categories.total)
+        return PageData(categories.data.map { CategoryFindAllResponse(it) }, categories.total)
     }
 
     /**
@@ -115,7 +114,7 @@ class QuestionService(
         val questions = questionRepository.findAll(pageOffsetRequest)
         val questionCategoryMap = questionCategoryRepository.findByQuestionIds(questions.data.mapNotNull { it.id })
             .groupBy({ it.question.id ?: 0L},
-                {it.category})
+                { it.category })
 
         return PageData(questions.data.map { QuestionFindAllResponse(it, questionCategoryMap[it.id ?: 0] ?: emptyList()) },
             questions.total)
@@ -176,7 +175,7 @@ class QuestionService(
         val question = questionCategories.first().question
         question.update(
             request.questionText,
-            request.questionBackgroundColor,
+            BackgroundColor.of(request.questionBackgroundColor),
             request.questionStartDateTime,
             request.questionEndDateTime,
             ServiceStatus.valueOf(request.questionStatus)

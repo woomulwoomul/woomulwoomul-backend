@@ -5,6 +5,7 @@ import com.woomulwoomul.clientapi.controller.question.request.AnswerCreateReques
 import com.woomulwoomul.clientapi.controller.question.request.AnswerUpdateRequest
 import com.woomulwoomul.clientapi.service.question.AnswerService
 import com.woomulwoomul.clientapi.service.question.response.*
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import org.junit.jupiter.api.DisplayName
@@ -49,7 +50,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
-                        1L, "질문", "0F0F0F",
+                        1L, "질문", BackgroundColor.entries[0],
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3"))),
@@ -58,7 +59,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
-                        2L, "질문", "0F0F0F",
+                        2L, "질문", BackgroundColor.entries[1],
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3"))),
@@ -67,7 +68,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
-                        3L, "질문", "0F0F0F",
+                        3L, "질문", BackgroundColor.entries[2],
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3")))
@@ -148,7 +149,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                     1L,
                     "질문",
-                    "0F0F0F",
+                    BackgroundColor.WHITE,
                     listOf(AnswerFindCategoryResponse(1L, "카테고리1"),
                         AnswerFindCategoryResponse(2L, "카테고리2"),
                         AnswerFindCategoryResponse(3L, "카테고리3")))
@@ -219,7 +220,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                     1L,
                     "질문",
-                    "0F0F0F",
+                    BackgroundColor.WHITE,
                     listOf(AnswerFindCategoryResponse(1L, "카테고리1"),
                         AnswerFindCategoryResponse(2L, "카테고리2"),
                         AnswerFindCategoryResponse(3L, "카테고리3")))
@@ -285,7 +286,7 @@ class AnswerControllerTest : RestDocsSupport() {
                     "tester",
                     1L,
                     "질문",
-                    "0F0F0F",
+                    BackgroundColor.WHITE,
                     listOf(
                         AnswerCreateCategoryResponse(1L, "카테고리1"),
                         AnswerCreateCategoryResponse(2L, "카테고리2"),
@@ -363,17 +364,17 @@ class AnswerControllerTest : RestDocsSupport() {
                     ),
                     1L,
                     "질문",
-                    "0F0F0F",
+                    BackgroundColor.WHITE,
                     listOf(
-                        com.woomulwoomul.clientapi.service.question.response.AnswerUpdateCategoryResponse(
+                        AnswerUpdateCategoryResponse(
                             1L,
                             "카테고리1"
                         ),
-                        com.woomulwoomul.clientapi.service.question.response.AnswerUpdateCategoryResponse(
+                        AnswerUpdateCategoryResponse(
                             2L,
                             "카테고리2"
                         ),
-                        com.woomulwoomul.clientapi.service.question.response.AnswerUpdateCategoryResponse(
+                        AnswerUpdateCategoryResponse(
                             3L,
                             "카테고리3"
                         )

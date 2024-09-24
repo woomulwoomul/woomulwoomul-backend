@@ -1,6 +1,7 @@
 package com.woomulwoomul.clientapi.service.question
 
 import com.woomulwoomul.clientapi.service.question.request.QuestionUserCreateServiceRequest
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
@@ -13,7 +14,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -33,16 +33,15 @@ class QuestionServiceTest(
     @Autowired private val userRepository: UserRepository,
 ) {
 
-    @DisplayName("현재 날짜 기준 질문이 있을시 기본 질문들 조회를 하면 정상 작동한다")
     @Test
-    fun givenValid_whenGetDefaultQuestion_thenReturn() {
+    fun `현재 날짜 기준 질문이 있을시 기본 질문들 조회를 하면 정상 작동한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
             "질문",
-            backgroundColor = "000000",
+            backgroundColor = BackgroundColor.WHITE.value,
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59)
         )
@@ -67,16 +66,15 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("현재 날짜 기준 질문이 없을시 기본 질문 조회를 하면 정상 작동한다")
     @Test
-    fun givenNonExistingQuestionInCurrentTime_whenGetDefaultQuestion_thenReturn() {
+    fun `현재 날짜 기준 질문이 없을시 기본 질문 조회를 하면 정상 작동한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
             "질문",
-            backgroundColor = "000000",
+            BackgroundColor.WHITE.value,
             now.minusDays(2),
             now.minusDays(1)
         )
@@ -101,13 +99,12 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("질문 ID로 기본 질문들 조회를 하면 정상 작동한다")
     @Test
-    fun givenQuestionIds_whenGetDefaultQuestion_thenReturn() {
+    fun `질문 ID로 기본 질문들 조회를 하면 정상 작동한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(ADMIN)
-        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
+        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문1")
 
         // when
         val result = questionService.getDefaultQuestion(questionCategory.question.id!!, now)
@@ -128,9 +125,8 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("기본 질문이 존재하지 않는데 기본 질문들 조회를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingQuestion_whenGetDefaultQuestion_thenReturn() {
+    fun `기본 질문이 존재하지 않는데 기본 질문들 조회를 하면 예외가 발생한다`() {
         // given
         val now = LocalDateTime.now()
         val questionId: Long? = null
@@ -142,9 +138,8 @@ class QuestionServiceTest(
             .isEqualTo(QUESTION_NOT_FOUND)
     }
 
-    @DisplayName("전체 카테고리 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAllCategories_thenReturn() {
+    fun `전체 카테고리 조회가 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN)
         val categories = listOf(
@@ -175,9 +170,8 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("회원 질문 생성이 정상 작동한다")
     @Test
-    fun givenValid_whenCreateUserQuestion_theReturn() {
+    fun `회원 질문 생성이 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -203,7 +197,7 @@ class QuestionServiceTest(
             {
                 assertThat(response)
                     .extracting("questionText", "questionBackgroundColor")
-                    .containsExactly(request.questionText, request.questionBackgroundColor)
+                    .containsExactly(request.questionText, BackgroundColor.of(request.questionBackgroundColor))
             },
             {
                 assertThat(response.categories)
@@ -217,9 +211,8 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("존재하지 않은 회원으로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenNonExistingUser_whenCreateUserQuestion_thenThrow() {
+    fun `존재하지 않은 회원으로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN)
         val categories = listOf(
@@ -240,9 +233,8 @@ class QuestionServiceTest(
             .isEqualTo(USER_NOT_FOUND)
     }
 
-    @DisplayName("존재하지 않은 카테고리로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenNonExistingCategory_whenCreateUserQuestion_thenThrows() {
+    fun `존재하지 않은 카테고리로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val userRole = createAndSaveUserRole(USER, "tester", "tester@woomulwoomul.com")
 
@@ -255,9 +247,8 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
-    @DisplayName("질문 내용 1바이트 미만으로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenLesserThan1ByteSizeQuestionText_whenCreateUserQuestion_thenThrows() {
+    fun `질문 내용 1바이트 미만으로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -281,9 +272,8 @@ class QuestionServiceTest(
             .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
-    @DisplayName("질문 내용 1자 미만으로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenLesserThan1SizeQuestionText_whenCreateUserQuestion_thenThrows() {
+    fun `질문 내용 1자 미만으로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -307,9 +297,8 @@ class QuestionServiceTest(
             .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
-    @DisplayName("질문 내용 60자 초과로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenGreaterThan60SizeQuestionText_whenCreateUserQuestion_thenThrows() {
+    fun `질문 내용 60자 초과로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -333,9 +322,8 @@ class QuestionServiceTest(
             .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
-    @DisplayName("질문 배경 색상 6자 미만으로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenLesserThan6SizeQuestionBackgroundColor_whenCreateUserQuestion_thenThrows() {
+    fun `잘못된 포맷인 질문 배경 색상으로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -349,45 +337,18 @@ class QuestionServiceTest(
             .toList()
 
         val request = createValidQuestionUserCreateServiceRequest(categoryIds)
-        request.questionBackgroundColor = "0F0F0"
+        request.questionBackgroundColor = "XXXXXX"
 
         // when & then
         assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
             .isInstanceOf(ConstraintViolationException::class.java)
             .message()
             .asString()
-            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
+            .contains(QUESTION_BACKGROUND_COLOR_PATTERN_INVALID.message)
     }
 
-    @DisplayName("질문 배경 색상 6자 초과로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenGreaterThan6SizeQuestionBackgroundColor_whenCreateUserQuestion_thenThrows() {
-        // given
-        val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
-        val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
-        val categories = listOf(
-            createAndSaveCategory(adminRole.user, "카테고리1"),
-            createAndSaveCategory(adminRole.user, "카테고리2"),
-            createAndSaveCategory(adminRole.user, "카테고리3"),
-        )
-        val categoryIds = categories.stream()
-            .map { it.id!! }
-            .toList()
-
-        val request = createValidQuestionUserCreateServiceRequest(categoryIds)
-        request.questionBackgroundColor = "0F0F0FF"
-
-        // when & then
-        assertThatThrownBy { questionService.createUserQuestion(userRole.user.id!!, request) }
-            .isInstanceOf(ConstraintViolationException::class.java)
-            .message()
-            .asString()
-            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
-    }
-
-    @DisplayName("질문 카테고리 1개 미만으로 회원 질문 생성을 하면 예외를 던진다")
-    @Test
-    fun givenLesserThan1SizeCategoryIds_whenCreateUserQuestion_thenThrows() {
+    fun `질문 카테고리 1개 미만으로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -403,9 +364,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_IDS_SIZE_INVALID.message)
     }
 
-    @DisplayName("질문 카테고리 3개 초과로 회원 질문 생성을 하면 예외를 던진다")
     @Test
-    fun givenGreaterThan3SizeCategoryIds_whenCreateUserQuestion_thenThrows() {
+    fun `질문 카테고리 3개 초과로 회원 질문 생성을 하면 예외를 던진다`() {
         // given
         val adminRole = createAndSaveUserRole(ADMIN, "tester1", "tester1@woomulwoomul.com")
         val userRole = createAndSaveUserRole(USER, "tester2", "tester2@woomulwoomul.com")
@@ -430,7 +390,7 @@ class QuestionServiceTest(
     }
 
     private fun createValidQuestionUserCreateServiceRequest(categoryIds: List<Long>): QuestionUserCreateServiceRequest {
-        return QuestionUserCreateServiceRequest("질문", "0F0F0F", categoryIds)
+        return QuestionUserCreateServiceRequest("질문", BackgroundColor.WHITE.value, categoryIds)
     }
 
     private fun createAndSaveCategory(
@@ -443,14 +403,14 @@ class QuestionServiceTest(
     private fun createAndSaveQuestionCategory(
         user: UserEntity,
         text: String = "질문",
-        backgroundColor: String = "0F0F0F",
+        backgroundColor: String = BackgroundColor.WHITE.value,
         startDateTime: LocalDateTime? = null,
         endDateTime: LocalDateTime? = null,
     ): QuestionCategoryEntity {
         val question = questionRepository.save(QuestionEntity(
             user = user,
             text = text,
-            backgroundColor = backgroundColor,
+            backgroundColor = BackgroundColor.of(backgroundColor),
             startDateTime = startDateTime,
             endDateTime = endDateTime
         ))

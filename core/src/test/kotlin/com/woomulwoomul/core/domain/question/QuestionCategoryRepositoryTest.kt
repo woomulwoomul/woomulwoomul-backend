@@ -1,5 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.*
 import org.assertj.core.api.Assertions.assertThat
@@ -33,9 +34,12 @@ class QuestionCategoryRepositoryTest(
     fun givenValid_whenFindByQuestionIds_thenReturn() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
-        val questionCategory1 = createAndSaveQuestionCategory(adminRole.user, "질문1", backgroundColor = "000001")
-        val questionCategory2 = createAndSaveQuestionCategory(adminRole.user, "질문2", backgroundColor = "000002")
-        val questionCategory3 = createAndSaveQuestionCategory(adminRole.user, "질문3", backgroundColor = "000003")
+        val questionCategory1 = createAndSaveQuestionCategory(adminRole.user, "질문1",
+            backgroundColor = BackgroundColor.entries[0])
+        val questionCategory2 = createAndSaveQuestionCategory(adminRole.user, "질문2",
+            backgroundColor = BackgroundColor.entries[1])
+        val questionCategory3 = createAndSaveQuestionCategory(adminRole.user, "질문3",
+            backgroundColor = BackgroundColor.entries[2])
 
         // when
         val questionCategories = questionCategoryRepository.findByQuestionIds(listOf(
@@ -97,7 +101,8 @@ class QuestionCategoryRepositoryTest(
     fun givenProvider_whenFindByQuestionId_thenReturn(status: ServiceStatus, statusesQuery: List<ServiceStatus>) {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
-        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문", backgroundColor = "000001")
+        val questionCategory = createAndSaveQuestionCategory(adminRole.user, "질문",
+            backgroundColor = BackgroundColor.WHITE)
         questionCategory.question.updateStatus(status)
 
         // when
@@ -157,21 +162,21 @@ class QuestionCategoryRepositoryTest(
         val questionCategory1 = createAndSaveQuestionCategory(
             adminRole.user,
             "질문1",
-            backgroundColor = "000001",
+            backgroundColor = BackgroundColor.entries[0],
             startDateTime.minusDays(1),
             endDateTime.minusDays(1)
         )
         val questionCategory2 = createAndSaveQuestionCategory(
             adminRole.user,
             "질문2",
-            backgroundColor = "000002",
+            backgroundColor = BackgroundColor.entries[1],
             startDateTime,
             endDateTime
         )
         val questionCategory3 = createAndSaveQuestionCategory(
             adminRole.user,
             "질문3",
-            backgroundColor = "000003",
+            backgroundColor = BackgroundColor.entries[2],
             startDateTime.plusDays(1),
             endDateTime.plusDays(1)
         )
@@ -226,7 +231,7 @@ class QuestionCategoryRepositoryTest(
     private fun createAndSaveQuestionCategory(
         user: UserEntity,
         text: String = "질문",
-        backgroundColor: String = "0F0F0F",
+        backgroundColor: BackgroundColor = BackgroundColor.WHITE,
         startDateTime: LocalDateTime? = null,
         endDateTime: LocalDateTime? = null,
     ): QuestionCategoryEntity {

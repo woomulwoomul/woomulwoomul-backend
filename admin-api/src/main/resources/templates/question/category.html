@@ -50,7 +50,7 @@
                     <td>상태</td>
                     <td>
                         <select th:name="categoryStatus" class="form-select">
-                            <option th:each="status : ${response.availableStatus}"
+                            <option th:each="status : ${response.availableStatuses}"
                                     th:value="${status.name()}"
                                     th:selected="${response.status == status}">
                                 <span th:text="${status.text}"></span>

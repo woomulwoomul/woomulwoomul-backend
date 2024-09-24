@@ -1,5 +1,6 @@
 package com.woomulwoomul.clientapi.service.question.response
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionEntity
 import com.woomulwoomul.core.domain.user.UserEntity
@@ -9,7 +10,7 @@ data class AnswerCreateResponse(
     val userNickname: String,
     val questionId: Long,
     val questionText: String,
-    val questionBackgroundColor: String,
+    val questionBackgroundColor: BackgroundColor,
     val categories: List<AnswerCreateCategoryResponse>
 ) {
     constructor(user: UserEntity, question: QuestionEntity, categories: Set<CategoryEntity>): this(

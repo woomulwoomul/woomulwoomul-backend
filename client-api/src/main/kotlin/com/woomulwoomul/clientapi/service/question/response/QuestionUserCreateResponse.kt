@@ -1,12 +1,13 @@
 package com.woomulwoomul.clientapi.service.question.response
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionEntity
 
 data class QuestionUserCreateResponse(
     val questionId: Long,
     val questionText: String,
-    val questionBackgroundColor: String,
+    val questionBackgroundColor: BackgroundColor,
     val categories: List<QuestionUserCreateCategoryResponse>
 ) {
 

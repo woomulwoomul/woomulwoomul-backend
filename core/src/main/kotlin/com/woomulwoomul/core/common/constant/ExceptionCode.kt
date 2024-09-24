@@ -30,7 +30,6 @@ enum class ExceptionCode(
     USER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "회원 이미지 URL은 1자 ~500자 이내로 입력해 주세요."),
     USER_INTRODUCTION_SIZE_INVALID(BAD_REQUEST, "회원 소개글은 0자 ~ 60자 이내로 입력해 주세요."),
     QUESTION_TEXT_SIZE_INVALID(BAD_REQUEST, "질문 내용은 1자 ~ 60자 이내로 입력해 주세요."),
-    QUESTION_BACKGROUND_COLOR_SIZE_INVALID(BAD_REQUEST, "질문 배경 색상은 6자만 가능합니다."),
     CATEGORY_IDS_SIZE_INVALID(BAD_REQUEST, "질문 카테고리는 1개 ~ 3개 이내로 입력해 주세요."),
     ANSWER_TEXT_SIZE_INVALID(BAD_REQUEST, "답변 내용은 0자 ~ 280자 이내로 입력해 주세요."),
     ANSWER_IMAGE_URL_SIZE_INVALID(BAD_REQUEST, "답변 이미지 URL은 0자 ~500자 이내로 입력해 주세요."),
@@ -44,6 +43,8 @@ enum class ExceptionCode(
     NICKNAME_PATTERN_INVALID(BAD_REQUEST, "닉네임은 한글/영어/숫자/언더바(_)만 사용할 수 있어요."),
     CATEGORY_STATUS_PATTERN_INVALID(BAD_REQUEST, "카테고리 상태는 'ACTIVE' 또는 'ADMIN_DEL'만 가능합니다."),
     QUESTION_STATUS_PATTERN_INVALID(BAD_REQUEST, "질문 상태는 'ACTIVE', 'USER_DEL', 또는 'ADMIN_DEL'만 가능합니다."),
+    QUESTION_BACKGROUND_COLOR_PATTERN_INVALID(BAD_REQUEST, "질문 배경 색상은 'FFACA8', 'FFA34F', 'FFC34F', " +
+            "'C5FFAA', '1AE7D8', '4FB5FF', '868BFF', 'C58AFF', 'FF9CE3', 'FFFFFF' 중 하나만 가능합니다."),
 
     // @Positive, @PositiveOrZero
 

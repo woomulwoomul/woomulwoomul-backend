@@ -1,5 +1,6 @@
 package com.woomulwoomul.clientapi.service.develop
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.TESTER_NOT_FOUND
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.config.auth.JwtProvider
@@ -35,7 +36,6 @@ class DevelopService(
 
     private val testerConst = "tester"
     private val imageUrlConst = "https://img.freepik.com/free-photo/copy-space-coffee-beans_23-2148937252.jpg?w=900&t=st=1721451022~exp=1721451622~hmac=bee6c7b6b1a6a02fb5e296f5ff380f7dc0e9c36e2b20ded8272e8cde418e1e40"
-    private val colorCodesConst = listOf("FF0000", "00FFFF", "0000FF", "00008B", "ADD8E6", "800080", "FFFF00", "00FF00", "FF00FF", "FFC0CB")
 
     /**
      * 서버명 조회
@@ -144,7 +144,7 @@ class DevelopService(
             QuestionEntity(
                 user = admin,
                 text = "질문${it}번 입니다.",
-                backgroundColor = colorCodesConst[Random.nextInt(colorCodesConst.size)],
+                backgroundColor = BackgroundColor.entries.get(Random.nextInt(BackgroundColor.entries.size)),
                 startDateTime = now.plusDays((it - 1).toLong()).withHour(0).withMinute(0).withSecond(0),
                 endDateTime = now.plusDays((it - 1).toLong()).withHour(23).withMinute(59).withSecond(59)
             )

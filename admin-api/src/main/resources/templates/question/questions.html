@@ -51,7 +51,11 @@
             <tr th:each="question : ${data}">
                 <td th:text="${question.id}">ID</td>
                 <td th:text="${question.text}">내용</td>
-                <td th:text="${question.backgroundColor}">배경 색상</td>
+                <td>
+                    <span th:text="${question.backgroundColor.getValue()}"
+                          th:style="'background-color: #000000; color: #' + ${question.backgroundColor.getValue()}"
+                          class="form-check-label"></span>
+                </td>
                 <td th:text="${#temporals.format(question.startDateTime, 'yyyy-MM-dd HH:mm:ss')}">시작일</td>
                 <td th:text="${#temporals.format(question.endDateTime, 'yyyy-MM-dd HH:mm:ss')}">종료일</td>
                 <td th:text="${question.status.text}">상태</td>

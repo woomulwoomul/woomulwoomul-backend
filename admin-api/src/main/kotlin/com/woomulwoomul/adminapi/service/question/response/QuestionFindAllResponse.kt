@@ -1,5 +1,6 @@
 package com.woomulwoomul.adminapi.service.question.response
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionEntity
@@ -8,7 +9,7 @@ import java.time.LocalDateTime
 data class QuestionFindAllResponse(
     val id: Long,
     val text: String,
-    val backgroundColor: String,
+    val backgroundColor: BackgroundColor,
     val userNickname: String,
     val categoryNames: List<String>,
     val startDateTime: LocalDateTime?,

@@ -4,6 +4,7 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceR
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
@@ -17,7 +18,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.groups.Tuple.tuple
 import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -37,9 +37,29 @@ class QuestionServiceTest(
     @Autowired private val userRepository: UserRepository,
 ) {
 
-    @DisplayName("전체 카테고리 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAllCategories_thenReturn() {
+    fun `질문 생성 폼 조회가 정상 작동한다`() {
+        // given
+        val adminRole = createAndSaveUserRole(Role.ADMIN)
+        val categories = listOf(
+            createAndSaveCategory(adminRole.user, "카테고리1"),
+            createAndSaveCategory(adminRole.user, "카테고리2"),
+            createAndSaveCategory(adminRole.user, "카테고리3"),
+            createAndSaveCategory(adminRole.user, "카테고리4"),
+            createAndSaveCategory(adminRole.user, "카테고리5")
+        )
+
+        // when
+        val result = questionService.getCreateQuestionForm()
+
+        // then
+        assertThat(result)
+            .extracting("availableCategoryNames", "availableBackgroundColor")
+            .containsExactly(categories.map(CategoryEntity::name), BackgroundColor.entries)
+    }
+
+    @Test
+    fun `전체 카테고리 조회가 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val categories = listOf(
@@ -72,9 +92,8 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("카테고리 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindCategory_thenReturn() {
+    fun `카테고리 조회가 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -89,9 +108,8 @@ class QuestionServiceTest(
                 result.updateDateTime)
     }
 
-    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 조회를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingCategoryId_whenFindCategory_thenThrow() {
+    fun `존재하지 않는 카테고리 ID로 카테고리 조회를 하면 예외가 발생한다`() {
         // given
         val categoryId = Long.MAX_VALUE
 
@@ -102,9 +120,8 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
-    @DisplayName("카테고리 생성이 정상 작동한다")
     @Test
-    fun givenValid_whenCreateCategory_thenReturn() {
+    fun `카테고리 생성이 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val request = createValidCategoryCreateServiceRequest("카테고리")
@@ -116,9 +133,8 @@ class QuestionServiceTest(
         assertThat(categoryRepository.existsById(categoryId)).isTrue()
     }
 
-    @DisplayName("1자 미만인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
     @Test
-    fun givenLesserThan1SizeCategoryName_whenCreateCategory_thenThrow() {
+    fun `1자 미만인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val request = createValidCategoryCreateServiceRequest("")
@@ -131,9 +147,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_NAME_SIZE_INVALID.message)
     }
 
-    @DisplayName("10자 초과인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
     @Test
-    fun givenGreaterThan10SizeCategoryName_whenCreateCategory_thenThrow() {
+    fun `10자 초과인 카테고리명으로 카테고리 생성을 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val request = createValidCategoryCreateServiceRequest("카".repeat(11))
@@ -146,9 +161,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_NAME_SIZE_INVALID.message)
     }
 
-    @DisplayName("존재하지 않은 관리자로 카테고리 생성을 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingAdmin_whenCreateCategory_thenThrow() {
+    fun `존재하지 않은 관리자로 카테고리 생성을 하면 예외가 발생한다`() {
         // given
         val adminId = 1L
         val request = createValidCategoryCreateServiceRequest("카테고리")
@@ -160,9 +174,8 @@ class QuestionServiceTest(
             .isEqualTo(ADMIN_NOT_FOUND)
     }
 
-    @DisplayName("존재하는 카테고리명으로 카테고리 생성을 하면 예외가 발생한다")
     @Test
-    fun givenExistingCategory_whenCreateCategory_thenThrow() {
+    fun `존재하는 카테고리명으로 카테고리 생성을 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -175,9 +188,8 @@ class QuestionServiceTest(
             .isEqualTo(EXISTING_CATEGORY)
     }
 
-    @DisplayName("카테고리 업데이트가 정상 작동한다")
     @Test
-    fun givenValid_whenUpdateCategory_thenReturn() {
+    fun `카테고리 업데이트가 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -192,9 +204,8 @@ class QuestionServiceTest(
             .isEqualTo(request.categoryName)
     }
 
-    @DisplayName("1자 미만인 카테고리명으로 카테고리 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenLesserThan1SizeCategoryName_whenUpdateCategory_thenThrow() {
+    fun `1자 미만인 카테고리명으로 카테고리 업데이트를 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -208,9 +219,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_NAME_SIZE_INVALID.message)
     }
 
-    @DisplayName("10자 초과인 카테고리명으로 카테고리 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenGreaterThan10SizeCategoryName_whenUpdateCategory_thenThrow() {
+    fun `10자 초과인 카테고리명으로 카테고리 업데이트를 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -224,9 +234,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_NAME_SIZE_INVALID.message)
     }
 
-    @DisplayName("잘못된 상태 포맷으로 카테고리 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenPatternStatus_whenUpdateCategory_thenReturn() {
+    fun `잘못된 상태 포맷으로 카테고리 업데이트를 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -240,9 +249,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_STATUS_PATTERN_INVALID.message)
     }
 
-    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingCategoryId_whenUpdateCategory_thenThrow() {
+    fun `존재하지 않는 카테고리 ID로 카테고리 업데이트를 하면 예외가 발생한다`() {
         // given
         val categoryId = Long.MAX_VALUE
         val request = createValidCategoryUpdateServiceRequest("카테고리")
@@ -254,9 +262,8 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
-    @DisplayName("카테고리 삭제가 정상 작동한다")
     @Test
-    fun givenValid_whenDeleteCategory_thenReturn() {
+    fun `카테고리 삭제가 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val category = createAndSaveCategory(adminRole.user, "카테고리")
@@ -270,9 +277,8 @@ class QuestionServiceTest(
             .isEqualTo(ADMIN_DEL)
     }
 
-    @DisplayName("존재하지 않는 카테고리 ID로 카테고리 삭제를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingCategoryId_whenDeleteCategory_thenThrow() {
+    fun `존재하지 않는 카테고리 ID로 카테고리 삭제를 하면 예외가 발생한다`() {
         // given
         val categoryId = Long.MAX_VALUE
 
@@ -283,9 +289,8 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
-    @DisplayName("전체 질문 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAllQuestions_thenReturn() {
+    fun `전체 질문 조회가 정상 작동한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(Role.ADMIN)
@@ -293,7 +298,7 @@ class QuestionServiceTest(
             createAndSaveQuestionCategory(
                 adminRole.user,
                 "질문1",
-                "000001",
+                BackgroundColor.entries[0],
                 now.withHour(0).withMinute(0).withSecond(0),
                 now.withHour(23).withMinute(59).withSecond(59),
                 "카테고리1"
@@ -301,7 +306,7 @@ class QuestionServiceTest(
             createAndSaveQuestionCategory(
                 adminRole.user,
                 "질문2",
-                "000002",
+                BackgroundColor.entries[1],
                 null,
                 null,
                 "카테고리2"
@@ -309,7 +314,7 @@ class QuestionServiceTest(
             createAndSaveQuestionCategory(
                 adminRole.user,
                 "질문3",
-                "000003",
+                BackgroundColor.entries[2],
                 now.withHour(0).withMinute(0).withSecond(0),
                 now.withHour(23).withMinute(59).withSecond(59),
                 "카테고리3"
@@ -342,16 +347,15 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("질문 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindQuestion_thenReturn() {
+    fun `질문 조회가 정상 작동한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
             "질문",
-            "000000",
+            BackgroundColor.entries[0],
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59),
             "카테고리1"
@@ -369,18 +373,18 @@ class QuestionServiceTest(
         // then
         assertThat(result)
             .extracting("id", "text", "backgroundColor", "userNickname", "categoryNames", "startDateTime",
-                "endDateTime", "status", "createDateTime", "updateDateTime", "availableCategoryNames")
+                "endDateTime", "status", "createDateTime", "updateDateTime", "availableCategoryNames",
+                "availableBackgroundColors", "availableStatuses")
             .containsExactly(questionCategory.question.id, questionCategory.question.text,
                 questionCategory.question.backgroundColor, questionCategory.question.user.nickname,
                 listOf(questionCategory.category.name), questionCategory.question.startDateTime,
                 questionCategory.question.endDateTime, questionCategory.question.status,
                 questionCategory.question.createDateTime, questionCategory.question.updateDateTime,
-                categories.map(CategoryEntity::name))
+                categories.map(CategoryEntity::name), BackgroundColor.entries, ServiceStatus.entries)
     }
 
-    @DisplayName("존재하지 않는 질문 ID로 질문 조회를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingQuestionId_whenFindQuestion_thenThrow() {
+    fun `존재하지 않는 질문 ID로 질문 조회를 하면 예외가 발생한다`() {
         // given
         val questionId = Long.MAX_VALUE
 
@@ -391,9 +395,8 @@ class QuestionServiceTest(
             .isEqualTo(QUESTION_NOT_FOUND)
     }
 
-    @DisplayName("질문 생성이 정상 작동한다")
     @Test
-    fun givenValid_whenCreateQuestion_thenReturn() {
+    fun `질문 생성이 정상 작동한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val categories = listOf(
@@ -414,7 +417,7 @@ class QuestionServiceTest(
             {
                 assertThat(question)
                     .extracting("text", "backgroundColor", "startDateTime", "endDateTime")
-                    .containsExactly(request.questionText, request.questionBackgroundColor,
+                    .containsExactly(request.questionText, BackgroundColor.of(request.questionBackgroundColor),
                         request.questionStartDateTime, request.questionEndDateTime)
             }, {
                 assertThat(questionCategories)
@@ -425,9 +428,88 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("존재하지 않은 회원 ID로 질문 생성을 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingUserId_whenCreateQuestion_thenReturn() {
+    fun `질문 내용 1자 미만으로 회원 질문 생성을 하면 예외가 발생한다`() {
+        // given
+        val userId = Long.MAX_VALUE
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리"))
+        request.questionText = ""
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(userId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
+    }
+
+    @Test
+    fun `질문 내용 60자 초과로 회원 질문 생성을 하면 예외가 발생한다`() {
+        // given
+        val userId = Long.MAX_VALUE
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리"))
+        request.questionText = "가".repeat(61)
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(userId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_TEXT_SIZE_INVALID.message)
+    }
+
+    @Test
+    fun `잘못된 포맷인 질문 배경 색상으로 회원 질문 생성을 하면 예외가 발생한다`() {
+        // given
+        val userId = Long.MAX_VALUE
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리"))
+        request.questionBackgroundColor = "XXXXXX"
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(userId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(QUESTION_BACKGROUND_COLOR_PATTERN_INVALID.message)
+    }
+
+    @Test
+    fun `1개 미만의 카테고리로 회원 질문 생성을 하면 예외가 발생한다`() {
+        // given
+        val userId = Long.MAX_VALUE
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리"))
+        request.categoryNames = emptyList()
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(userId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAMES_SIZE_INVALID.message)
+    }
+
+    @Test
+    fun `3개 초과의 카테고리로 회원 질문 생성을 하면 예외가 발생한다`() {
+        // given
+        val userId = Long.MAX_VALUE
+
+        val request = createValidQuestionCreateServiceRequest(listOf("카테고리"))
+        request.categoryNames = listOf("카테고리1", "카테고리2", "카테고리3", "카테고리4")
+
+        // when & then
+        assertThatThrownBy { questionService.createQuestion(userId, request) }
+            .isInstanceOf(ConstraintViolationException::class.java)
+            .message()
+            .asString()
+            .contains(CATEGORY_NAMES_SIZE_INVALID.message)
+    }
+
+    @Test
+    fun `존재하지 않은 회원 ID로 질문 생성을 하면 예외가 발생한다`() {
         // given
         val userId = Long.MAX_VALUE
 
@@ -440,9 +522,8 @@ class QuestionServiceTest(
             .isEqualTo(USER_NOT_FOUND)
     }
 
-    @DisplayName("존재하지 않은 카테고리명으로 질문 생성을 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingCategoryName_whenCreateQuestion_thenReturn() {
+    fun `존재하지 않은 카테고리명으로 질문 생성을 하면 예외가 발생한다`() {
         // given
         val adminRole = createAndSaveUserRole(Role.ADMIN)
 
@@ -455,16 +536,15 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
-    @DisplayName("질문 업데이트가 정상 작동한다")
     @Test
-    fun givenValid_whenUpdateQuestion_thenReturn() {
+    fun `질문 업데이트가 정상 작동한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
             "질문",
-            "000000",
+            BackgroundColor.entries[0],
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59),
             "카테고리1"
@@ -487,7 +567,7 @@ class QuestionServiceTest(
             {
                 assertThat(question)
                     .extracting("text", "backgroundColor", "startDateTime", "endDateTime", "status")
-                    .containsExactly(request.questionText, request.questionBackgroundColor,
+                    .containsExactly(request.questionText, BackgroundColor.of(request.questionBackgroundColor),
                         request.questionStartDateTime, request.questionEndDateTime,
                         ServiceStatus.valueOf(request.questionStatus))
             }, {
@@ -499,9 +579,8 @@ class QuestionServiceTest(
         )
     }
 
-    @DisplayName("내용이 1자 미만일 경우 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenLesserThan1SizeQuestionText_whenUpdateQuestion_thenThrow() {
+    fun `내용이 1자 미만일 경우 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = 1L
         val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
@@ -515,9 +594,8 @@ class QuestionServiceTest(
             .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
-    @DisplayName("내용이 60자 초과일 경우 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenGreaterThan60SizeQuestionText_whenUpdateQuestion_thenThrow() {
+    fun `내용이 60자 초과일 경우 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = 1L
         val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
@@ -531,41 +609,23 @@ class QuestionServiceTest(
             .contains(QUESTION_TEXT_SIZE_INVALID.message)
     }
 
-    @DisplayName("배경 색상이 6자 미만일 경우 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenLesserThan6SizeQuestionBackgroundColor_whenUpdateQuestion_thenThrow() {
+    fun `잘못된 포맷인 배경 색상으로 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = 1L
         val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
-        request.questionBackgroundColor = "0F0F0"
+        request.questionBackgroundColor = "XXXXXX"
 
         // when & then
         assertThatThrownBy { questionService.updateQuestion(questionId, request) }
             .isInstanceOf(ConstraintViolationException::class.java)
             .message()
             .asString()
-            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
+            .contains(QUESTION_BACKGROUND_COLOR_PATTERN_INVALID.message)
     }
 
-    @DisplayName("배경 색상이 6자 초과일 경우 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenGreaterThan6SizeQuestionBackgroundColor_whenUpdateQuestion_thenThrow() {
-        // given
-        val questionId = 1L
-        val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
-        request.questionBackgroundColor = "0F0F0FF"
-
-        // when & then
-        assertThatThrownBy { questionService.updateQuestion(questionId, request) }
-            .isInstanceOf(ConstraintViolationException::class.java)
-            .message()
-            .asString()
-            .contains(QUESTION_BACKGROUND_COLOR_SIZE_INVALID.message)
-    }
-
-    @DisplayName("카테고리가 1개 미만일 경우 질문 업데이트를 하면 예외가 발생한다")
-    @Test
-    fun givenLesserThan1SizeCategoryNames_whenUpdateQuestion_thenThrow() {
+    fun `카테고리가 1개 미만일 경우 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = 1L
         val request = createValidQuestionUpdateServiceRequest(emptyList())
@@ -578,9 +638,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_NAMES_SIZE_INVALID.message)
     }
 
-    @DisplayName("카테고리가 3개 초과일 경우 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenGreaterThan3SizeCategoryNames_whenUpdateQuestion_thenThrow() {
+    fun `카테고리가 3개 초과일 경우 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = 1L
         val request = createValidQuestionUpdateServiceRequest(listOf("카테고리1", "카테고리2", "카테고리3", "카테고리4"))
@@ -593,9 +652,8 @@ class QuestionServiceTest(
             .contains(CATEGORY_NAMES_SIZE_INVALID.message)
     }
 
-    @DisplayName("잘못된 포맷인 질문 상태로 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenPatternQuestionStatus_whenUpdateQuestion_thenThrow() {
+    fun `잘못된 포맷인 질문 상태로 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = 1L
         val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
@@ -609,9 +667,8 @@ class QuestionServiceTest(
             .contains(QUESTION_STATUS_PATTERN_INVALID.message)
     }
 
-    @DisplayName("존재하지 않은 질문 ID로 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingQuestionId_whenUpdateQuestion_thenThrow() {
+    fun `존재하지 않은 질문 ID로 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val questionId = Long.MAX_VALUE
         val request = createValidQuestionUpdateServiceRequest(listOf("카테고리"))
@@ -623,16 +680,15 @@ class QuestionServiceTest(
             .isEqualTo(QUESTION_NOT_FOUND)
     }
 
-    @DisplayName("존재하지 않은 카테고리 ID로 질문 업데이트를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingCategoryId_whenUpdateQuestion_thenThrow() {
+    fun `존재하지 않은 카테고리 ID로 질문 업데이트를 하면 예외가 발생한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
             "질문",
-            "000000",
+            BackgroundColor.entries[0],
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59),
             "카테고리"
@@ -647,16 +703,15 @@ class QuestionServiceTest(
             .isEqualTo(CATEGORY_NOT_FOUND)
     }
 
-    @DisplayName("질문 삭제가 정상 동작한다")
     @Test
-    fun givenValid_whenDeleteQuestion_thenReturn() {
+    fun `질문 삭제가 정상 동작한다`() {
         // given
         val now = LocalDateTime.now()
         val adminRole = createAndSaveUserRole(Role.ADMIN)
         val questionCategory = createAndSaveQuestionCategory(
             adminRole.user,
             "질문",
-            "000000",
+            BackgroundColor.entries[0],
             now.withHour(0).withMinute(0).withSecond(0),
             now.withHour(23).withMinute(59).withSecond(59),
             "카테고리"
@@ -671,9 +726,8 @@ class QuestionServiceTest(
             .isEqualTo(ADMIN_DEL)
     }
 
-    @DisplayName("존재하지 않은 질문 ID로 질문 삭제를 하면 예외가 발생한다")
     @Test
-    fun givenNonExistingQuestionId_whenDeleteQuestion_thenThrow() {
+    fun `존재하지 않은 질문 ID로 질문 삭제를 하면 예외가 발생한다`() {
         // given
         val questionId = Long.MAX_VALUE
 
@@ -688,7 +742,7 @@ class QuestionServiceTest(
             : QuestionCreateServiceRequest {
         return QuestionCreateServiceRequest(
             "질문",
-            "0F0F0F",
+            "FFACA8",
             categoryNames,
             null,
             null
@@ -698,7 +752,7 @@ class QuestionServiceTest(
     private fun createValidQuestionUpdateServiceRequest(categoryNames: List<String>): QuestionUpdateServiceRequest {
         return QuestionUpdateServiceRequest(
             "질문 업데이트",
-            "XXXXXX",
+            "FFACA8",
             categoryNames,
             null,
             null,
@@ -726,7 +780,7 @@ class QuestionServiceTest(
     private fun createAndSaveQuestionCategory(
         user: UserEntity,
         text: String = "질문",
-        backgroundColor: String = "0F0F0F",
+        backgroundColor: BackgroundColor = BackgroundColor.WHITE,
         startDateTime: LocalDateTime? = null,
         endDateTime: LocalDateTime? = null,
         categoryName: String = "카테고리"

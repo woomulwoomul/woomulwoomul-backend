@@ -4,7 +4,7 @@ import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import java.time.LocalDateTime
 
-data class QuestionFindAllCategoryResponse (
+data class CategoryFindAllResponse (
     val id: Long,
     val name: String,
     val status: ServiceStatus,

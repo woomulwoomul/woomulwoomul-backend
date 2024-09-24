@@ -1,5 +1,6 @@
 package com.woomulwoomul.core.domain.question
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.DetailServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
@@ -10,13 +11,12 @@ import org.junit.jupiter.api.Test
 
 class QuestionAnswerEntityTest {
 
-    @DisplayName("회원이 질문 답변 삭제가 정상 작동한다")
     @Test
-    fun givenValid_whenDeleteByUser_thenReturn() {
+    fun `회원이 질문 답변 삭제가 정상 작동한다`() {
         // given
         val users = listOf(createUser(1L, "tester1", "tester1@woomulwoomul.com"),
             createUser(2L, "tester2", "tester2@woomulwoomul.com"))
-        val question = createQuestion(1L, users[0], "질문1입니다.", "0F0F0F")
+        val question = createQuestion(1L, users[0], "질문1입니다.", BackgroundColor.WHITE)
         val answer = createAnswer(1L, "답변1입니다.", "")
         val questionAnswer = createQuestionAnswer(1L, users[1], users[0], question, answer)
 
@@ -48,7 +48,7 @@ class QuestionAnswerEntityTest {
         return UserEntity(id, nickname, email, "", "")
     }
 
-    private fun createQuestion(id: Long, user: UserEntity, text: String, backgroundColor: String): QuestionEntity {
+    private fun createQuestion(id: Long, user: UserEntity, text: String, backgroundColor: BackgroundColor): QuestionEntity {
         return QuestionEntity(id, user, text, backgroundColor)
     }
 

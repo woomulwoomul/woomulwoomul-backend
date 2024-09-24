@@ -1,5 +1,6 @@
 package com.woomulwoomul.adminapi.service.question.response
 
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionEntity
@@ -9,7 +10,7 @@ import java.time.LocalDateTime
 data class QuestionFindResponse(
     val id: Long,
     val text: String,
-    val backgroundColor: String,
+    val backgroundColor: BackgroundColor,
     val userNickname: String,
     val categoryNames: List<String> = listOf(),
     val startDateTime: LocalDateTime?,
@@ -19,7 +20,8 @@ data class QuestionFindResponse(
     val updateDateTime: LocalDateTime,
 
     val availableCategoryNames: List<String>,
-    val availableStatus: List<ServiceStatus> = ServiceStatus.entries
+    val availableBackgroundColors: List<BackgroundColor> = BackgroundColor.entries,
+    val availableStatuses: List<ServiceStatus> = ServiceStatus.entries
 ) {
 
     constructor(

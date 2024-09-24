@@ -4,6 +4,7 @@ import com.woomulwoomul.clientapi.controller.RestDocsSupport
 import com.woomulwoomul.clientapi.controller.question.request.QuestionUserCreateRequest
 import com.woomulwoomul.clientapi.service.question.QuestionService
 import com.woomulwoomul.clientapi.service.question.response.*
+import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import org.junit.jupiter.api.DisplayName
@@ -40,7 +41,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .thenReturn(QuestionFindResponse(
                 1L,
                 "질문1",
-                "0F0F0F",
+                BackgroundColor.WHITE,
                 listOf(QuestionFindCategoryResponse(1L, "카테고리1"),
                     QuestionFindCategoryResponse(2L, "카테고리2")),
                 1L
@@ -148,7 +149,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .thenReturn(QuestionUserCreateResponse(
                 1L,
                 request.questionText!!,
-                request.questionBackgroundColor!!,
+                BackgroundColor.WHITE,
                 request.categoryIds!!.map { QuestionUserCreateCategoryResponse(it, "카테고리".plus(it)) }.toList()
             ))
 

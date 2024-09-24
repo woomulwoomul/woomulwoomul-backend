@@ -37,13 +37,21 @@
         <tr>
             <td>배경 색상</td>
             <td>
-                <input type="text"  th:name="questionBackgroundColor"/>
+                <label th:each="availableBackgroundColor : ${response.availableBackgroundColors}"
+                       class="form-check form-check-inline">
+                    <input type="radio" th:name="questionBackgroundColor"
+                           th:value="${availableBackgroundColor.getValue()}"
+                           class="form-check-input" />
+                    <span th:text="${availableBackgroundColor.getValue()}"
+                          th:style="'background-color: #000000; color: #' + ${availableBackgroundColor.getValue()}"
+                          class="form-check-label"></span>
+                </label>
             </td>
         </tr>
         <tr>
             <td>카테고리</td>
             <td>
-                <label th:each="availableCategoryName : ${response}">
+                <label th:each="availableCategoryName : ${response.availableCategoryNames}">
                     <input type="checkbox" th:name="categoryNames" th:value="${availableCategoryName}" />
                     <span th:text="${availableCategoryName}"></span>
                 </label>
