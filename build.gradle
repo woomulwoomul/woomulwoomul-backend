@@ -10,7 +10,8 @@ plugins {
 	id 'org.jetbrains.kotlin.kapt' version '1.9.21'
 }
 
-java.sourceCompatibility = JavaVersion.VERSION_21
+kotlin.jvmToolchain {21}
+
 bootJar.enabled = false
 
 allprojects {
@@ -103,7 +104,7 @@ subprojects {
 					value = 'COVEREDRATIO'
 					minimum = 0.1
 				}
-				excludes = [] + excludePattern
+				excludes = [] + excludePattern as List<String>
 			}
 		}
 	}
@@ -121,6 +122,12 @@ project(":client-api") {
 }
 
 project(":admin-api") {
+	dependencies {
+		implementation(project(":core"))
+	}
+}
+
+project(":batch") {
 	dependencies {
 		implementation(project(":core"))
 	}

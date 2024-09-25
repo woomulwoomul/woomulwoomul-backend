@@ -6,7 +6,8 @@ on:
     paths-ignore:
       - 'docs/**'
       - 'README.md'
-      - 'admin-server'
+      - 'admin-api'
+      - 'batch'
 
 jobs:
   build:
