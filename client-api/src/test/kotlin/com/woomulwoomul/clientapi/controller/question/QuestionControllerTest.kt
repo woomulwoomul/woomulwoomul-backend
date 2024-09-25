@@ -41,7 +41,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .thenReturn(QuestionFindResponse(
                 1L,
                 "질문1",
-                BackgroundColor.WHITE,
+                BackgroundColor.WHITE.value,
                 listOf(QuestionFindCategoryResponse(1L, "카테고리1"),
                     QuestionFindCategoryResponse(2L, "카테고리2")),
                 1L
@@ -149,7 +149,7 @@ class QuestionControllerTest : RestDocsSupport() {
             .thenReturn(QuestionUserCreateResponse(
                 1L,
                 request.questionText!!,
-                BackgroundColor.WHITE,
+                BackgroundColor.WHITE.value,
                 request.categoryIds!!.map { QuestionUserCreateCategoryResponse(it, "카테고리".plus(it)) }.toList()
             ))
 

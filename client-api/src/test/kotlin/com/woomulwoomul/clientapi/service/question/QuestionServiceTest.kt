@@ -56,7 +56,7 @@ class QuestionServiceTest(
                 assertThat(result)
                     .extracting("questionId", "questionText", "backgroundColor")
                     .containsExactly(questionCategory.question.id, questionCategory.question.text,
-                        questionCategory.question.backgroundColor)
+                        questionCategory.question.backgroundColor.value)
             },
             {
                 assertThat(result.categories)
@@ -89,7 +89,7 @@ class QuestionServiceTest(
                 assertThat(result)
                     .extracting("questionId", "questionText", "backgroundColor")
                     .containsExactly(questionCategory.question.id, questionCategory.question.text,
-                            questionCategory.question.backgroundColor)
+                            questionCategory.question.backgroundColor.value)
             },
             {
                 assertThat(result.categories)
@@ -115,7 +115,7 @@ class QuestionServiceTest(
                 assertThat(result)
                     .extracting("questionId", "questionText", "backgroundColor")
                     .containsExactly(questionCategory.question.id, questionCategory.question.text,
-                        questionCategory.question.backgroundColor)
+                        questionCategory.question.backgroundColor.value)
             },
             {
                 assertThat(result.categories)
@@ -197,7 +197,7 @@ class QuestionServiceTest(
             {
                 assertThat(response)
                     .extracting("questionText", "questionBackgroundColor")
-                    .containsExactly(request.questionText, BackgroundColor.of(request.questionBackgroundColor))
+                    .containsExactly(request.questionText, request.questionBackgroundColor)
             },
             {
                 assertThat(response.categories)

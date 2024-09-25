@@ -7,14 +7,14 @@ import com.woomulwoomul.core.domain.question.QuestionEntity
 data class QuestionFindResponse(
     val questionId: Long,
     val questionText: String,
-    val backgroundColor: BackgroundColor,
+    val backgroundColor: String,
     val categories: List<QuestionFindCategoryResponse>,
     val userId: Long,
 ) {
     constructor(question: QuestionEntity, categories: Set<CategoryEntity>): this(
         question.id ?: 0,
         question.text,
-        question.backgroundColor,
+        question.backgroundColor.value,
         categories.ifEmpty { listOf() }
             .map { QuestionFindCategoryResponse(it) },
         question.user.id ?: 0

@@ -80,7 +80,7 @@ class AnswerServiceTest(
                     .containsExactly(
                         tuple(answers[1].id!!, answers[1].text, answers[1].imageUrl, answers[1].updateDateTime, 1L,
                             listOf(questionAnswers[1].receiver.imageUrl), questions[1].id!!, questions[1].text,
-                            questions[1].backgroundColor,
+                            questions[1].backgroundColor.value,
                             listOf(AnswerFindAllCategoryResponse(categories[0].id!!, categories[0].name),
                                 AnswerFindAllCategoryResponse(categories[1].id!!, categories[1].name),
                                 AnswerFindAllCategoryResponse(categories[2].id!!, categories[2].name))
@@ -172,7 +172,7 @@ class AnswerServiceTest(
                     .extracting("answerId", "answerText", "answerImageUrl", "answerUpdateDateTime", "answeredUserCnt",
                         "answeredUserImageUrls", "questionId", "questionText", "questionBackgroundColor")
                     .containsExactly(answer.id, answer.text, answer.imageUrl, answer.updateDateTime, 1L,
-                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor)
+                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor.value)
             },
             {
                 assertThat(response.categories)
@@ -231,7 +231,7 @@ class AnswerServiceTest(
                     )
                     .containsExactly(
                         answer.id, answer.text, answer.imageUrl, answer.updateDateTime, 1L,
-                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor
+                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor.value
                     )
             },
             {
@@ -285,7 +285,7 @@ class AnswerServiceTest(
             {
                 assertThat(response)
                     .extracting("userId", "userNickname", "questionId", "questionText", "questionBackgroundColor")
-                    .containsExactly(user.id, user.nickname, question.id, question.text, question.backgroundColor)
+                    .containsExactly(user.id, user.nickname, question.id, question.text, question.backgroundColor.value)
             },
             {
                 assertThat(response.categories)
@@ -323,7 +323,7 @@ class AnswerServiceTest(
             {
                 assertThat(response)
                     .extracting("userId", "userNickname", "questionId", "questionText", "questionBackgroundColor")
-                    .containsExactly(user.id, user.nickname, question.id, question.text, question.backgroundColor)
+                    .containsExactly(user.id, user.nickname, question.id, question.text, question.backgroundColor.value)
             },
             {
                 assertThat(response.categories)
@@ -362,7 +362,7 @@ class AnswerServiceTest(
             {
                 assertThat(response)
                     .extracting("userId", "userNickname", "questionId", "questionText", "questionBackgroundColor")
-                    .containsExactly(user1.id, user1.nickname, question.id, question.text, question.backgroundColor)
+                    .containsExactly(user1.id, user1.nickname, question.id, question.text, question.backgroundColor.value)
             },
             {
                 assertThat(response.categories)
@@ -531,7 +531,7 @@ class AnswerServiceTest(
                     .extracting("answerId", "answerText", "answerImageUrl", "answerUpdateDateTime", "answeredUserCnt",
                         "answeredUserImageUrls", "questionId", "questionText", "questionBackgroundColor")
                     .containsExactly(answer.id, answer.text, answer.imageUrl, answer.updateDateTime, 1L,
-                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor)
+                        listOf(user.imageUrl), question.id, question.text, question.backgroundColor.value)
             },
             {
                 assertThat(response.categories)

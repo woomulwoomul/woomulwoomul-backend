@@ -10,7 +10,7 @@ data class AnswerCreateResponse(
     val userNickname: String,
     val questionId: Long,
     val questionText: String,
-    val questionBackgroundColor: BackgroundColor,
+    val questionBackgroundColor: String,
     val categories: List<AnswerCreateCategoryResponse>
 ) {
     constructor(user: UserEntity, question: QuestionEntity, categories: Set<CategoryEntity>): this(
@@ -18,7 +18,7 @@ data class AnswerCreateResponse(
         user.nickname,
         question.id ?: 0,
         question.text,
-        question.backgroundColor,
+        question.backgroundColor.value,
         categories.ifEmpty { listOf() }
             .map { AnswerCreateCategoryResponse(it) }
     )

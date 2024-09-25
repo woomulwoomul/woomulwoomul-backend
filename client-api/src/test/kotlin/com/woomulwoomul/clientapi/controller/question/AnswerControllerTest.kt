@@ -50,7 +50,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
-                        1L, "질문", BackgroundColor.entries[0],
+                        1L, "질문", BackgroundColor.entries[0].value,
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3"))),
@@ -59,7 +59,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
-                        2L, "질문", BackgroundColor.entries[1],
+                        2L, "질문", BackgroundColor.entries[1].value,
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3"))),
@@ -68,7 +68,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         listOf("https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg",
                             "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
-                        3L, "질문", BackgroundColor.entries[2],
+                        3L, "질문", BackgroundColor.entries[2].value,
                         listOf(AnswerFindAllCategoryResponse(1L, "카테고리1"),
                             AnswerFindAllCategoryResponse(2L, "카테고리2"),
                             AnswerFindAllCategoryResponse(3L, "카테고리3")))
@@ -149,7 +149,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                     1L,
                     "질문",
-                    BackgroundColor.WHITE,
+                    BackgroundColor.WHITE.value,
                     listOf(AnswerFindCategoryResponse(1L, "카테고리1"),
                         AnswerFindCategoryResponse(2L, "카테고리2"),
                         AnswerFindCategoryResponse(3L, "카테고리3")))
@@ -220,7 +220,7 @@ class AnswerControllerTest : RestDocsSupport() {
                         "https://t1.kakaocdn.net/account_images/default_profile.jpeg"),
                     1L,
                     "질문",
-                    BackgroundColor.WHITE,
+                    BackgroundColor.WHITE.value,
                     listOf(AnswerFindCategoryResponse(1L, "카테고리1"),
                         AnswerFindCategoryResponse(2L, "카테고리2"),
                         AnswerFindCategoryResponse(3L, "카테고리3")))
@@ -286,7 +286,7 @@ class AnswerControllerTest : RestDocsSupport() {
                     "tester",
                     1L,
                     "질문",
-                    BackgroundColor.WHITE,
+                    BackgroundColor.WHITE.value,
                     listOf(
                         AnswerCreateCategoryResponse(1L, "카테고리1"),
                         AnswerCreateCategoryResponse(2L, "카테고리2"),
@@ -364,7 +364,7 @@ class AnswerControllerTest : RestDocsSupport() {
                     ),
                     1L,
                     "질문",
-                    BackgroundColor.WHITE,
+                    BackgroundColor.WHITE.value,
                     listOf(
                         AnswerUpdateCategoryResponse(
                             1L,

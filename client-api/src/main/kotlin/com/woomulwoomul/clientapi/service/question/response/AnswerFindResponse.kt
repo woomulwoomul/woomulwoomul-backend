@@ -17,7 +17,7 @@ data class AnswerFindResponse(
 
     val questionId: Long,
     val questionText: String,
-    val questionBackgroundColor: BackgroundColor,
+    val questionBackgroundColor: String,
 
     val categories: List<AnswerFindCategoryResponse>,
 ) {
@@ -35,7 +35,7 @@ data class AnswerFindResponse(
         answeredUserImageUrls,
         questionAnswer.question.id!!,
         questionAnswer.question.text,
-        questionAnswer.question.backgroundColor,
+        questionAnswer.question.backgroundColor.value,
         categories.map { AnswerFindCategoryResponse(it) }
     )
 }

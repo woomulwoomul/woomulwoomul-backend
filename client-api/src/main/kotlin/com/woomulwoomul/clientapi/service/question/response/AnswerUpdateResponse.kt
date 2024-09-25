@@ -17,7 +17,7 @@ data class AnswerUpdateResponse(
 
     val questionId: Long,
     val questionText: String,
-    val questionBackgroundColor: BackgroundColor,
+    val questionBackgroundColor: String,
 
     val categories: List<AnswerUpdateCategoryResponse>,
 ) {
@@ -36,7 +36,7 @@ data class AnswerUpdateResponse(
         answeredUserImageUrls,
         questionAnswer.question.id!!,
         questionAnswer.question.text,
-        questionAnswer.question.backgroundColor,
+        questionAnswer.question.backgroundColor.value,
         categories.map { AnswerUpdateCategoryResponse(it) }
     )
 }
