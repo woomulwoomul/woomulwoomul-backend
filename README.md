@@ -11,13 +11,13 @@
 ![Dev-Client-API-Status](https://uptime.nogamsung.com/api/badge/3/status?label=Dev%20Client%20API%20Status&style=flat)
 ![Dev-Admin-API-Status](https://uptime.nogamsung.com/api/badge/5/status?label=Dev%20Admin%20API%20Status&style=flat)
 
-![Prd-Client-API-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Dmain%26token%3D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&style=flat&label=Prd-Client-API-CI&logo=GitHub-Actions)
-![Prd-Admin-API-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Dmain%26token%3D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&style=flat&label=Prd-Admin-API-CI&logo=GitHub-Actions)
-![Prd-Core-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Dmain%26token%3D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&style=flat&label=Prd-Core-CI&logo=GitHub-Actions)
+![Prd-Client-API-CI](https://github.com/woomulwoomul/woomulwoomul-backend/actions/workflows/prd-client-ci.yml/badge.svg)
+![Prd-Admin-API-CI](https://github.com/woomulwoomul/woomulwoomul-backend/actions/workflows/prd-admin-ci.yml/badge.svg)
+![Prd-Batch-API-CI](https://github.com/woomulwoomul/woomulwoomul-backend/actions/workflows/prd-batch-ci.yml/badge.svg)
 
-![Dev-Client-API-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Ddev%26token%3D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&style=flat&label=Dev-Client-API-CI&logo=GitHub-Actions)
-![Dev-Admin-API-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Ddev%26token%3D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&style=flat&label=Dev-Admin-API-CI&logo=GitHub-Actions)
-![Dev-Core-CI](https://img.shields.io/endpoint.svg?url=https%3A%2F%2Factions-badge.atrox.dev%2Fwoomulwoomul%2Fwoomulwoomul-backend%2Fbadge%3Fref%3Ddev%26token%3D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&style=flat&label=Dev-Core-CI&logo=GitHub-Actions)
+![Dev-Client-API-CI](https://github.com/woomulwoomul/woomulwoomul-backend/actions/workflows/dev-client-ci.yml/badge.svg)
+![Dev-Admin-API-CI](https://github.com/woomulwoomul/woomulwoomul-backend/actions/workflows/dev-admin-ci.yml/badge.svg)
+![Dev-Batch-API-CI](https://github.com/woomulwoomul/woomulwoomul-backend/actions/workflows/dev-batch-ci.yml/badge.svg)
 
 ![Kotlin](https://img.shields.io/badge/Kotlin-1.9.24-7F52FF?logo=Kotlin&style=flat)
 ![SpringBoot](https://img.shields.io/badge/Spring_Boot-3.3.0-6DB33F?logo=Spring-Boot&style=flat)

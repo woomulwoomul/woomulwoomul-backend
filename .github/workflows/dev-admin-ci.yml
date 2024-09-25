@@ -7,7 +7,7 @@ on:
       - 'docs/**'
       - 'README.md'
       - 'admin-api'
-      - 'batch'
+      - 'batch-api'
 
 jobs:
   build:

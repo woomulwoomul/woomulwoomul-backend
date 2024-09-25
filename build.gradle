@@ -128,7 +128,7 @@ project(":admin-api") {
 	}
 }
 
-project(":batch") {
+project(":batch-api") {
 	dependencies {
 		implementation(project(":core"))
 	}
