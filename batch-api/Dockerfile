@@ -8,6 +8,6 @@ RUN apt-get update && \
     ln -fs /usr/share/zoneinfo/Asia/Seoul /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata
 
-ARG JAR_FILE=batch/build/libs/batch-app.jar
+ARG JAR_FILE=batch-api/build/libs/batch-app.jar
 COPY ${JAR_FILE} batch-app.jar
 ENTRYPOINT ["java", "-jar", "/batch-app.jar"]
