@@ -27,7 +27,7 @@ spring:
             redirect-uri: https://${OAUTH2_HOST}/login/oauth2/code/kakao
 
 logging:
-  config: classpath:logback/prod-logback.xml
+  config: classpath:logback/prd-logback.xml
 
 sentry:
   dsn: ${SENTRY_DSN}

@@ -20,7 +20,7 @@ spring:
       mode: ${SQL_INIT_MODE}
 
 logging:
-  config: classpath:logback/prod-logback.xml
+  config: classpath:logback/prd-logback.xml
 
 sentry:
   dsn: ${SENTRY_DSN}
