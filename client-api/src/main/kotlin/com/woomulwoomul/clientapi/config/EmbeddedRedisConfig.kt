@@ -13,7 +13,7 @@ import org.springframework.core.io.ClassPathResource
 import redis.embedded.RedisServer
 import java.io.File
 
-@Profile("local, test")
+@Profile("local", "test")
 @Configuration
 class EmbeddedRedisConfig(
     private val redisProperties: RedisProperties,

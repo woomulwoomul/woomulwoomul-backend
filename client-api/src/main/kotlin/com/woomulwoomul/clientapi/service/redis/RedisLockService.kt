@@ -1,6 +1,5 @@
 package com.woomulwoomul.clientapi.service.redis
 
-import com.woomulwoomul.core.common.constant.ExceptionCode
 import com.woomulwoomul.core.common.constant.ExceptionCode.REDIS_LOCK_FORCE_LEASED
 import com.woomulwoomul.core.common.constant.ExceptionCode.REDIS_LOCK_WAIT_TIMEOUT
 import com.woomulwoomul.core.common.response.CustomException
