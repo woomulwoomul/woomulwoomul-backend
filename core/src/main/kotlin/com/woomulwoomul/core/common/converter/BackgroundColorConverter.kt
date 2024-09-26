@@ -1,6 +1,6 @@
 package com.woomulwoomul.core.common.converter
 
-import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.domain.question.BackgroundColor
 import jakarta.persistence.AttributeConverter
 import jakarta.persistence.Converter
 

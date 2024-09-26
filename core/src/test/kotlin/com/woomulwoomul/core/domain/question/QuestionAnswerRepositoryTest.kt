@@ -1,6 +1,5 @@
 package com.woomulwoomul.core.domain.question
 
-import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.core.domain.user.UserEntity

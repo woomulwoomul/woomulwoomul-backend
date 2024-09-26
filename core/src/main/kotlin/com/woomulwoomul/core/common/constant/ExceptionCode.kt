@@ -43,8 +43,8 @@ enum class ExceptionCode(
     NICKNAME_PATTERN_INVALID(BAD_REQUEST, "닉네임은 한글/영어/숫자/언더바(_)만 사용할 수 있어요."),
     CATEGORY_STATUS_PATTERN_INVALID(BAD_REQUEST, "카테고리 상태는 'ACTIVE' 또는 'ADMIN_DEL'만 가능합니다."),
     QUESTION_STATUS_PATTERN_INVALID(BAD_REQUEST, "질문 상태는 'ACTIVE', 'USER_DEL', 또는 'ADMIN_DEL'만 가능합니다."),
-    QUESTION_BACKGROUND_COLOR_PATTERN_INVALID(BAD_REQUEST, "질문 배경 색상은 'FFACA8', 'FFA34F', 'FFC34F', " +
-            "'C5FFAA', '1AE7D8', '4FB5FF', '868BFF', 'C58AFF', 'FF9CE3', 'FFFFFF' 중 하나만 가능합니다."),
+    QUESTION_BACKGROUND_COLOR_PATTERN_INVALID(BAD_REQUEST, "질문 배경 색상은 '#FFACA8', '#FFA34F', '#FFC34F', " +
+            "'#C5FFAA', '#1AE7D8', '#4FB5FF', '#868BFF', '#C58AFF', '#FF9CE3', '#FFFFFF' 중 하나만 가능합니다."),
 
     // @Positive, @PositiveOrZero
 

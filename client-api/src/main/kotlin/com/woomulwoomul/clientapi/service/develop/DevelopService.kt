@@ -1,6 +1,6 @@
 package com.woomulwoomul.clientapi.service.develop
 
-import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.TESTER_NOT_FOUND
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.config.auth.JwtProvider

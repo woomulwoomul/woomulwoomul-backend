@@ -1,6 +1,5 @@
 package com.woomulwoomul.core.domain.question
 
-import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.common.converter.BackgroundColorConverter
 import com.woomulwoomul.core.domain.base.BasePermanentEntity
 import com.woomulwoomul.core.domain.base.ServiceStatus
@@ -25,7 +24,7 @@ class QuestionEntity(
     var text: String,
 
     @Convert(converter = BackgroundColorConverter::class)
-    @Column(nullable = false, length = 6)
+    @Column(nullable = false, length = 7)
     var backgroundColor: BackgroundColor,
 
     var startDateTime: LocalDateTime? = null,
