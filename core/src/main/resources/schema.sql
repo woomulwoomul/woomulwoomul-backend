@@ -92,7 +92,7 @@ CREATE TABLE question
 (
     question_id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
     text                        VARCHAR(60)                 NOT NULL,
-    background_color            VARCHAR(6)                  NOT NULL,
+    background_color            VARCHAR(7)                  NOT NULL,
     start_date_time             DATETIME(6),
     end_date_time               DATETIME(6),
     status                      VARCHAR(10)                 NOT NULL,

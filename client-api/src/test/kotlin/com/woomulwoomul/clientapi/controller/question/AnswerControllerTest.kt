@@ -5,7 +5,7 @@ import com.woomulwoomul.clientapi.controller.question.request.AnswerCreateReques
 import com.woomulwoomul.clientapi.controller.question.request.AnswerUpdateRequest
 import com.woomulwoomul.clientapi.service.question.AnswerService
 import com.woomulwoomul.clientapi.service.question.response.*
-import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import org.junit.jupiter.api.DisplayName

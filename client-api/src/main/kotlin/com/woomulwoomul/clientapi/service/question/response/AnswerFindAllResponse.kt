@@ -1,7 +1,6 @@
 package com.woomulwoomul.clientapi.service.question.response
 
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.question.CategoryEntity
 import com.woomulwoomul.core.domain.question.QuestionAnswerEntity
 import java.time.LocalDateTime

@@ -4,7 +4,7 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryCreateServiceR
 import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
-import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
@@ -742,7 +742,7 @@ class QuestionServiceTest(
             : QuestionCreateServiceRequest {
         return QuestionCreateServiceRequest(
             "질문",
-            "FFACA8",
+            BackgroundColor.WHITE.value,
             categoryNames,
             null,
             null
@@ -752,7 +752,7 @@ class QuestionServiceTest(
     private fun createValidQuestionUpdateServiceRequest(categoryNames: List<String>): QuestionUpdateServiceRequest {
         return QuestionUpdateServiceRequest(
             "질문 업데이트",
-            "FFACA8",
+            BackgroundColor.WHITE.value,
             categoryNames,
             null,
             null,
