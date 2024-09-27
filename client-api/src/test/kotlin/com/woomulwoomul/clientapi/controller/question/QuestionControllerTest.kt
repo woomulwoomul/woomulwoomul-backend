@@ -4,7 +4,7 @@ import com.woomulwoomul.clientapi.controller.RestDocsSupport
 import com.woomulwoomul.clientapi.controller.question.request.QuestionUserCreateRequest
 import com.woomulwoomul.clientapi.service.question.QuestionService
 import com.woomulwoomul.clientapi.service.question.response.*
-import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.PageData
 import org.junit.jupiter.api.DisplayName

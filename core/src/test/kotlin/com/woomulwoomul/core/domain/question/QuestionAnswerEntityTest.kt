@@ -1,12 +1,10 @@
 package com.woomulwoomul.core.domain.question
 
-import com.woomulwoomul.core.common.constant.BackgroundColor
 import com.woomulwoomul.core.domain.base.DetailServiceStatus
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertAll
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 class QuestionAnswerEntityTest {

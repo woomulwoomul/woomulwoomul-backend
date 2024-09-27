@@ -1,7 +1,7 @@
 package com.woomulwoomul.clientapi.service.question
 
 import com.woomulwoomul.clientapi.service.question.request.QuestionUserCreateServiceRequest
-import com.woomulwoomul.core.common.constant.BackgroundColor
+import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageCursorRequest
 import com.woomulwoomul.core.common.response.CustomException
