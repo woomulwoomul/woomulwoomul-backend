@@ -12,7 +12,7 @@ data class CategoryFindResponse(
     val createDateTime: LocalDateTime,
     val updateDateTime: LocalDateTime,
 
-    val availableStatus: List<ServiceStatus> = listOf(ServiceStatus.ACTIVE, ServiceStatus.ADMIN_DEL)
+    val availableStatuses: List<ServiceStatus> = listOf(ServiceStatus.ACTIVE, ServiceStatus.ADMIN_DEL)
 ) {
 
     constructor(category: CategoryEntity): this(

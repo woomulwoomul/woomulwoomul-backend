@@ -1,6 +1,5 @@
 package com.woomulwoomul.clientapi.service.develop
 
-import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.TESTER_NOT_FOUND
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.config.auth.JwtProvider
@@ -51,6 +50,7 @@ class DevelopService(
      * @throws TESTER_NOT_FOUND 404
      * @return 헤더
      */
+    @Transactional
     fun getTesterToken(testerId: Long): HttpHeaders {
         val tester = userRepository.findByNickname(testerConst.plus(testerId))
             ?: throw CustomException(TESTER_NOT_FOUND)
@@ -213,8 +213,9 @@ class DevelopService(
         entityManager.createNativeQuery("DELETE FROM follow").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM user_visit").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM user_provider").executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM user_login").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM user_role").executeUpdate()
-        entityManager.createNativeQuery("DELETE FROM withdraw_user").executeUpdate()
+        entityManager.createNativeQuery("DELETE FROM user_withdraw").executeUpdate()
         entityManager.createNativeQuery("DELETE FROM users").executeUpdate()
 
         entityManager.createNativeQuery("ALTER TABLE notification AUTO_INCREMENT = 1").executeUpdate()
@@ -226,8 +227,9 @@ class DevelopService(
         entityManager.createNativeQuery("ALTER TABLE follow AUTO_INCREMENT = 1").executeUpdate()
         entityManager.createNativeQuery("ALTER TABLE user_visit AUTO_INCREMENT = 1").executeUpdate()
         entityManager.createNativeQuery("ALTER TABLE user_provider AUTO_INCREMENT = 1").executeUpdate()
+        entityManager.createNativeQuery("ALTER TABLE user_login AUTO_INCREMENT = 1").executeUpdate()
         entityManager.createNativeQuery("ALTER TABLE user_role AUTO_INCREMENT = 1").executeUpdate()
-        entityManager.createNativeQuery("ALTER TABLE withdraw_user AUTO_INCREMENT = 1").executeUpdate()
+        entityManager.createNativeQuery("ALTER TABLE user_withdraw AUTO_INCREMENT = 1").executeUpdate()
         entityManager.createNativeQuery("ALTER TABLE users AUTO_INCREMENT = 1").executeUpdate()
     }
 }

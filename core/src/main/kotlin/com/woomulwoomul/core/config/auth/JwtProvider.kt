@@ -16,6 +16,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Component
@@ -192,6 +193,15 @@ class JwtProvider(
     }
 
     /**
+     * 회원 르고인 로깅
+     * @param user 회원
+     */
+    @Transactional
+    fun logUserLogin(user: UserEntity) {
+        userLoginRepository.save(UserLoginEntity(user = user))
+    }
+
+    /**
      * 토큰 제작
      * @param userDetails 회원 정보
      * @param currentTime 현재 시간
@@ -222,14 +232,6 @@ class JwtProvider(
             .toList()
 
         return User(user.id.toString(), "", grantedAuthorities)
-    }
-
-    /**
-     * 회원 르고인 로깅
-     * @param user 회원
-     */
-    private fun logUserLogin(user: UserEntity) {
-        userLoginRepository.save(UserLoginEntity(user = user))
     }
 
     /**
