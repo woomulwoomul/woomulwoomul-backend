@@ -1,0 +1,90 @@
+[[oauth-login]]
+=== SNS 로그인
+
+==== HTTP Request
+
+[source,http,options="nowrap"]
+----
+GET /oauth2/authorization/kakao HTTP/1.1
+Content-Type: application/json
+----
+
+==== HTTP Response
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Authorization: access-token
+Refresh-Token: refresh-token
+
+{
+  "code" : "OAUTH2_LOGIN",
+  "message" : "SNS 로그인을 했습니다."
+}
+----
+
+|===
+|Parameter|Description
+
+|`+user-id+`
+|회원 ID
+
+|`+access-token+`
+|액세스 토큰
+
+|`+refresh-token+`
+|리프레시 토큰
+
+|===
+
+==== Response Fields
+|===
+|Path|Type|Optional|Description
+
+
+|`+code+`
+|`+String+`
+|
+|코드
+
+
+|`+message+`
+|`+String+`
+|
+|메세지
+
+|===
+
+==== Exception
+
+===== 401
+----
+{
+  "code" : "OAUTH_UNAUTHENTICATED",
+  "message" : "SNS 로그인에 실패했습니다. 다시 로그인 해주세요."
+}
+----
+
+===== 404
+----
+{
+  "code" : "USER_NOT_FOUND",
+  "message" : "존재하지 않는 회원입니다."
+}
+----
+
+===== 409
+----
+{
+  "code" : "NICKNAME_GENERATE_FAIL",
+  "message" : "닉네임 생성 중 오류가 발생했습니다. 잠시 후 다시 시도 해주세요."
+}
+----
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----

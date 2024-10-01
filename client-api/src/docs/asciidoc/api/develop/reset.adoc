@@ -1,0 +1,9 @@
+[[reset]]
+=== 데이터베이스 리셋 및 테스트 데이터 주입
+
+==== HTTP Request
+include::{snippets}/develop/reset/http-request.adoc[]
+
+==== HTTP Response
+include::{snippets}/develop/reset/http-response.adoc[]
+include::{snippets}/develop/reset/response-fields.adoc[]

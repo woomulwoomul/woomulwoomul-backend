@@ -1,137 +1,133 @@
-buildscript {
-	ext {
-		queryDslVersion = '5.0.0'
-	}
-}
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id 'java'
 	id 'jacoco'
-	id 'org.springframework.boot' version '3.2.5'
-	id 'io.spring.dependency-management' version '1.1.4'
-	id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+	id 'org.springframework.boot' version '3.3.0'
+	id 'io.spring.dependency-management' version '1.1.5'
+	id 'org.jetbrains.kotlin.jvm' version '1.9.24'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.24'
+	id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.24'
+	id 'org.jetbrains.kotlin.kapt' version '1.9.21'
 }
 
-group = 'com.woomulwoomul'
-version = '0.0.1-SNAPSHOT'
+kotlin.jvmToolchain {21}
 
-java {
-	sourceCompatibility = '21'
-}
+bootJar.enabled = false
 
-bootJar {
-	archiveFileName = 'app.jar'
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+allprojects {
+	group = 'com.woomulwoomul'
+	version = '0.0.1-SNAPSHOT'
+	repositories {
+		mavenCentral()
 	}
 }
 
-repositories {
-	mavenCentral()
-}
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
-	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
-	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
-	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
-	implementation 'com.auth0:java-jwt:4.4.0'
-	implementation 'io.sentry:sentry-spring-boot-starter:7.8.0'
-	implementation 'io.springfox:springfox-boot-starter:3.0.0'
-	implementation 'io.springfox:springfox-swagger-ui:3.0.0'
-	implementation 'io.springfox:springfox-swagger2:3.0.0'
-	implementation 'com.amazonaws:aws-java-sdk-s3:1.12.710'
-	implementation 'com.amazonaws:aws-java-sdk-bom:1.12.710'
-
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.h2database:h2'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-
-	annotationProcessor 'org.projectlombok:lombok'
-
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-	finalizedBy 'jacocoTestReport'
-}
-
-def querydslDir = "$buildDir/generated/querydsl"
-
-querydsl {
-	jpa = true
-	querydslSourcesDir = querydslDir
-}
-
-sourceSets {
-	main.java.srcDir querydslDir
-}
-
-compileQuerydsl{
-	options.annotationProcessorPath = configurations.querydsl
-}
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-	querydsl.extendsFrom compileClasspath
-}
-
-jacoco {
-	toolVersion = '0.8.12'
-}
-
-jacocoTestReport {
-	reports {
-		html.required = true
-		csv.required = true
-		xml.required = true
+subprojects {
+	apply {
+		plugin('jacoco')
+		plugin('org.springframework.boot')
+		plugin('io.spring.dependency-management')
+		plugin('org.jetbrains.kotlin.jvm')
+		plugin('org.jetbrains.kotlin.plugin.spring')
+		plugin('org.jetbrains.kotlin.plugin.jpa')
+		plugin('org.jetbrains.kotlin.kapt')
 	}
 
-	def qDomains = []
-	for (qPattern in "**/QA".."**/QZ")
-		qDomains.add(qPattern + "*")
+	dependencies {
+		implementation 'org.springframework.boot:spring-boot-starter-web'
+		implementation 'org.springframework.boot:spring-boot-starter-validation'
+		implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'org.jetbrains.kotlin:kotlin-reflect'
+		implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
+		implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.4.4'
+		implementation 'io.github.nefilim.kjwt:kjwt-core:0.9.0'
+		implementation 'io.sentry:sentry-spring-boot-starter:7.4.0'
 
-	afterEvaluate {
-		classDirectories.each { dir ->
-			fileTree(dir).exclude(qDomains)
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testImplementation 'org.springframework.security:spring-security-test'
+		testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+	}
+
+	tasks.withType(KotlinCompile).configureEach {
+		kotlinOptions {
+			freeCompilerArgs += '-Xjsr305=strict'
+			jvmTarget = '21'
 		}
 	}
 
-	finalizedBy 'jacocoTestCoverageVerification'
-}
+	jacoco {
+		toolVersion = '0.8.12'
+	}
 
-jacocoTestCoverageVerification {
-	def qDomains = []
-	for (qPattern in "*.QA".."*.QZ")
-		qDomains.add(qPattern + "*")
+	jacocoTestReport {
+		reports {
+			html.required = true
+			csv.required = true
+			xml.required = true
+		}
 
-	violationRules {
+		def excludePattern = []
+		("QA".."QZ").each { qPattern ->
+			excludePattern.add("**/*$qPattern*")
+		}
 
-		rule {
-			enabled = true
-			element = 'BUNDLE'
+		afterEvaluate {
+			classDirectories.setFrom(files(classDirectories.files.collect {
+				fileTree(
+						dir: it,
+						excludes: [] + excludePattern
+				)
+			}))
+		}
 
-			limit {
-				counter = 'INSTRUCTION'
-				value = 'COVEREDRATIO'
-//				minimum = 0.90
+		finalizedBy 'jacocoTestCoverageVerification'
+	}
+
+	jacocoTestCoverageVerification {
+		def excludePattern = []
+		("QA".."QZ").each { qPattern ->
+			excludePattern.add("**/*\$qPattern*")
+		}
+
+		violationRules {
+
+			rule {
+				enabled = true
+				element = 'BUNDLE'
+
+				limit {
+					counter = 'INSTRUCTION'
+					value = 'COVEREDRATIO'
+					minimum = 0.1
+				}
+				excludes = [] + excludePattern as List<String>
 			}
-
-			excludes = [] + qDomains
 		}
+	}
+}
+
+project(":core") {
+	bootJar.enabled = false
+	jar.enabled = true
+}
+
+project(":client-api") {
+	dependencies {
+		implementation(project(":core"))
+	}
+}
+
+project(":admin-api") {
+	dependencies {
+		implementation(project(":core"))
+	}
+}
+
+project(":batch-api") {
+	dependencies {
+		implementation(project(":core"))
 	}
 }

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>우물우물 Admin</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: body}"></div>
+
+    <form th:action="@{/categories}" th:method="post"
+          onsubmit="return confirm('카테고리를 생성하시겠습니까?');">
+        <table>
+            <tbody>
+                <tr>
+                    <td>카테고리명</td>
+                    <td>
+                        <input type="text"  th:name="categoryName"/>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="margin-top: 30px;">
+            <button type="submit">생성</button>
+        </div>
+    </form>
+</body>
+</html>

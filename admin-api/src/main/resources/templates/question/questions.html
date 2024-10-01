@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>우물우물 Admin</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: body}"></div>
+
+    <div style="margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center;">
+        <h1>질문</h1>
+    </div>
+
+    <div style="margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center;">
+        <a th:href="@{/questions/new}" class="btn btn-primary">
+            <button type="submit">생성</button>
+        </a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>내용</th>
+                <th>배경 색상</th>
+                <th>시작일</th>
+                <th>종료일</th>
+                <th>상태</th>
+                <th>생성일</th>
+                <th>수정일</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="question : ${data}">
+                <td th:text="${question.id}">ID</td>
+                <td th:text="${question.text}">내용</td>
+                <td>
+                    <span th:text="${question.backgroundColor.getValue()}"
+                          th:style="'background-color: ' + ${question.backgroundColor.getValue()}"
+                          class="form-check-label"></span>
+                </td>
+                <td th:text="${#temporals.format(question.startDateTime, 'yyyy-MM-dd HH:mm:ss')}">시작일</td>
+                <td th:text="${#temporals.format(question.endDateTime, 'yyyy-MM-dd HH:mm:ss')}">종료일</td>
+                <td th:text="${question.status.text}">상태</td>
+                <td th:text="${#temporals.format(question.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
+                <td th:text="${#temporals.format(question.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
+                <td>
+                    <a th:href="@{/questions/{id}(id=${question.id})}" class="btn btn-primary">
+                        <button type="submit">수정</button>
+                    </a>
+                </td>
+                <td>
+                    <form th:action="@{/questions/{id}(id=${question.id})}" th:method="delete"
+                          onsubmit="return confirm('질문을 삭제하시겠습니까?');">
+                        <button type="submit" class="btn btn-primary">삭제</button>
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>
+        <ul>
+            <li th:if="${currentPage > 1}">
+                <a th:href="@{/questions(page-from=${currentPage - 1}, page-size=20)}">Previous</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(1, totalPage)}">
+                <a th:href="@{/questions(page-from=${i}, page-size=20)}"
+                   th:text="${i}"
+                   th:classappend="${i == currentPage} ? 'active' : ''"></a>
+            </li>
+            <li th:if="${currentPage < totalPage}">
+                <a th:href="@{/questions(page-from=${currentPage + 1}, page-size=20)}">Next</a>
+            </li>
+        </ul>
+    </div>
+</body>
+</html>

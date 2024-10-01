@@ -1,1 +1,6 @@
-rootProject.name = 'woomulwoomul-backend'
+rootProject.name = 'woomulwoomulbackend'
+
+include 'core'
+include 'client-api'
+include 'admin-api'
+include 'batch-api'

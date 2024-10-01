@@ -1,0 +1,76 @@
+[[create-user-question]]
+=== 회원 질문 작성
+
+==== HTTP Request
+include::{snippets}/question/create-user-question/http-request.adoc[]
+include::{snippets}/question/create-user-question/response-fields.adoc[]
+
+==== HTTP Response
+include::{snippets}/question/create-user-question/http-response.adoc[]
+include::{snippets}/question/create-user-question/response-fields.adoc[]
+
+==== Exception
+
+===== 400
+----
+{
+  "code" : "QUESTION_TEXT_FIELD_REQUIRED",
+  "message" : "질문은 필수 입력입니다."
+}
+----
+----
+{
+  "code" : "QUESTION_TEXT_SIZE_INVALID",
+  "message" : "질문 내용은 1자 ~ 60자 이내로 입력해 주세요."
+}
+----
+----
+{
+  "code" : "QUESTION_BACKGROUND_COLOR_FIELD_REQUIRED",
+  "message" : "질문 배경 색상은 필수 입력입니다."
+}
+----
+----
+{
+  "code" : "QUESTION_BACKGROUND_COLOR_PATTERN_INVALID",
+  "message" : "질문 배경 색상은 '#FFACA8', '#FFA34F', '#FFC34F', '#C5FFAA', '#1AE7D8', '#4FB5FF', '#868BFF', '#C58AFF', '#FF9CE3', '#FFFFFF' 중 하나만 가능합니다."
+}
+----
+----
+{
+  "code" : "CATEGORY_IDS_SIZE_INVALID",
+  "message" : "질문 카테고리는 1개 ~ 3개 이내로 입력해 주세요."
+}
+----
+
+===== 401
+----
+{
+  "code" : "TOKEN_UNAUTHENTICATED",
+  "message" : "승인되지 않은 요청입니다. 다시 로그인 해주세요."
+}
+----
+
+===== 403
+----
+{
+  "code" : "TOKEN_UNAUTHORIZED",
+  "message" : "권한이 없는 요청입니다. 로그인 후에 다시 시도 해주세요."
+}
+----
+
+===== 404
+----
+{
+  "code" : "USER_NOT_FOUND",
+  "message" : "존재하지 않는 회원입니다."
+}
+----
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----

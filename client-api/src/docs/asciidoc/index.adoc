@@ -1,0 +1,55 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= 우물우물 REST API 문서
+:doctype: book
+:icon: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 2
+:sectlinks:
+
+[[Develop-API]]
+=== Develop API
+include::api/develop/health-check.adoc[]
+include::api/develop/get-tester-token.adoc[]
+include::api/develop/reset.adoc[]
+
+[[Auth-API]]
+=== Auth API
+include::api/auth/oauth-login.adoc[]
+include::api/auth/refresh-token.adoc[]
+
+[[User-API]]
+=== User API
+include::api/user/validate-nickname.adoc[]
+include::api/user/get-user-profile.adoc[]
+include::api/user/update-user-profile.adoc[]
+include::api/user/upload-image.adoc[]
+
+[[Follow-API]]
+=== Follow API
+include::api/follow/get-all-following.adoc[]
+include::api/follow/delete-follow.adoc[]
+
+[[Question-API]]
+=== Question API
+include::api/question/get-default-question.adoc[]
+include::api/question/get-all-categories.adoc[]
+include::api/question/create-user-question.adoc[]
+
+[[Answer-API]]
+=== Answer API
+include::api/question/get-all-answers.adoc[]
+include::api/question/get-answer-by-answer-id.adoc[]
+include::api/question/get-answer-by-question-id.adoc[]
+include::api/question/create-answer.adoc[]
+include::api/question/update-answer.adoc[]
+include::api/question/delete-answer.adoc[]
+include::api/question/upload-image.adoc[]
+include::api/question/is-existing-answer.adoc[]
+
+[[Notification-API]]
+=== Notification API
+include::api/notification/get-all-notifications.adoc[]
+include::api/notification/read-notification.adoc[]

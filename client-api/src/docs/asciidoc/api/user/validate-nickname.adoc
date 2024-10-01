@@ -1,0 +1,54 @@
+[[validate-nickname]]
+=== 닉네임 검증
+
+==== HTTP Request
+include::{snippets}/user/validate-nickname/http-request.adoc[]
+include::{snippets}/user/validate-nickname/query-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/user/validate-nickname/http-response.adoc[]
+include::{snippets}/user/validate-nickname/response-fields.adoc[]
+
+==== Exception
+
+===== 400
+----
+{
+  "code" : "NICKNAME_FIELD_REQUIRED",
+  "message" : "회원 닉네임은 필수 입력입니다."
+}
+----
+----
+{
+  "code" : "NICKNAME_SIZE_INVALID",
+  "message" : "닉네임은 2자 ~ 10자 이내로 입력해 주세요."
+}
+----
+----
+{
+  "code" : "NICKNAME_PATTERN_INVALID",
+  "message" : "닉네임은 한글/영어/숫자/언더바(_)만 사용할 수 있어요."
+}
+----
+
+===== 409
+----
+{
+  "code" : "UNAVAILABLE_NICKNAME",
+  "message" : "사용 불가능한 닉네임입니다."
+}
+----
+----
+{
+  "code" : "EXISTING_NICKNAME",
+  "message" : "이미 사용중인 닉네임입니다."
+}
+----
+
+===== 500
+----
+{
+  "code" : "SERVER_ERROR",
+  "message" : "서버 에러가 발생했습니다."
+}
+----

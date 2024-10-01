@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>우물우물 Admin</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div th:replace="~{fragments/header :: body}"></div>
+
+    <form th:action="@{/categories/{id}(id=${response.id})}" th:method="patch"
+            onsubmit="return confirm('카테고리를 수정하시겠습니까?');">
+        <table>
+            <tbody>
+                <tr>
+                    <td>ID</td>
+                    <td>
+                        <input type="text" th:value="${response.id}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>카테고리명</td>
+                    <td>
+                        <input type="text" th:name="categoryName" th:value="${response.name}" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>닉네임</td>
+                    <td>
+                        <input type="text" th:name="adminNickname" th:value="${response.adminNickname}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>상태</td>
+                    <td>
+                        <select th:name="categoryStatus" class="form-select">
+                            <option th:each="status : ${response.availableStatuses}"
+                                    th:value="${status.name()}"
+                                    th:selected="${response.status == status}">
+                                <span th:text="${status.text}"></span>
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>생성일</td>
+                    <td>
+                        <input type="text" th:value="${#temporals.format(response.createDateTime, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>수정일</td>
+                    <td>
+                        <input type="text" th:value="${#temporals.format(response.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}" readonly/>
+                    </td>
+                </tr>
+                <tr>
+                    <td th:colspan="2">
+                        <button type="submit" style="width: 100%; height: 100%;">수정</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
