@@ -122,9 +122,13 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     private fun preFormatCode(code: String): String {
-        return code.fold(StringBuilder()) { acc, c ->
-            if (c.isUpperCase() && acc.isNotEmpty()) acc.append('_')
-            acc.append(c)
-        }.toString().uppercase()
+        val formattedCode = code.substringAfterLast('.', code)
+
+        return buildString(formattedCode.length + 5) {
+            formattedCode.forEachIndexed { index, c ->
+                if (c.isUpperCase() && index > 0) append('_')
+                append(c)
+            }
+        }.uppercase()
     }
 }

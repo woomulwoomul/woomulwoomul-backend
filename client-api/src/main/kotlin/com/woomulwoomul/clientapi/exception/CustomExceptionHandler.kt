@@ -5,6 +5,7 @@ import com.woomulwoomul.core.common.constant.ExceptionCode
 import com.woomulwoomul.core.common.exception.ByteSize
 import com.woomulwoomul.core.common.response.CustomException
 import com.woomulwoomul.core.common.response.ExceptionResponse
+import io.micrometer.common.util.StringUtils
 import io.sentry.Sentry
 import jakarta.validation.ConstraintViolationException
 import jakarta.validation.constraints.*
@@ -122,9 +123,13 @@ class CustomExceptionHandler : ResponseEntityExceptionHandler() {
     }
 
     private fun preFormatCode(code: String): String {
-        return code.fold(StringBuilder()) { acc, c ->
-            if (c.isUpperCase() && acc.isNotEmpty()) acc.append('_')
-            acc.append(c)
-        }.toString().uppercase()
+        val formattedCode = code.substringAfterLast('.', code)
+
+        return buildString(formattedCode.length + 5) {
+            formattedCode.forEachIndexed { index, c ->
+                if (c.isUpperCase() && index > 0) append('_')
+                append(c)
+            }
+        }.uppercase()
     }
 }
