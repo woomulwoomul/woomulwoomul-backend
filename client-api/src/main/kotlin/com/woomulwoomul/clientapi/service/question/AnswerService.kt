@@ -149,12 +149,11 @@ class AnswerService(
      */
     @Transactional
     fun createAnswer(receiverUserId: Long,
-                     senderUserId: Long,
+                     senderUserId: Long?,
                      questionId: Long,
                      @Valid request: AnswerCreateServiceRequest
-                     ): AnswerCreateResponse {
+    ): AnswerCreateResponse {
         val receiver = userRepository.findByUserId(receiverUserId) ?: throw CustomException(USER_NOT_FOUND)
-        val sender = userRepository.findByUserId(senderUserId) ?: throw CustomException(USER_NOT_FOUND)
 
         if (questionAnswerRepository.exists(receiverUserId, questionId)) throw CustomException(EXISTING_ANSWER)
 
@@ -164,9 +163,15 @@ class AnswerService(
         val categories = questionCategories.mapTo(mutableSetOf()) { it.category }
 
         val answer = answerRepository.save(request.toAnswerEntity())
-        questionAnswerRepository.save(request.toQuestionAnswerEntity(receiver, sender, question, answer))
 
-        if (receiverUserId == senderUserId) return AnswerCreateResponse(receiver, question, categories)
+        if (senderUserId == null || receiverUserId == senderUserId) {
+            questionAnswerRepository.save(request.toQuestionAnswerEntity(receiver, null, question, answer))
+            return AnswerCreateResponse(receiver, question, categories)
+        }
+
+        val sender = userRepository.findByUserId(senderUserId) ?: throw CustomException(USER_NOT_FOUND)
+
+        questionAnswerRepository.save(request.toQuestionAnswerEntity(receiver, sender, question, answer))
 
         if (!followRepository.exists(receiverUserId, senderUserId)) {
             followRepository.save(request.toFollowEntity(sender, receiver))

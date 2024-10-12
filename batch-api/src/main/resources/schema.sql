@@ -141,7 +141,7 @@ CREATE TABLE question_answer
     status                      VARCHAR(10)                 NOT NULL,
     create_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) NOT NULL,
     update_date_time            DATETIME(6) DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6) NOT NULL,
-    sender_id                   BIGINT                      NOT NULL,
+    sender_id                   BIGINT,
     receiver_id                 BIGINT                      NOT NULL,
     question_id                 BIGINT                      NOT NULL,
     answer_id                   BIGINT,

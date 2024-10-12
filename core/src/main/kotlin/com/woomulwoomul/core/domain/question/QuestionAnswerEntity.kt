@@ -21,8 +21,8 @@ class QuestionAnswerEntity(
     val receiver: UserEntity,
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "sender_id", nullable = false)
-    val sender: UserEntity,
+    @JoinColumn(name = "sender_id")
+    val sender: UserEntity?,
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id", nullable = false)

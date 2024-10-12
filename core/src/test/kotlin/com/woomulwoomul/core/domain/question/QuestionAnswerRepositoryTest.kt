@@ -177,10 +177,10 @@ class QuestionAnswerRepositoryTest(
                 assertThat(foundQuestionAnswer!!.sender)
                     .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
                         "updateDateTime")
-                    .containsExactly(questionAnswer.sender.id, questionAnswer.sender.nickname,
-                            questionAnswer.sender.email, questionAnswer.sender.imageUrl,
-                            questionAnswer.sender.introduction, questionAnswer.sender.status,
-                            questionAnswer.sender.createDateTime, questionAnswer.sender.updateDateTime)
+                    .containsExactly(questionAnswer.sender!!.id, questionAnswer.sender!!.nickname,
+                            questionAnswer.sender!!.email, questionAnswer.sender!!.imageUrl,
+                            questionAnswer.sender!!.introduction, questionAnswer.sender!!.status,
+                            questionAnswer.sender!!.createDateTime, questionAnswer.sender!!.updateDateTime)
             },
             {
                 assertThat(foundQuestionAnswer!!.question)
@@ -239,10 +239,10 @@ class QuestionAnswerRepositoryTest(
                 assertThat(foundQuestionAnswer!!.sender)
                     .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
                         "updateDateTime")
-                    .containsExactly(questionAnswer.sender.id, questionAnswer.sender.nickname,
-                        questionAnswer.sender.email, questionAnswer.sender.imageUrl,
-                        questionAnswer.sender.introduction, questionAnswer.sender.status,
-                        questionAnswer.sender.createDateTime, questionAnswer.sender.updateDateTime)
+                    .containsExactly(questionAnswer.sender!!.id, questionAnswer.sender!!.nickname,
+                        questionAnswer.sender!!.email, questionAnswer.sender!!.imageUrl,
+                        questionAnswer.sender!!.introduction, questionAnswer.sender!!.status,
+                        questionAnswer.sender!!.createDateTime, questionAnswer.sender!!.updateDateTime)
             },
             {
                 assertThat(foundQuestionAnswer!!.question)
