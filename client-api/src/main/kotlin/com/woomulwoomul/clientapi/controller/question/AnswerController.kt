@@ -53,10 +53,10 @@ class AnswerController(
         return DefaultSingleResponse.toResponseEntity(FOUND_USER_ANSWER, response)
     }
 
-    @PostMapping("/api/users/{userId}/questions/{questionId}")
+    @PostMapping("/api/questions/{questionId}/answers")
     fun createAnswer(principal: Principal,
-                     @PathVariable userId: Long,
                      @PathVariable questionId: Long,
+                     @RequestParam(name = "user-id", required = false) userId: Long?,
                      @RequestBody @Valid request: AnswerCreateRequest): ResponseEntity<DefaultSingleResponse> {
         val response = answerService.createAnswer(
             UserUtils.getUserId(principal),

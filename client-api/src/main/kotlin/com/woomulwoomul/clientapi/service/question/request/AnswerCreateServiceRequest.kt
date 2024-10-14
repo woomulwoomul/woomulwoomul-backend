@@ -21,7 +21,7 @@ data class AnswerCreateServiceRequest(
 
     fun toQuestionAnswerEntity(
         receiver: UserEntity,
-        sender: UserEntity,
+        sender: UserEntity?,
         question: QuestionEntity,
         answer: AnswerEntity,
     ): QuestionAnswerEntity {

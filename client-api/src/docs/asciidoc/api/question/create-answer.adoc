@@ -3,6 +3,7 @@
 
 ==== HTTP Request
 include::{snippets}/answer/create-answer/http-request.adoc[]
+include::{snippets}/answer/create-answer/query-parameters.adoc[]
 include::{snippets}/answer/create-answer/request-fields.adoc[]
 
 ==== HTTP Response

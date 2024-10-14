@@ -298,7 +298,8 @@ class AnswerControllerTest : RestDocsSupport() {
 
         // when & then
         mockMvc.perform(
-            post("/api/users/{userId}/questions/{questionId}", 1, 1)
+            post("/api/questions/{questionId}/answers", 1)
+                .queryParam("user-id", 1.toString())
                 .header(AUTHORIZATION, "Bearer access-token")
                 .principal(mockPrincipal)
                 .contentType(APPLICATION_JSON_VALUE)
@@ -340,6 +341,9 @@ class AnswerControllerTest : RestDocsSupport() {
                             .description("카테고리 ID"),
                         fieldWithPath("data.categories[].name").type(JsonFieldType.STRING)
                             .description("카테고리명")
+                    ),
+                    queryParameters(
+                        parameterWithName("user-id").description("질문한 회원 ID").optional()
                     )
                 )
             )
