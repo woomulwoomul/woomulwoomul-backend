@@ -38,6 +38,7 @@
 ## Link
 
 - ### [API Status](https://uptime.nogamsung.com/status/woomulwoomul)
+- ### [Patch Note](docs/patch-note.md)
 - ### [Convention](docs/convention.md)
 - ### [Client Repository](https://github.com/woomulwoomul/woomulwoomul-frontend)
 
