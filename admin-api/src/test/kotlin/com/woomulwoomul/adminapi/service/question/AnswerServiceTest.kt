@@ -3,6 +3,8 @@ package com.woomulwoomul.adminapi.service.question
 import com.woomulwoomul.core.common.constant.ExceptionCode.ANSWER_NOT_FOUND
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException
+import com.woomulwoomul.core.domain.base.DetailServiceStatus
+import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.question.*
 import com.woomulwoomul.core.domain.user.*
 import org.assertj.core.api.Assertions.assertThat
@@ -95,7 +97,14 @@ class AnswerServiceTest(
         answerService.delete(questionAnswer.answer!!.id!!)
 
         // then
-        assertThat(questionAnswerRepository.findByAnswerId(questionAnswer.answer!!.id!!)).isNull()
+        assertAll(
+            {
+                assertThat(questionAnswer.status).isEqualTo(DetailServiceStatus.ADMIN_DEL)
+            },
+            {
+                assertThat(questionAnswer.answer!!.status).isEqualTo(ServiceStatus.ADMIN_DEL)
+            }
+        )
     }
 
     @Test
