@@ -62,6 +62,11 @@
                 <td th:text="${#temporals.format(question.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
                 <td th:text="${#temporals.format(question.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
                 <td>
+                    <a th:href="@{/questions/{id}/answers(id=${question.id})}" class="btn btn-primary">
+                        <button type="submit">답변 조회</button>
+                    </a>
+                </td>
+                <td>
                     <a th:href="@{/questions/{id}(id=${question.id})}" class="btn btn-primary">
                         <button type="submit">수정</button>
                     </a>

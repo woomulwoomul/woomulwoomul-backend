@@ -24,4 +24,18 @@ class DevelopController(
         return ResponseEntity.status(SERVER_OK.httpStatus)
             .body(DefaultResponse(SERVER_OK.name, serverName + SERVER_OK.message))
     }
+
+    @GetMapping("/api/tester/{testerId}")
+    fun getTesterToken(@PathVariable testerId: Long): ResponseEntity<DefaultResponse> {
+        val headers = developService.getTesterToken(testerId)
+
+        return DefaultResponse.toResponseEntity(headers, TESTER_TOKEN_GENERATED)
+    }
+
+    @PostMapping("/api/reset")
+    fun reset(): ResponseEntity<DefaultResponse> {
+        developService.resetAndInject(LocalDateTime.now())
+
+        return DefaultResponse.toResponseEntity(DB_RESET)
+    }
 }
