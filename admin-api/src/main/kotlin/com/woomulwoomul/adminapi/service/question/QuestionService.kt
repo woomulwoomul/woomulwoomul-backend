@@ -5,7 +5,6 @@ import com.woomulwoomul.adminapi.service.question.request.CategoryUpdateServiceR
 import com.woomulwoomul.adminapi.service.question.request.QuestionCreateServiceRequest
 import com.woomulwoomul.adminapi.service.question.request.QuestionUpdateServiceRequest
 import com.woomulwoomul.adminapi.service.question.response.*
-import com.woomulwoomul.core.domain.question.BackgroundColor
 import com.woomulwoomul.core.common.constant.ExceptionCode.*
 import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.common.response.CustomException

@@ -1,12 +1,12 @@
 package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.common.request.PageCursorRequest
+import com.woomulwoomul.core.common.request.PageOffsetRequest
 import com.woomulwoomul.core.domain.base.DetailServiceStatus.COMPLETE
 import com.woomulwoomul.core.domain.user.UserEntity
 import com.woomulwoomul.core.domain.user.UserRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.groups.Tuple.tuple
-import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertAll
 import org.junit.jupiter.params.ParameterizedTest
@@ -30,9 +30,121 @@ class QuestionAnswerRepositoryTest(
     @Autowired private val answerRepository: AnswerRepository,
 ) {
 
-    @DisplayName("회원 ID와 답변 ID로 질문 답변 전체 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAllAnswered_thenReturn() {
+    fun `질문 ID로 질문 답변 전체 조회가 정상 작동한다`() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val users = listOf(createAndSaveUser("user1","user1@woomulwoomul.com"),
+            createAndSaveUser("user2","user2@woomulwoomul.com"),
+            createAndSaveUser("user3","user3@woomulwoomul.com"),
+            createAndSaveUser("user4","user4@woomulwoomul.com"),
+            createAndSaveUser("user5","user5@woomulwoomul.com"))
+
+        val categories = listOf(
+            createAndSaveCategory(admin, "카테고리1"),
+            createAndSaveCategory(admin, "카테고리2"),
+            createAndSaveCategory(admin, "카테고리3")
+        )
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswers = listOf(
+            createAndSaveQuestionAnswer(users[0], admin, question),
+            createAndSaveQuestionAnswer(users[1], admin, question),
+            createAndSaveQuestionAnswer(users[2], admin, question),
+            createAndSaveQuestionAnswer(users[3], admin, question),
+            createAndSaveQuestionAnswer(users[4], admin, question)
+        )
+        val answers = listOf(
+            createAndSaveAnswer(questionAnswers[0], "답변1", ""),
+            createAndSaveAnswer(questionAnswers[1], "", "답변2"),
+            createAndSaveAnswer(questionAnswers[2], "답변3", ""),
+            createAndSaveAnswer(questionAnswers[3], "", "답변4"),
+            createAndSaveAnswer(questionAnswers[4], "답변5", "")
+        )
+
+        val pageOffsetRequest = PageOffsetRequest.of(2, 2)
+
+        // when
+        val foundQuestionAnswers = questionAnswerRepository.findAllByQuestionId(question.id!!, pageOffsetRequest)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionAnswers.total)
+                    .isEqualTo(questionAnswers.size.toLong())
+            },
+            {
+                assertThat(foundQuestionAnswers.data)
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(questionAnswers[2].id, questionAnswers[2].status, questionAnswers[2].createDateTime,
+                            questionAnswers[2].updateDateTime),
+                        tuple(questionAnswers[1].id, questionAnswers[1].status, questionAnswers[1].createDateTime,
+                            questionAnswers[1].updateDateTime)
+                    )
+            },
+            {
+                assertThat(foundQuestionAnswers.data)
+                    .extracting("question")
+                    .extracting("id", "text", "backgroundColor", "startDateTime", "endDateTime", "status",
+                        "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(question.id, question.text, question.backgroundColor, question.startDateTime,
+                            question.endDateTime, question.status, question.createDateTime, question.updateDateTime),
+                        tuple(question.id, question.text, question.backgroundColor, question.startDateTime,
+                            question.endDateTime, question.status, question.createDateTime, question.updateDateTime)
+                    )
+            },
+            {
+                assertThat(foundQuestionAnswers.data)
+                    .extracting("answer")
+                    .extracting("id", "text", "imageUrl", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(
+                        tuple(answers[2].id, answers[2].text, answers[2].imageUrl, answers[2].status,
+                            answers[2].createDateTime, answers[2].updateDateTime),
+                        tuple(answers[1].id, answers[1].text, answers[1].imageUrl, answers[1].status,
+                            answers[1].createDateTime, answers[1].updateDateTime)
+                    )
+            },
+            {
+                assertThat(foundQuestionAnswers.data)
+                    .extracting("receiver")
+                    .extracting("id", "nickname", "email", "imageUrl", "introduction", "status", "createDateTime",
+                        "updateDateTime")
+                    .containsExactly(
+                        tuple(users[2].id, users[2].nickname, users[2].email, users[2].imageUrl, users[2].introduction,
+                            users[2].status, users[2].createDateTime, users[2].updateDateTime),
+                        tuple(users[1].id, users[1].nickname, users[1].email, users[1].imageUrl, users[1].introduction,
+                            users[1].status, users[1].createDateTime, users[1].updateDateTime)
+                    )
+            }
+        )
+    }
+
+    @Test
+    fun `질문 답변이 없을때 질문 ID로 질문 답변 전체 조회가 정상 작동한다`() {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val categories = listOf(createAndSaveCategory(admin, "카테고리"))
+        val question = createAndSaveQuestion(categories, admin, "질문")
+
+        val pageOffsetRequest = PageOffsetRequest.of(1, 20)
+
+        // when
+        val foundQuestionAnswers = questionAnswerRepository.findAllByQuestionId(question.id!!, pageOffsetRequest)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionAnswers.total).isEqualTo(0L)
+            },
+            {
+                assertThat(foundQuestionAnswers.data).isEmpty()
+            }
+        )
+    }
+
+    @Test
+    fun `회원 ID와 답변 ID로 질문 답변 전체 조회가 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
@@ -46,7 +158,6 @@ class QuestionAnswerRepositoryTest(
             createAndSaveQuestion(categories, admin, "질문1"),
             createAndSaveQuestion(categories, admin, "질문2"),
             createAndSaveQuestion(categories, admin, "질문3")
-
         )
         val questionAnswers = listOf(
             createAndSaveQuestionAnswer(user, admin, questions[0]),
@@ -61,6 +172,7 @@ class QuestionAnswerRepositoryTest(
 
         // when
         val foundQuestionAnswers = questionAnswerRepository.findAllAnswered(user.id!!, pageCursorRequest)
+
         // then
         assertAll(
             {
@@ -115,9 +227,8 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
-    @DisplayName("질문 답변이 없을때 회원 ID와 답변 ID로 질문 답변 전체 조회를 하면 정상 작동한다")
     @Test
-    fun givenEmpty_whenFindAllAnswered_thenReturn() {
+    fun `질문 답변이 없을때 회원 ID와 답변 ID로 질문 답변 전체 조회를 하면 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
         val user = createAndSaveUser("user","user@woomulwoomul.com")
@@ -137,9 +248,39 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
-    @DisplayName("회원 ID와 답변 ID로 질문 답변 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAnsweredByUserIdAndAnswerId_thenReturn() {
+    fun `답변 ID로 질문 답변 조회가 정상 작동한다`()  {
+        // given
+        val admin = createAndSaveUser("admin","admin@woomulwoomul.com")
+        val user = createAndSaveUser("user","user@woomulwoomul.com")
+
+        val categories = listOf(createAndSaveCategory(admin, "카테고리"))
+        val question = createAndSaveQuestion(categories, admin, "질문")
+        val questionAnswer = createAndSaveQuestionAnswer(user, admin, question)
+        val answer = createAndSaveAnswer(questionAnswer, "답변", "")
+
+        // when
+        val foundQuestionAnswer = questionAnswerRepository.findByAnswerId(answer.id!!)
+
+        // then
+        assertAll(
+            {
+                assertThat(foundQuestionAnswer)
+                    .extracting("id", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(questionAnswer.id, questionAnswer.status, questionAnswer.createDateTime,
+                        questionAnswer.updateDateTime)
+            },
+            {
+                assertThat(foundQuestionAnswer!!.answer)
+                    .extracting("id", "text", "imageUrl", "status", "createDateTime", "updateDateTime")
+                    .containsExactly(answer.id, answer.text, answer.imageUrl, answer.status, answer.createDateTime,
+                        answer.updateDateTime)
+            }
+        )
+    }
+
+    @Test
+    fun `회원 ID와 답변 ID로 질문 답변 조회가 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user = createAndSaveUser("user", "user@woomulwoomul.com")
@@ -199,9 +340,8 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
-    @DisplayName("회원 ID와 질문 ID로 질문 답변 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindAnsweredByUserIdAndQuestionId_thenReturn() {
+    fun `회원 ID와 질문 ID로 질문 답변 조회가 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user = createAndSaveUser("user", "user@woomulwoomul.com")
@@ -261,9 +401,8 @@ class QuestionAnswerRepositoryTest(
         )
     }
 
-    @DisplayName("질문 ID로 답변한 회원들의 프로필 이미지들 조회가 정상 작동한다")
     @Test
-    fun givenQuestionId_whenCountAnsweredUsers_thenReturn() {
+    fun `질문 ID로 답변한 회원들의 프로필 이미지들 조회가 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
@@ -294,9 +433,8 @@ class QuestionAnswerRepositoryTest(
         assertThat(randomAnsweredImageUrls).containsExactlyInAnyOrder(user1.imageUrl, user2.imageUrl, user3.imageUrl)
     }
 
-    @DisplayName("질문 ID로 답변한 회원들수 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenCountAnsweredUser_thenReturn() {
+    fun `질문 ID로 답변한 회원들수 조회가 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
@@ -327,9 +465,8 @@ class QuestionAnswerRepositoryTest(
         assertThat(answeredUserCnt).isEqualTo(answers.size.toLong())
     }
 
-    @DisplayName("질문 ID들로 답변한 회원들수 조회가 정상 작동한다")
     @Test
-    fun givenValid_whenFindRandomAnsweredUserImageUrls_thenReturn() {
+    fun `질문 ID들로 답변한 회원들수 조회가 정상 작동한다`() {
         // given
         val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")
         val user1 = createAndSaveUser("user1", "user1@woomulwoomul.com")
@@ -378,8 +515,7 @@ class QuestionAnswerRepositoryTest(
 
     @ParameterizedTest(name = "[{index}] 수신자 회원 ID와 질문 ID로 질문 답변 존재 여부 조회를 하면 {0}를 반환한다")
     @MethodSource("providerExists")
-    @DisplayName("수신자 회원 ID와 질문 ID로 질문 답변 존재 여부 조회가 정상 작동한다")
-    fun givenProvider_whenExists_thenReturn(expected: Boolean) {
+    fun `수신자 회원 ID와 질문 ID로 질문 답변 존재 여부 조회가 정상 작동한다`(expected: Boolean) {
         // given
         val (receiverUserId, questionId) = if (expected) {
             val admin = createAndSaveUser("admin", "admin@woomulwoomul.com")

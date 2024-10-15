@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>우물우물 Admin</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        th, td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="~{fragments/header :: body}"></div>
+
+<div style="margin-top: 50px; margin-bottom: 50px; display: flex; justify-content: center;">
+    <h1>답변</h1>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>내용</th>
+        <th>이미지</th>
+        <th>수신자 ID</th>
+        <th>수신자 닉네임</th>
+        <th>발신자 ID</th>
+        <th>수신자 ID</th>
+        <th>상태</th>
+        <th>생성일</th>
+        <th>수정일</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="questionAnswer : ${data}">
+        <td th:text="${questionAnswer.id}">ID</td>
+        <td th:text="${questionAnswer.text}">내용</td>
+        <td style="text-align center">
+            <img th:src="@{${questionAnswer.imageUrl}}" th:alt="'없음'" width="150" height="165"/>
+        </td>
+        <td th:text="${questionAnswer.receiverId}">수신자 ID</td>
+        <td th:text="${questionAnswer.receiverNickname}">수신자 닉네임</td>
+        <td th:text="${questionAnswer.senderId}">발신자 ID</td>
+        <td th:text="${questionAnswer.senderNickname}">발신자 닉네임</td>
+        <td th:text="${questionAnswer.status}">상태</td>
+        <td th:text="${#temporals.format(questionAnswer.createDateTime, 'yyyy-MM-dd HH:mm:ss')}">생성일</td>
+        <td th:text="${#temporals.format(questionAnswer.updateDateTime, 'yyyy-MM-dd HH:mm:ss')}">수정일</td>
+        <td>
+            <form th:action="@{/questions/{questionId}/answers/{answerId}(questionId=${questionAnswer.questionId}, answerId=${questionAnswer.id})}" th:method="delete"
+                  onsubmit="return confirm('답변을 삭제하시겠습니까?');">
+                <button type="submit" class="btn btn-primary">삭제</button>
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div>
+    <ul>
+        <li th:if="${currentPage > 1}">
+            <a th:href="@{/questions/{id}/answers(id=${questionId}, page-from=${currentPage - 1}, page-size=20)}">Previous</a>
+        </li>
+        <li th:each="i : ${#numbers.sequence(1, totalPage)}">
+            <a th:href="@{/questions/{id}/answers(id=${questionId}, page-from=${i}, page-size=20)}"
+               th:text="${i}"
+               th:classappend="${i == currentPage} ? 'active' : ''"></a>
+        </li>
+        <li th:if="${currentPage < totalPage}">
+            <a th:href="@{//questions/{id}/answers(id=${questionId}, page-from=${currentPage + 1}, page-size=20)}">Next</a>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

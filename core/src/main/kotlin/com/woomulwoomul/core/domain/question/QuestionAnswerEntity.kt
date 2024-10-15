@@ -1,8 +1,7 @@
 package com.woomulwoomul.core.domain.question
 
 import com.woomulwoomul.core.domain.base.BaseDetailEntity
-import com.woomulwoomul.core.domain.base.DetailServiceStatus.COMPLETE
-import com.woomulwoomul.core.domain.base.DetailServiceStatus.USER_DEL
+import com.woomulwoomul.core.domain.base.DetailServiceStatus.*
 import com.woomulwoomul.core.domain.base.ServiceStatus
 import com.woomulwoomul.core.domain.user.UserEntity
 import jakarta.persistence.*
@@ -39,5 +38,10 @@ class QuestionAnswerEntity(
     fun deleteByUser() {
         status = USER_DEL
         answer?.status = ServiceStatus.USER_DEL
+    }
+
+    fun deleteByAdmin() {
+        status = ADMIN_DEL
+        answer?.status = ServiceStatus.ADMIN_DEL
     }
 }
